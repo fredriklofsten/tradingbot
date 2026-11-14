@@ -1,0 +1,29 @@
+name: Daglig papperstrading
+on:
+  schedule:
+    - cron: "40 16 * * 1-5"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  kor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Backtest varje måndag (eller första gången)
+        run: '[ "$(date +%u)" = "1" ] || [ ! -f backtest.json ] && python tradingbot.py backtest || true'
+      - name: Handla och bygg rapport
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python tradingbot.py allt
+      - name: Spara resultat
+        run: |
+          git config user.name "tradingbot"
+          git config user.email "tradingbot@users.noreply.github.com"
+          git add -A
+          git commit -m "Papperstrading $(date +%F)" || echo "inget nytt"
+          git push
