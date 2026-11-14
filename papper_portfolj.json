@@ -1,0 +1,709 @@
+{
+ "start": "2026-11-14",
+ "startkapital": 100000,
+ "kassa": 50000.0,
+ "innehav": {
+  "ATCO-A.ST": 64.9219765929779,
+  "VOLV-B.ST": 38.593847357941094,
+  "INVE-B.ST": 28.610315186246417,
+  "SPY": 1.642552128977822
+ },
+ "senaste_signaler": [
+  {
+   "aktie": "SPY",
+   "datum": "2026-11-13",
+   "pris": 754.3699951171875,
+   "ml": 0.6584473160158663,
+   "nyheter": 0.20725000000000002,
+   "poang": 0.6688098160158663,
+   "nyhetslista": [
+    {
+     "rubrik": "‘65% of the S&P Is Basically AI’: Eisman’s Warning as Ramsey Tells Disabled Veteran His $500,000 Is ‘Safe’",
+     "sammanfattning": "Dave Ramsey called a disabled veteran's $500,000 index fund conservative, while Steve Eisman says the same index hides a giant bet on one theme. One question about when he might need the money decides who is right.",
+     "datum": "2026-11-14",
+     "poang": -0.4767,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Will ETF Buying Change Meta Stock Narrative",
+     "sammanfattning": "Large ETFs including SPY, XLC and SPYM recently added to Meta Platforms positions over several days, alongside fresh fixed income offerings and expanded sustainability agreements tied to green steel, clean cement and zero emission trucking. The combination of strong ETF buying and growing use of AI to sharpen Meta Platforms advertising engine reinforces how central data driven ad performance remains to the business story, even as it layers on heavy capex and new financing to fund AI and...",
+     "datum": "2026-11-14",
+     "poang": 0.8779,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "S&P 500, Dow, Nasdaq End Lower Amid Nvidia Turmoil, But Record Best Week Since August —  SPCX, NVDA, ARM, AZN In Focus",
+     "sammanfattning": "Nvidia saw its worst week since April last year after Jensen Huang stepped down as CEO, and its board is looking for candidates.",
+     "datum": "2026-11-13",
+     "poang": -0.296,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Never bought Nvidia stock? Its slide could still hit your 401(k).",
+     "sammanfattning": "Millions of Americans are exposed to Nvidia shares through their retirement plans. That's not as bad as it sounds (really!).",
+     "datum": "2026-11-13",
+     "poang": 0.6177,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Intel attracts $79 million in ETF buying despite warning",
+     "sammanfattning": "Semiconductor ETFs lead institutional buying, although Intel's valuation remains well above its estimated GF Value.",
+     "datum": "2026-11-13",
+     "poang": 0.804,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Kevin Warsh’s Fed Will Vote on Rates Only 7 Times in 2027",
+     "sammanfattning": "The Fed is quietly trimming its meeting calendar, and long-term Treasuries already flinched. With a hike looming in December, fewer decision days could make every surprise hit bond holders harder. Which corner of the bond market gets hurt most?",
+     "datum": "2026-11-13",
+     "poang": -0.2263,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "The S&P 500 Has a “Pure Value” Version. RPV Gives Its Cheapest Stocks the Biggest Weights",
+     "sammanfattning": "Most S&P 500 funds hand the biggest weights to the market's winners. One lesser-known fund flips that logic, loading up on unloved health insurers, automakers, and refiners. Does it deserve a spot in a retiree's portfolio, or is the discount a trap?",
+     "datum": "2026-11-13",
+     "poang": 0.2732,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Nvidia Is 6.1% Of Your S&P 500 Fund. What Is Your Number?",
+     "sammanfattning": "More on the AI trade: our AI storyline page collects our pieces on AI stocks.",
+     "datum": "2026-11-13",
+     "poang": 0.0772,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "$1 Million In SCHD Five Years Ago: What Is It Worth Now?",
+     "sammanfattning": "This week the headlines were loud: a chip giant's CEO, an IPO, a hot inflation print. Before the weekend, with coffee and your brokerage statement, a quieter question is worth five minutes. Suppose you had put $1 million into SCHD, the Schwab dividend fund, in November 2021 and reinvested every dividend.",
+     "datum": "2026-11-13",
+     "poang": 0.4215,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "PPI +6.5% YoY: Highest in Nearly 4 Years",
+     "sammanfattning": "The Producer Price Index (PPI) at +6.5% is the highest we've seen since November of 2022.",
+     "datum": "2026-11-13",
+     "poang": 0.0,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ],
+   "viktigast": [
+    [
+     "vol_60",
+     0.12259923175416139
+    ],
+    [
+     "fran_arshogsta",
+     0.11933418693982085
+    ],
+    [
+     "manad",
+     0.05695689287238589
+    ],
+    [
+     "avk_120d",
+     0.027699530516431814
+    ],
+    [
+     "avk_60d",
+     0.019953051643192537
+    ]
+   ],
+   "handling": "KÖP/BEHÅLL"
+  },
+  {
+   "aktie": "AAPL",
+   "datum": "2026-11-13",
+   "pris": 356.2699890136719,
+   "ml": 0.48155239772365627,
+   "nyheter": 0.14337,
+   "poang": 0.4887208977236563,
+   "nyhetslista": [
+    {
+     "rubrik": "In Jensen Huang’s Ouster, Tech Billionaires See a Mistake—and a Lesson",
+     "sammanfattning": "Elon Musk, Palmer Luckey and other founders blasted the Nvidia CEO’s removal after his affairs. Some likened it to Apple firing Steve Jobs.",
+     "datum": "2026-11-14",
+     "poang": -0.34,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Is Apple Stock a Buy Right Now?",
+     "sammanfattning": "Apple is hitting new highs, but it could go even higher.",
+     "datum": "2026-11-14",
+     "poang": 0.0,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Nvidia's competitors pounce, and what GPU rental prices say about the AI race",
+     "sammanfattning": "Deirdre Bosa discusses hyperscalers stock rising in the wake of Nvidia's (NVDA) scandal, Tim Cook remaining loyal to Apple (AAPL) after Trump's post, and breaking down the AI trade. \n\nDeirdre Bosa then sits down with Silicon Data CEO Carmen Li to talk about turning AI computing into a commodity, \n\n'Deirdre Bosa Live' airs every day at 4 p.m. Tune in daily to hear how the latest developments in AI and technology are reshaping companies, industries, and the global economy",
+     "datum": "2026-11-13",
+     "poang": 0.0516,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Stock Market Today: Indexes Trim Losses, Manage To Score Weekly Gains Despite Strong Volatility",
+     "sammanfattning": "The Dow Jones index fell Friday despite cooler-than-expected inflation data. AI giant Nvidia continued to fall.",
+     "datum": "2026-11-13",
+     "poang": -0.4592,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "A $1,999 Sellout. What China Renaissance Sees in Apple (AAPL)",
+     "sammanfattning": "We just published a list of the Buy Alert: 10 Stocks Analysts Upgraded on Wednesday and Apple (NASDAQ:AAPL) ranked 10th on this list. October consumer prices rose 0.4%, the third straight monthly gain of at least 0.4%, according to data reported by Reuters. Economists polled by the outlet had expected 0.3%. Core inflation, which excludes […]",
+     "datum": "2026-11-13",
+     "poang": 0.7579,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Inside Jim Cramer’s Charitable Trust: 5 Stocks He Actually Owns",
+     "sammanfattning": "Jim Cramer started his Charitable Trust in 2005 with $3 million of his own money. According to CNBC, Cramer’s own investment is at risk, and the trust distributes its investment income and realized capital gains to charity. The CNBC Investing Club gives subscribers a way to follow that portfolio. Members can see how much of […]",
+     "datum": "2026-11-13",
+     "poang": 0.9545,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "The Price Tag on Jensen Huang’s Resignation: $639 Billion and Counting",
+     "sammanfattning": "Nvidia’s market cap tumbled $639.1 billion this week, its worst weekly decline ever. The debate now is whether or not investors want to take advantage of the fall.",
+     "datum": "2026-11-13",
+     "poang": -0.6728,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Meta tests prediction-market app for employees, WSJ reports",
+     "sammanfattning": "Investing.com -- Meta Platforms is testing an internal prediction-market app called Takes, allowing employees to predict the outcomes of events using virtual points rather than real money, The Wall Street Journal reported Friday.",
+     "datum": "2026-11-13",
+     "poang": 0.0,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "3 Favorite Warren Buffett Stocks Hit Record Highs As Nvidia Sinks",
+     "sammanfattning": "What unites the three favorite Warren Buffett stocks? Their defensive edge in a market dealing with the shock exit of Nvidia CEO Jensen Huang.",
+     "datum": "2026-11-13",
+     "poang": 0.5423,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Ackman on Huang's Exit, Anthropic IPO Roadshow",
+     "sammanfattning": "Bill Ackman, Pershing Square founder and CEO, says it's sad to see Jensen Huang leave Nvidia and he'll go on to do something great. Ackman also says he was impressed with the presentation given by Anthropic CEO Dario Amodei at the company's IPO roadshow event in New York. He speaks to Bloomberg's Isabelle Lee.",
+     "datum": "2026-11-13",
+     "poang": 0.5994,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ],
+   "viktigast": [
+    [
+     "manad",
+     0.08216676810712109
+    ],
+    [
+     "vol_kvot",
+     0.03881788057077162
+    ],
+    [
+     "avk_20d",
+     0.027118414823831666
+    ],
+    [
+     "avst_ma200",
+     0.025472825229368112
+    ],
+    [
+     "vol_60",
+     0.017763350690922164
+    ]
+   ],
+   "handling": "BEHÅLL"
+  },
+  {
+   "aktie": "MSFT",
+   "datum": "2026-11-13",
+   "pris": 523.8800048828125,
+   "ml": 0.4822278458154566,
+   "nyheter": -0.06252000000000002,
+   "poang": 0.47910184581545656,
+   "nyhetslista": [
+    {
+     "rubrik": "Cerebras stock surges on Microsoft deal: What it means for Nvidia",
+     "sammanfattning": "Deirdre Bosa outlines how various AI companies are storming the AI castle and searching for Nvidia (NVDA) alternatives, such as Cerebras' (CBRS) deal with Microsoft (MSFT). ",
+     "datum": "2026-11-13",
+     "poang": 0.0,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Nvidia, Alphabet, Microsoft, and Micron Are All Buying Anthropic’s IPO. Should You Buy Too?",
+     "sammanfattning": "Anthropic's IPO now has a price range, but is the stock worth it?",
+     "datum": "2026-11-14",
+     "poang": 0.4039,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "The Chaos and Unexpected Joys of a 19-Hour Global Email Outage",
+     "sammanfattning": "It was the workplace equivalent of a snow day, pushing some to frustration, some to the telephone. One man built bookshelves.",
+     "datum": "2026-11-14",
+     "poang": -0.5574,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Microsoft Service Restored After Widespread Outage, Company Says",
+     "sammanfattning": "The tech giant said it has processed a backlog of emails after widespread disruption to Microsoft 365.",
+     "datum": "2026-11-14",
+     "poang": -0.0258,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Insight Enterprises Inc (NSIT) (Q3 2026) Earnings Call Highlights: AI-Driven Demand Fuels 34% ...",
+     "sammanfattning": "Insight Enterprises Inc (NSIT) posted 20% gross profit growth and lifted its 2026 guidance, as surging AI infrastructure and cloud demand offset margin pressure and anticipated Q4 moderation.",
+     "datum": "2026-11-14",
+     "poang": -0.2023,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Nscale reports ballooning debt and need for more as IPO approaches",
+     "sammanfattning": "Neocloud startup Nscale reported ballooning debt and increased reliance on Nvidia for financing as the startup aims for an IPO amid swirling questions about the sustainability of the AI boom .",
+     "datum": "2026-11-13",
+     "poang": -0.4404,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Stocks to Watch Recap: Nvidia, AMD, Microsoft",
+     "sammanfattning": "🔎 Microsoft (MSFT): A major global outage in the software giant’s Microsoft 365 services extended into Friday.",
+     "datum": "2026-11-13",
+     "poang": 0.0,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Nvidia's competitors pounce, and what GPU rental prices say about the AI race",
+     "sammanfattning": "Deirdre Bosa discusses hyperscalers stock rising in the wake of Nvidia's (NVDA) scandal, Tim Cook remaining loyal to Apple (AAPL) after Trump's post, and breaking down the AI trade. \n\nDeirdre Bosa then sits down with Silicon Data CEO Carmen Li to talk about turning AI computing into a commodity, \n\n'Deirdre Bosa Live' airs every day at 4 p.m. Tune in daily to hear how the latest developments in AI and technology are reshaping companies, industries, and the global economy",
+     "datum": "2026-11-13",
+     "poang": 0.0516,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "With Nvidia Floundering, AI Bulls Need More Than Spending. Watch Revenue.",
+     "sammanfattning": "Capital spending shows what AI companies are building. Revenue per gigawatt offers clues to demand for that computing power.",
+     "datum": "2026-11-13",
+     "poang": -0.128,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "What Does Dominion Energy Offer That NiSource Does Not?",
+     "sammanfattning": "For questions about this article or underlying research, email help@trefis.com.",
+     "datum": "2026-11-13",
+     "poang": 0.2732,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ],
+   "viktigast": [
+    [
+     "vol_60",
+     0.14050170013472751
+    ],
+    [
+     "fran_arshogsta",
+     0.0403755266140586
+    ],
+    [
+     "marknad_avst_ma200",
+     0.04022582921665482
+    ],
+    [
+     "manad",
+     0.03827976305040518
+    ],
+    [
+     "avk_120d",
+     0.023930198242124723
+    ]
+   ],
+   "handling": "BEHÅLL"
+  },
+  {
+   "aktie": "NVDA",
+   "datum": "2026-11-13",
+   "pris": 162.85000610351562,
+   "ml": 0.32424467541553775,
+   "nyheter": 0.06976,
+   "poang": 0.32773267541553774,
+   "nyhetslista": [
+    {
+     "rubrik": "Nvidia and Jensen Huang fallout: Here's everything we know after a momentous week",
+     "sammanfattning": "Here's a giant rundown of everything that happened with Nvidia this week.",
+     "datum": "2026-11-14",
+     "poang": 0.0,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Nvidia's competitors pounce, and what GPU rental prices say about the AI race",
+     "sammanfattning": "Deirdre Bosa discusses hyperscalers stock rising in the wake of Nvidia's (NVDA) scandal, Tim Cook remaining loyal to Apple (AAPL) after Trump's post, and breaking down the AI trade. \n\nDeirdre Bosa then sits down with Silicon Data CEO Carmen Li to talk about turning AI computing into a commodity, \n\n'Deirdre Bosa Live' airs every day at 4 p.m. Tune in daily to hear how the latest developments in AI and technology are reshaping companies, industries, and the global economy",
+     "datum": "2026-11-13",
+     "poang": 0.0516,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "How the Nvidia scandal impacts US–China relations: Department of Defense CTO",
+     "sammanfattning": "US Secretary of Commerce Howard Lutnick will reportedly testify before the Senate Banking Committee on Dec. 10 as lawmakers raise questions about how far Lutnick went to protect Nvidia's (NVDA) push to sell AI chips to China.\n\nUS Department of Defense (Department of War) CTO Emil Michael sits down with Deirdre Bosa to discuss the US–China relationship.",
+     "datum": "2026-11-13",
+     "poang": -0.4939,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Cerebras stock surges on Microsoft deal: What it means for Nvidia",
+     "sammanfattning": "Deirdre Bosa outlines how various AI companies are storming the AI castle and searching for Nvidia (NVDA) alternatives, such as Cerebras' (CBRS) deal with Microsoft (MSFT). ",
+     "datum": "2026-11-13",
+     "poang": 0.0,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "'Nothing has changed': Why some Nvidia stock bulls aren't wavering after Jensen Huang ouster",
+     "sammanfattning": "The bulls refuse to completely throw in the towel on Nvidia.",
+     "datum": "2026-11-13",
+     "poang": -0.1916,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Rene Haas, Ian Buck, Chris Malachowsky: Wall Street zeroes in on potential Nvidia CEO successors",
+     "sammanfattning": "Wall Street has a list of names that could replace Jensen Huang, including Rene Haas, Ian Buck, and others.",
+     "datum": "2026-11-13",
+     "poang": 0.2732,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Why a Rising TSMC Challenger Could Reshape the Chip Foundry Landscape",
+     "sammanfattning": "Japan's state-backed Rapidus is promising cheaper 2-nanometer chips, but it still has to prove that it can manufacture them.",
+     "datum": "2026-11-14",
+     "poang": 0.2732,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Nvidia's 60% target cut exposes a Wall Street split",
+     "sammanfattning": "Two major investment banks see very different futures for the AI giant.",
+     "datum": "2026-11-14",
+     "poang": -0.3818,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Strategy's Michael Saylor Says Bitcoin Is Now a Bipartisan Issue That Crosses Party Lines. Here's Why He's Right.",
+     "sammanfattning": "Even with a Democratic majority in Congress, Bitcoin can still soar higher over the next two years.",
+     "datum": "2026-11-14",
+     "poang": 0.4019,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Not Only Did President Donald Trump Fail to Keep His Social Security Promise, but He May Have Accelerated the Program's Path to Insolvency",
+     "sammanfattning": "Donald Trump’s pledge to end the taxation of Social Security benefits hasn’t gone as planned.",
+     "datum": "2026-11-14",
+     "poang": 0.765,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ],
+   "viktigast": [
+    [
+     "vol_kvot",
+     0.05541185624461128
+    ],
+    [
+     "avst_ma50",
+     0.04983912686896722
+    ],
+    [
+     "marknad_avst_ma200",
+     0.04946060185477256
+    ],
+    [
+     "vol_60",
+     0.04588564338737836
+    ],
+    [
+     "manad",
+     0.03614913885559271
+    ]
+   ],
+   "handling": "SÄLJ"
+  },
+  {
+   "aktie": "VOLV-B.ST",
+   "datum": "2026-11-13",
+   "pris": 323.3999938964844,
+   "ml": 0.6899513893199274,
+   "nyheter": 0.0,
+   "poang": 0.6899513893199274,
+   "nyhetslista": [],
+   "viktigast": [
+    [
+     "manad",
+     0.14768717521011102
+    ],
+    [
+     "atr_pct",
+     0.03419516263552972
+    ],
+    [
+     "avst_ma200",
+     0.03208870640063314
+    ],
+    [
+     "vol_60",
+     0.030174718248112836
+    ],
+    [
+     "vol_kvot",
+     0.029629392014713225
+    ]
+   ],
+   "handling": "KÖP/BEHÅLL"
+  },
+  {
+   "aktie": "ERIC-B.ST",
+   "datum": "2026-11-13",
+   "pris": 106.30000305175781,
+   "ml": 0.4596303179886868,
+   "nyheter": 0.8020428571428571,
+   "poang": 0.4997324608458297,
+   "nyhetslista": [
+    {
+     "rubrik": "TMUS vs. NOK: Which Telecom Stock is the Better Buy Now?",
+     "sammanfattning": "T-Mobile and Nokia are competing to capitalize on rising AI and cloud infrastructure demand, but differences in growth, profitability and valuation make this telecom comparison worth a closer look.",
+     "datum": "2026-11-13",
+     "poang": 0.8442,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Can Nokia's Expanded One New Zealand Deal Accelerate Its AI Growth?",
+     "sammanfattning": "NOK expands its One New Zealand partnership to advance autonomous networks, leveraging AI-driven solutions to improve network automation, operational efficiency and reliability.",
+     "datum": "2026-11-12",
+     "poang": 0.8442,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Why Telefonaktiebolaget LM Ericsson (OM:ERIC B) Shares Climbed After Its Latest Update",
+     "sammanfattning": "Telefonaktiebolaget LM Ericsson (OM:ERIC B) is back in focus after signing a new Memorandum of Understanding with Singapore’s National University Health System and Singtel to advance connected healthcare using 5G-Advanced and early 6G research. Investors have been rewarding this flurry of 5G, satellite and healthcare projects, with Telefonaktiebolaget LM Ericsson’s share price delivering a 20.5% year to date return and a 12.7% 30 day share price gain. The 3 year total shareholder return of...",
+     "datum": "2026-11-12",
+     "poang": 0.9081,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Ericsson (OM:ERIC B) Stock May Be Fully Priced Despite 5G Drone Detection Launch",
+     "sammanfattning": "Telefonaktiebolaget LM Ericsson has delivered a strong share price run in recent years, which naturally raises the question of whether the current Stockholm listing reflects the cash flows the business can produce. With the stock recently closing at SEK 103.20, investors are asking how much of Ericsson’s telecom and 5G story is already embedded in the valuation built on its cash generation. Over the past 3 years, Ericsson shares are up 123.6%, putting a lot of weight on whether the...",
+     "datum": "2026-11-11",
+     "poang": 0.7717,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Ericsson (OM:ERIC B) Unveils 6G Healthcare Hub And ISAC System",
+     "sammanfattning": "Telefonaktiebolaget LM Ericsson (OM:ERIC B) announced new 6G healthcare work with Singtel and Singapore's National University Health System, including what the partners describe as the world's first 6G AI centre in healthcare. The group reported satellite to ground network handoff trials with AT&T, alongside AI driven autonomous network deployments with Verizon in the United States. Ericsson publicly launched its ISAC System for integrated network sensing, targeting use in defense, public...",
+     "datum": "2026-11-11",
+     "poang": 0.5859,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Nokia Stock Rises 18.4% Year to Date: Is There More Upside Ahead?",
+     "sammanfattning": "NOK's 18.4% YTD gain reflects surging AI and cloud demand, strong hyperscaler wins and optical networking growth, but challenges remain.",
+     "datum": "2026-11-09",
+     "poang": 0.7717,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Verizon (VZ) Stock May Sit Below Fair Value After AI Network Expansion",
+     "sammanfattning": "Verizon Communications stock has quietly put up a solid run over the past few years, which naturally raises a simple question for anyone looking at the ticker today. Is the current share price of US$45.69 still in line with what the company’s cash flows can support, or has sentiment moved ahead of the fundamentals? Over the past 3 years, Verizon Communications has returned 55.6%, so a lot of investor belief is already tied to how durable its cash generation proves to be. Fresh moves into AI...",
+     "datum": "2026-11-07",
+     "poang": 0.8885,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ],
+   "viktigast": [
+    [
+     "avst_ma200",
+     0.06391497880859591
+    ],
+    [
+     "vol_60",
+     0.06142312525291257
+    ],
+    [
+     "manad",
+     0.04187165889293546
+    ],
+    [
+     "fran_arshogsta",
+     0.029667965838178618
+    ],
+    [
+     "vol_kvot",
+     0.027261303857048502
+    ]
+   ],
+   "handling": "BEHÅLL"
+  },
+  {
+   "aktie": "INVE-B.ST",
+   "datum": "2026-11-13",
+   "pris": 436.25,
+   "ml": 0.6882924673949422,
+   "nyheter": 0.0,
+   "poang": 0.6882924673949422,
+   "nyhetslista": [],
+   "viktigast": [
+    [
+     "relativ_styrka_60d",
+     0.11868915398327158
+    ],
+    [
+     "vol_60",
+     0.07165775401069518
+    ],
+    [
+     "manad",
+     0.06524064171122997
+    ],
+    [
+     "avk_120d",
+     0.03378582202111613
+    ],
+    [
+     "marknad_avk_20d",
+     0.032634032634032605
+    ]
+   ],
+   "handling": "KÖP/BEHÅLL"
+  },
+  {
+   "aktie": "ATCO-A.ST",
+   "datum": "2026-11-13",
+   "pris": 192.25,
+   "ml": 0.6928928398136774,
+   "nyheter": 0.9678,
+   "poang": 0.7412828398136775,
+   "nyhetslista": [
+    {
+     "rubrik": "Atlas Copco (OM:ATCO A) Stock Looks Undervalued Despite Its 52% Five Year Run",
+     "sammanfattning": "Atlas Copco has rewarded long term shareholders with strong gains in recent years, and fresh expansion projects in the United States now put the focus squarely on what the business can earn in cash terms. With the share price recently closing at SEK 194.65, the question is how comfortably the company’s cash flows support where the stock trades today. Over the past 5 years, Atlas Copco has delivered a share price return of 51.5%, which puts real weight on whether the current valuation is...",
+     "datum": "2026-11-11",
+     "poang": 0.9678,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ],
+   "viktigast": [
+    [
+     "marknad_avk_20d",
+     0.14364035087719293
+    ],
+    [
+     "manad",
+     0.07513157894736844
+    ],
+    [
+     "relativ_styrka_60d",
+     0.07337719298245611
+    ],
+    [
+     "macd_hist",
+     0.059144736842105305
+    ],
+    [
+     "avk_60d",
+     0.05907894736842104
+    ]
+   ],
+   "handling": "KÖP/BEHÅLL"
+  }
+ ],
+ "spy_start_sek": 7598.693386837724,
+ "uppdaterad": "2026-11-14T13:20"
+}
