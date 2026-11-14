@@ -1,5 +1,5 @@
 {
- "version": 2,
+ "version": 3,
  "start": "2026-11-14",
  "portfoljer": {
   "ai": {
@@ -155,6 +155,84 @@
     "TELIA.ST": 0.0303,
     "ALFA.ST": 0.0303
    }
+  },
+  "risk": {
+   "kassa": 0.0,
+   "innehav": {
+    "NVDA": 0.913988903967898,
+    "META": 0.2767126372517559,
+    "ABB.ST": 2.6641124609317606,
+    "GOOGL": 0.7589966382320278,
+    "SAND.ST": 6.276601613177029,
+    "AMZN": 0.8811616317815179,
+    "MSFT": 0.45694125227339466,
+    "ERIC-B.ST": 22.767293389497578,
+    "ATCO-A.ST": 12.985646694154696,
+    "HD": 0.7408349167089318,
+    "XOM": 1.526810352249479,
+    "SKF-B.ST": 9.633481230173546,
+    "UNH": 0.6903039336474114,
+    "JNJ": 1.0356685729468509,
+    "WMT": 2.341813090939931,
+    "ALFA.ST": 5.579544880159979,
+    "AZN.ST": 1.6442503846059493,
+    "HM-B.ST": 17.195060435097478,
+    "TELIA.ST": 62.945268349956784,
+    "V": 0.7347725772871385,
+    "HEXA-B.ST": 29.839289430772975,
+    "AAPL": 0.9169041547739565,
+    "SEB-A.ST": 14.972365561279284,
+    "JPM": 0.9633124034421038,
+    "VOLV-B.ST": 10.603728443761563,
+    "EVO.ST": 4.081175718494993,
+    "ASSA-B.ST": 9.090210339318547,
+    "PG": 2.1878163002108466,
+    "KO": 3.8667659071662825,
+    "SWED-A.ST": 9.344615452883446,
+    "ESSITY-B.ST": 13.738356530672254,
+    "SHB-A.ST": 25.909783519153937,
+    "INVE-B.ST": 9.563198070290731
+   },
+   "senast_ombalans": "2026-11-14",
+   "senaste_filter": {
+    "us": false,
+    "se": false
+   },
+   "vikter": {
+    "ASSA-B.ST": 0.036,
+    "META": 0.0179,
+    "ATCO-A.ST": 0.025,
+    "ABB.ST": 0.0224,
+    "SAND.ST": 0.0227,
+    "AZN.ST": 0.0307,
+    "MSFT": 0.0241,
+    "SEB-A.ST": 0.0333,
+    "HM-B.ST": 0.0309,
+    "INVE-B.ST": 0.0432,
+    "ESSITY-B.ST": 0.0402,
+    "HEXA-B.ST": 0.0322,
+    "ERIC-B.ST": 0.0242,
+    "GOOGL": 0.0226,
+    "JPM": 0.0336,
+    "SWED-A.ST": 0.0396,
+    "JNJ": 0.0298,
+    "XOM": 0.0262,
+    "EVO.ST": 0.0355,
+    "PG": 0.0374,
+    "KO": 0.0387,
+    "AAPL": 0.0329,
+    "AMZN": 0.0237,
+    "WMT": 0.0302,
+    "V": 0.0315,
+    "SKF-B.ST": 0.027,
+    "UNH": 0.0283,
+    "SHB-A.ST": 0.0428,
+    "HD": 0.026,
+    "VOLV-B.ST": 0.0343,
+    "NVDA": 0.015,
+    "TELIA.ST": 0.0314,
+    "ALFA.ST": 0.0306
+   }
   }
  },
  "signaler": [
@@ -162,19 +240,30 @@
    "aktie": "ASSA-B.ST",
    "datum": "2026-11-13",
    "pris": 395.70001220703125,
-   "ml": 0.4686277807983604,
+   "ml": 0.48044035660292733,
    "nyheter": 0.0,
-   "poang": 0.4686277807983604,
+   "poang": 0.48044035660292733,
+   "risk": 0.19824164151428664,
    "nyhetslista": []
   },
   {
    "aktie": "META",
    "datum": "2026-11-13",
    "pris": 641.6900024414062,
-   "ml": 0.5119662972614749,
-   "nyheter": 0.51657,
-   "poang": 0.5377947972614749,
+   "ml": 0.5094364911748241,
+   "nyheter": 0.49122999999999994,
+   "poang": 0.5339979911748242,
+   "risk": 0.3986815152737992,
    "nyhetslista": [
+    {
+     "rubrik": "SpaceX Hollows Out Its AI Video Division. Elon Musk Now Has Different Priorities",
+     "sammanfattning": "A quiet round of layoffs just gutted one of Elon Musk's flashiest AI products, months after he vowed to double down on it. The retreat could hand a rival with deep pockets and a giant video platform exactly the opening it needs.",
+     "datum": "2026-11-14",
+     "poang": 0.6124,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
     {
      "rubrik": "Jamie Dimon Just Said 5 Words Blocking Outside AI Agents From JPMorgan Accounts: \"You Don't Want Rogue Agents.\" Here's Why That Security Stance Matters for JPM and Its Tech Rivals.",
      "sammanfattning": "The CEO of JPMorgan Chase isn't going to open his customers' accounts to \"just any\" AI agents from third parties.",
@@ -201,15 +290,6 @@
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
-    },
-    {
-     "rubrik": "Centrus Energy (LEU) Has Fresh Attention, But What Is The Market Missing?",
-     "sammanfattning": "Oklo Inc. has locked in multi-year contracts with Centrus Energy (LEU) for high-assay low-enriched uranium, backed by Meta-funded prepayments, tying Centrus directly to Oklo’s planned 1.2 GW Ohio power campus. The Centrus Energy share price has fallen sharply in recent months, with a 30 day share price return down 13.5% and the 90 day move down 45.4%, even though the 3 year total shareholder return is still up 97.6%. Fresh headlines include the Oklo HALEU contracts, new enrichment investment...",
-     "datum": "2026-11-14",
-     "poang": 0.8462,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
     }
    ]
   },
@@ -217,9 +297,10 @@
    "aktie": "ATCO-A.ST",
    "datum": "2026-11-13",
    "pris": 192.25,
-   "ml": 0.46198112566930394,
+   "ml": 0.46193212979216114,
    "nyheter": 0.9678,
-   "poang": 0.510371125669304,
+   "poang": 0.5103221297921612,
+   "risk": 0.2856307434077884,
    "nyhetslista": [
     {
      "rubrik": "Atlas Copco (OM:ATCO A) Stock Looks Undervalued Despite Its 52% Five Year Run",
@@ -236,9 +317,10 @@
    "aktie": "ABB.ST",
    "datum": "2026-11-13",
    "pris": 842.5999755859375,
-   "ml": 0.4833935711569582,
+   "ml": 0.47993502554351686,
    "nyheter": 0.18185,
-   "poang": 0.4924860711569582,
+   "poang": 0.48902752554351686,
+   "risk": 0.3176587958352655,
    "nyhetslista": [
     {
      "rubrik": "Softbank and ABB reenter talks after China blocked acquisition",
@@ -264,18 +346,20 @@
    "aktie": "SAND.ST",
    "datum": "2026-11-13",
    "pris": 362.1000061035156,
-   "ml": 0.470749375345527,
+   "ml": 0.47558008194557255,
    "nyheter": 0.0,
-   "poang": 0.470749375345527,
+   "poang": 0.47558008194557255,
+   "risk": 0.3137485917060289,
    "nyhetslista": []
   },
   {
    "aktie": "AZN.ST",
    "datum": "2026-11-13",
    "pris": 1866.0,
-   "ml": 0.4221979283245473,
+   "ml": 0.4365658458068949,
    "nyheter": 0.14996,
-   "poang": 0.4296959283245473,
+   "poang": 0.4440638458068949,
+   "risk": 0.23241025640855356,
    "nyhetslista": [
     {
      "rubrik": "3 British Healthcare Stocks With Revenue Growth Up To 13%",
@@ -319,15 +403,25 @@
    "aktie": "MSFT",
    "datum": "2026-11-13",
    "pris": 523.8800048828125,
-   "ml": 0.49287179806173814,
-   "nyheter": -0.06252000000000002,
-   "poang": 0.4897457980617381,
+   "ml": 0.4905112100073305,
+   "nyheter": -0.09345999999999999,
+   "poang": 0.4858382100073305,
+   "risk": 0.29572509247124773,
    "nyhetslista": [
     {
-     "rubrik": "Cerebras stock surges on Microsoft deal: What it means for Nvidia",
-     "sammanfattning": "Deirdre Bosa outlines how various AI companies are storming the AI castle and searching for Nvidia (NVDA) alternatives, such as Cerebras' (CBRS) deal with Microsoft (MSFT). ",
+     "rubrik": "Microsoft says AI didn’t break Outlook — its own network upgrade did",
+     "sammanfattning": "No one has confirmed what caused the Microsoft outage that took down Outlook and Copilot, and nothing links it to layoffs or AI, but it's not the first time Microsoft's own changes broke its apps.",
      "datum": "2026-11-13",
-     "poang": 0.0,
+     "poang": -0.6486,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "SpaceX Hollows Out Its AI Video Division. Elon Musk Now Has Different Priorities",
+     "sammanfattning": "A quiet round of layoffs just gutted one of Elon Musk's flashiest AI products, months after he vowed to double down on it. The retreat could hand a rival with deep pockets and a giant video platform exactly the opening it needs.",
+     "datum": "2026-11-14",
+     "poang": 0.6124,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
@@ -349,15 +443,6 @@
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
-    },
-    {
-     "rubrik": "Microsoft Service Restored After Widespread Outage, Company Says",
-     "sammanfattning": "The tech giant said it has processed a backlog of emails after widespread disruption to Microsoft 365.",
-     "datum": "2026-11-14",
-     "poang": -0.0258,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
     }
    ]
   },
@@ -365,36 +450,40 @@
    "aktie": "SEB-A.ST",
    "datum": "2026-11-13",
    "pris": 222.6999969482422,
-   "ml": 0.43502855060342505,
+   "ml": 0.44884820392135133,
    "nyheter": 0.0,
-   "poang": 0.43502855060342505,
+   "poang": 0.44884820392135133,
+   "risk": 0.21385738303803437,
    "nyhetslista": []
   },
   {
    "aktie": "HM-B.ST",
    "datum": "2026-11-13",
    "pris": 179.75,
-   "ml": 0.4880583756464901,
+   "ml": 0.48739727207601885,
    "nyheter": 0.0,
-   "poang": 0.4880583756464901,
+   "poang": 0.48739727207601885,
+   "risk": 0.2307077988848803,
    "nyhetslista": []
   },
   {
    "aktie": "INVE-B.ST",
    "datum": "2026-11-13",
    "pris": 436.25,
-   "ml": 0.480919562020338,
+   "ml": 0.4829663962326182,
    "nyheter": 0.0,
-   "poang": 0.480919562020338,
+   "poang": 0.4829663962326182,
+   "risk": 0.16499781978124353,
    "nyhetslista": []
   },
   {
    "aktie": "ESSITY-B.ST",
    "datum": "2026-11-13",
    "pris": 292.3999938964844,
-   "ml": 0.4926751844419487,
+   "ml": 0.4914259016371018,
    "nyheter": 0.8442,
-   "poang": 0.5348851844419487,
+   "poang": 0.5336359016371018,
+   "risk": 0.17750996540705027,
    "nyhetslista": [
     {
      "rubrik": "Essity (OM:ESSITY B) Stock Still Trades At A Discount Despite A 25% Run",
@@ -411,18 +500,20 @@
    "aktie": "HEXA-B.ST",
    "datum": "2026-11-13",
    "pris": 107.8499984741211,
-   "ml": 0.49358643457206147,
+   "ml": 0.4856671590382164,
    "nyheter": 0.0,
-   "poang": 0.49358643457206147,
+   "poang": 0.4856671590382164,
+   "risk": 0.22157780767554636,
    "nyhetslista": []
   },
   {
    "aktie": "ERIC-B.ST",
    "datum": "2026-11-13",
    "pris": 106.30000305175781,
-   "ml": 0.4790937095666187,
+   "ml": 0.4880015008586143,
    "nyheter": 0.8020428571428571,
-   "poang": 0.5191958524237615,
+   "poang": 0.5281036437157571,
+   "risk": 0.2946389785657783,
    "nyhetslista": [
     {
      "rubrik": "TMUS vs. NOK: Which Telecom Stock is the Better Buy Now?",
@@ -466,10 +557,20 @@
    "aktie": "GOOGL",
    "datum": "2026-11-13",
    "pris": 295.7699890136719,
-   "ml": 0.5620360521199051,
-   "nyheter": 0.35868,
-   "poang": 0.5799700521199052,
+   "ml": 0.5467687244259719,
+   "nyheter": 0.43271999999999994,
+   "poang": 0.5684047244259719,
+   "risk": 0.3153453338998038,
    "nyhetslista": [
+    {
+     "rubrik": "SpaceX Hollows Out Its AI Video Division. Elon Musk Now Has Different Priorities",
+     "sammanfattning": "A quiet round of layoffs just gutted one of Elon Musk's flashiest AI products, months after he vowed to double down on it. The retreat could hand a rival with deep pockets and a giant video platform exactly the opening it needs.",
+     "datum": "2026-11-14",
+     "poang": 0.6124,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
     {
      "rubrik": "Sundar Pichai Reported Alphabet's Cloud Revenue Grew 103% Last Quarter While the Gemini App Reached 1 Billion Monthly Users. Is Google Cloud Becoming a Bigger Growth Driver Than Search?",
      "sammanfattning": "From an investing perspective, nothing matters more to Alphabet's success than how it navigates the AI wave.",
@@ -496,15 +597,6 @@
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
-    },
-    {
-     "rubrik": "3 Cash Flow Stocks Trading Up To 49% Below Fair Value",
-     "sammanfattning": "AI related risks just jumped to the top of the Federal Reserve’s financial stability worries, with officials flagging stretched valuations tied to heavy spending on chips, data centers and software. When enthusiasm runs ahead of fundamentals, investors who focus on solid cash generation and pay a fair price can find rare entry points. This article highlights three cash rich stocks that screens suggest are priced below their underlying worth. The three ideas covered below are just a sample,...",
-     "datum": "2026-11-14",
-     "poang": 0.8885,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
     }
    ]
   },
@@ -512,9 +604,10 @@
    "aktie": "JPM",
    "datum": "2026-11-13",
    "pris": 346.19000244140625,
-   "ml": 0.489741583075889,
+   "ml": 0.48658059736285286,
    "nyheter": 0.10122000000000005,
-   "poang": 0.494802583075889,
+   "poang": 0.49164159736285284,
+   "risk": 0.2122749233298688,
    "nyhetslista": [
     {
      "rubrik": "JPMorgan Chase (JPM) Sees 40% Jump In Asia Pacific Alternative Asset Allocations",
@@ -558,9 +651,10 @@
    "aktie": "SWED-A.ST",
    "datum": "2026-11-13",
    "pris": 423.8999938964844,
-   "ml": 0.4136661975488107,
+   "ml": 0.4103946479425563,
    "nyheter": 0.9652,
-   "poang": 0.4619261975488107,
+   "poang": 0.4586546479425563,
+   "risk": 0.18001555631091098,
    "nyhetslista": [
     {
      "rubrik": "Swedbank (OM:SWED A) Stock Could Still Trade At A Discount After A 216% Run",
@@ -577,9 +671,10 @@
    "aktie": "JNJ",
    "datum": "2026-11-13",
    "pris": 285.75,
-   "ml": 0.45565381832750296,
+   "ml": 0.4584604184746965,
    "nyheter": 0.0031100000000000017,
-   "poang": 0.45580931832750293,
+   "poang": 0.45861591847469646,
+   "risk": 0.23920669449028995,
    "nyhetslista": [
     {
      "rubrik": "3 Biotech Stocks With Revenue Up To 11%",
@@ -623,9 +718,10 @@
    "aktie": "XOM",
    "datum": "2026-11-13",
    "pris": 170.58999633789062,
-   "ml": 0.5348590527281809,
+   "ml": 0.5322782548855309,
    "nyheter": 0.19873000000000002,
-   "poang": 0.5447955527281809,
+   "poang": 0.542214754885531,
+   "risk": 0.27179515509023383,
    "nyhetslista": [
     {
      "rubrik": "Top 3 Energy Stocks To Watch In November 2026",
@@ -669,18 +765,20 @@
    "aktie": "EVO.ST",
    "datum": "2026-11-13",
    "pris": 871.0,
-   "ml": 0.43637978572790387,
+   "ml": 0.43872001618067324,
    "nyheter": 0.0,
-   "poang": 0.43637978572790387,
+   "poang": 0.43872001618067324,
+   "risk": 0.20060023259680582,
    "nyhetslista": []
   },
   {
    "aktie": "PG",
    "datum": "2026-11-13",
    "pris": 169.8000030517578,
-   "ml": 0.517991855833287,
+   "ml": 0.5035375378602639,
    "nyheter": 0.32824,
-   "poang": 0.534403855833287,
+   "poang": 0.5199495378602639,
+   "risk": 0.1905600329850918,
    "nyhetslista": [
     {
      "rubrik": "Procter & Gamble (PG), Why Is It Back In The Spotlight?",
@@ -724,9 +822,10 @@
    "aktie": "KO",
    "datum": "2026-11-13",
    "pris": 99.25,
-   "ml": 0.45820180233746705,
+   "ml": 0.48069575442577905,
    "nyheter": 0.26898999999999995,
-   "poang": 0.47165130233746705,
+   "poang": 0.49414525442577906,
+   "risk": 0.18445990068588636,
    "nyhetslista": [
     {
      "rubrik": "KO Stock Alert: Coca-Cola Just Hit a New All-Time High",
@@ -770,9 +869,10 @@
    "aktie": "AAPL",
    "datum": "2026-11-13",
    "pris": 356.2699890136719,
-   "ml": 0.504112607434829,
+   "ml": 0.49969617785120507,
    "nyheter": 0.08834,
-   "poang": 0.508529607434829,
+   "poang": 0.504113177851205,
+   "risk": 0.2167091185545942,
    "nyhetslista": [
     {
      "rubrik": "Apple Leads Five Stocks Standing Tall Near Buy Points Despite Nvidia, Other Headwinds",
@@ -816,9 +916,10 @@
    "aktie": "AMZN",
    "datum": "2026-11-13",
    "pris": 266.6600036621094,
-   "ml": 0.5009862934293008,
+   "ml": 0.5083566232470048,
    "nyheter": 0.40923,
-   "poang": 0.5214477934293008,
+   "poang": 0.5288181232470048,
+   "risk": 0.301277644685999,
    "nyhetslista": [
     {
      "rubrik": "Scott Galloway Predicts Anthropic’s First Trade Opens “15% to 40% Higher.” That’s Great News for Alphabet and Amazon",
@@ -862,9 +963,10 @@
    "aktie": "WMT",
    "datum": "2026-11-13",
    "pris": 128.08999633789062,
-   "ml": 0.4480091167149891,
+   "ml": 0.43171837315084305,
    "nyheter": 0.10137999999999998,
-   "poang": 0.4530781167149891,
+   "poang": 0.43678737315084304,
+   "risk": 0.2360005005370263,
    "nyhetslista": [
     {
      "rubrik": "Dow Jones Futures: Market Rally Shaky As Nvidia Earnings, Anthropic IPO Loom; SpaceX Starship Flight 15 Booster Diverts.",
@@ -908,9 +1010,10 @@
    "aktie": "V",
    "datum": "2026-11-13",
    "pris": 425.760009765625,
-   "ml": 0.5008167645556022,
+   "ml": 0.48931492109663555,
    "nyheter": 0.39078,
-   "poang": 0.5203557645556022,
+   "poang": 0.5088539210966355,
+   "risk": 0.22628853983172698,
    "nyhetslista": [
     {
      "rubrik": "Visa (V) Stock Gets Fair Value Bump As Analysts Lift Targets On New Growth Areas",
@@ -954,18 +1057,20 @@
    "aktie": "SKF-B.ST",
    "datum": "2026-11-13",
    "pris": 280.20001220703125,
-   "ml": 0.4880057957962361,
+   "ml": 0.4933960541631295,
    "nyheter": 0.0,
-   "poang": 0.4880057957962361,
+   "poang": 0.4933960541631295,
+   "risk": 0.26416998768252914,
    "nyhetslista": []
   },
   {
    "aktie": "UNH",
    "datum": "2026-11-13",
    "pris": 407.4599914550781,
-   "ml": 0.5267086620862476,
+   "ml": 0.5213928485355475,
    "nyheter": 0.3819199999999999,
-   "poang": 0.5458046620862476,
+   "poang": 0.5404888485355475,
+   "risk": 0.2516836750247562,
    "nyhetslista": [
     {
      "rubrik": "Elevance Health Targets 12% Earnings Growth in 2027 as Insurance Margins Recover",
@@ -1009,9 +1114,10 @@
    "aktie": "SHB-A.ST",
    "datum": "2026-11-13",
    "pris": 165.14999389648438,
-   "ml": 0.4789185961474083,
+   "ml": 0.49823159560399005,
    "nyheter": 0.875,
-   "poang": 0.5226685961474082,
+   "poang": 0.5419815956039901,
+   "risk": 0.1666450948998829,
    "nyhetslista": [
     {
      "rubrik": "Is Svenska Handelsbanken (OM:SHB A) Undervalued After A 165% Run?",
@@ -1028,9 +1134,10 @@
    "aktie": "HD",
    "datum": "2026-11-13",
    "pris": 348.69000244140625,
-   "ml": 0.5076894593089248,
+   "ml": 0.4911713133977081,
    "nyheter": 0.17282000000000003,
-   "poang": 0.5163304593089248,
+   "poang": 0.4998123133977081,
+   "risk": 0.27404345107484296,
    "nyhetslista": [
     {
      "rubrik": "Target Stock Faces A Fresh Test As US Consumer Spending Shifts",
@@ -1074,18 +1181,20 @@
    "aktie": "VOLV-B.ST",
    "datum": "2026-11-13",
    "pris": 323.3999938964844,
-   "ml": 0.4683248205314701,
+   "ml": 0.4719467820062124,
    "nyheter": 0.0,
-   "poang": 0.4683248205314701,
+   "poang": 0.4719467820062124,
+   "risk": 0.20793915597693668,
    "nyhetslista": []
   },
   {
    "aktie": "NVDA",
    "datum": "2026-11-13",
    "pris": 162.85000610351562,
-   "ml": 0.3974846021498038,
-   "nyheter": -0.00044000000000000706,
-   "poang": 0.3974626021498038,
+   "ml": 0.4075980765303952,
+   "nyheter": 0.10261,
+   "poang": 0.4127285765303952,
+   "risk": 0.475610752198007,
    "nyhetslista": [
     {
      "rubrik": "Nvidia and Jensen Huang fallout: Here's everything we know after a momentous week",
@@ -1115,10 +1224,10 @@
      "metod": "VADER"
     },
     {
-     "rubrik": "Cerebras stock surges on Microsoft deal: What it means for Nvidia",
-     "sammanfattning": "Deirdre Bosa outlines how various AI companies are storming the AI castle and searching for Nvidia (NVDA) alternatives, such as Cerebras' (CBRS) deal with Microsoft (MSFT). ",
-     "datum": "2026-11-13",
-     "poang": 0.0,
+     "rubrik": "Opinion: Buy This Growth Stock to Beat the S&P 500 in 2027",
+     "sammanfattning": "This artificial intelligence cloud stock could be the ticket to market-crushing returns next year.",
+     "datum": "2026-11-14",
+     "poang": 0.7269,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
@@ -1129,9 +1238,10 @@
    "aktie": "TELIA.ST",
    "datum": "2026-11-13",
    "pris": 49.88999938964844,
-   "ml": 0.46991829227483534,
+   "ml": 0.4612134999745523,
    "nyheter": 0.41186,
-   "poang": 0.49051129227483536,
+   "poang": 0.48180649997455227,
+   "risk": 0.22706923318699096,
    "nyhetslista": [
     {
      "rubrik": "Retail Estates (ENXTBR:RET) Stock Looks About Right On Current Earnings",
@@ -1175,50 +1285,51 @@
    "aktie": "ALFA.ST",
    "datum": "2026-11-13",
    "pris": 548.0,
-   "ml": 0.47681683830925337,
+   "ml": 0.4760573935088008,
    "nyheter": 0.0,
-   "poang": 0.47681683830925337,
+   "poang": 0.4760573935088008,
+   "risk": 0.23321449926225934,
    "nyhetslista": []
   }
  ],
  "marknad": {
-  "us": 0.03435390560098295,
+  "us": 0.034353903869716484,
   "se": 0.058095375733421495
  },
  "spy_start": 7598.693386837724,
  "viktigast": [
   [
    "relativ_styrka_60d",
-   0.029660603807129832
-  ],
-  [
-   "vol_60",
-   0.018709657079073128
+   0.031673772433793844
   ],
   [
    "vol_60_rank",
-   0.01314239550301984
+   0.01938895657279079
   ],
   [
-   "relativ_styrka_60d_rank",
-   0.012062330576517585
-  ],
-  [
-   "avst_ma200",
-   0.011695803272798141
-  ],
-  [
-   "vol_20",
-   0.011631580716451762
+   "vol_60",
+   0.018149586344182695
   ],
   [
    "fran_arshogsta",
-   0.010299463107769524
+   0.0134357341142796
   ],
   [
    "avk_120d",
-   0.010238535085157855
+   0.012013704926712462
+  ],
+  [
+   "avst_ma200",
+   0.01146301735752205
+  ],
+  [
+   "relativ_styrka_60d_rank",
+   0.010920795488940982
+  ],
+  [
+   "atr_pct",
+   0.008563911076948058
   ]
  ],
- "uppdaterad": "2026-11-14T14:25"
+ "uppdaterad": "2026-11-14T14:49"
 }
