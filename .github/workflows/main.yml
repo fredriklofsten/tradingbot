@@ -8,6 +8,8 @@ permissions:
 jobs:
   kor:
     runs-on: ubuntu-latest
+    env:
+      TZ: Europe/Stockholm
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
