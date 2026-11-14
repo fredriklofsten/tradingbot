@@ -508,189 +508,470 @@ def cmd_papper():
     print(f"   {len(all_trades)} affärer idag")
 
 
-# ---------------- Rapport ----------------
-def fig_to_img(fig) -> str:
-    import matplotlib.pyplot as plt
-    buf = io.BytesIO()
-    fig.savefig(buf, format="png", dpi=110, bbox_inches="tight")
-    plt.close(fig)
-    return f'<img src="data:image/png;base64,{base64.b64encode(buf.getvalue()).decode()}">'
-
-
+# ---------------- Rapport (webbappen) ----------------
 def esc(s) -> str:
-    return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
 
 
-def pct(x, sign=True):
-    return f"{x:+.1%}" if sign else f"{x:.0%}"
+PORT_INFO = {
+    "ai": {"namn": "AI-portföljen", "farg": "#3b5bdb",
+           "kort": "Lägger mer pengar i aktierna AI:n tror mest på."},
+    "enkel": {"namn": "Enkla portföljen", "farg": "#0c8599",
+              "kort": "Lika mycket i alla 33 aktier. Ingen AI."},
+    "risk": {"namn": "Risk-portföljen", "farg": "#e67700",
+             "kort": "Mindre pengar i aktier som AI:n tror kommer svänga mycket."},
+}
+
+FEATURE_NAMES = {
+    "avk_1d": "gårdagens rörelse", "avk_5d": "senaste veckan", "avk_10d": "senaste två veckorna",
+    "avk_20d": "senaste månaden", "avk_60d": "senaste kvartalet", "avk_120d": "senaste halvåret",
+    "avst_ma10": "läge mot 10-dagars snitt", "avst_ma20": "läge mot 20-dagars snitt",
+    "avst_ma50": "läge mot 50-dagars snitt", "avst_ma200": "läge mot 200-dagars snitt",
+    "vol_20": "svängningar senaste månaden", "vol_60": "svängningar senaste kvartalet",
+    "vol_kvot": "om svängningarna ökar", "rsi_14": "RSI (överköpt/översåld)",
+    "macd_hist": "MACD (trendskifte)", "atr_pct": "dagliga kursspann", "volym_z": "ovanlig handelsvolym",
+    "fran_arshogsta": "avstånd till årshögsta", "marknad_avk_20d": "börsens senaste månad",
+    "marknad_avst_ma200": "börsens läge mot 200-dagars snitt",
+    "relativ_styrka_60d": "styrka jämfört med börsen", "se": "svensk eller amerikansk aktie",
+}
+
+
+def feature_name(n: str) -> str:
+    base = n.replace("_rank", "")
+    name = FEATURE_NAMES.get(base, base)
+    return name + (" (jämfört med de andra)" if n.endswith("_rank") else "")
+
+
+def kr(x) -> str:
+    return f"{x:,.0f}".replace(",", "\u00a0") + "\u00a0kr"
+
+
+def signed_pct(x, d=1) -> str:
+    return f"{x:+.{d}f} %".replace(".", ",").replace("-", "−")
 
 
 def cmd_rapport():
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    plt.rcParams.update({"font.size": 9, "axes.spines.top": False, "axes.spines.right": False})
-    colors = {"ai": "#2563eb", "enkel": "#16a34a", "risk": "#f59e0b", "jamforelse_spy": "#9ca3af"}
-    parts = []
+    pf = json.load(open(F_PORTFOLIO)) if os.path.exists(F_PORTFOLIO) else None
+    h = pd.read_csv(F_HISTORY) if os.path.exists(F_HISTORY) else pd.DataFrame()
+    bt = json.load(open(F_BACKTEST)) if os.path.exists(F_BACKTEST) else {}
+    if bt.get("version") != VERSION:
+        bt = {}
+    keys = [k for k in PORTS if len(h) and k in h]
+    sec = []          # HTML-sektioner
+    chart_data = {}   # data till graferna
 
-    if os.path.exists(F_PORTFOLIO) and os.path.exists(F_HISTORY):
-        pf = json.load(open(F_PORTFOLIO))
-        h = pd.read_csv(F_HISTORY)
-        lastrow = h.iloc[-1]
-        cards = ""
-        for key, label in PORTS.items():
-            v = lastrow.get(key, np.nan)
-            if pd.isna(v):
-                continue
-            d = v / START_CASH - 1
-            cards += (f"<div class='card'><small>{label}</small><b>{v:,.0f} kr</b>"
-                      f"<span class='{'pos' if d >= 0 else 'neg'}'>{d:+.2%}</span></div>")
-        cards += (f"<div class='card'><small>Om allt låg i SPY</small><b>{lastrow['jamforelse_spy']:,.0f} kr</b>"
-                  f"<span>{lastrow['jamforelse_spy'] / START_CASH - 1:+.2%}</span></div>")
-        parts.append(f"<h2>Låtsaspengar</h2><p class='note'>Start {pf['start']} med 100 000 kr i "
-                     f"varje portfölj.</p><div class='cards'>{cards}</div>")
-        if len(h) > 1:
-            fig, ax = plt.subplots(figsize=(7, 2.6))
-            dts = pd.to_datetime(h["datum"])
-            for k, lab in list(PORTS.items()) + [("jamforelse_spy", "SPY")]:
-                if k not in h:
-                    continue
-                ax.plot(dts, h[k], label=lab, color=colors[k], lw=2 if k != "jamforelse_spy" else 1.3)
-            ax.axhline(START_CASH, color="#e5e7eb", lw=1)
-            ax.legend(frameon=False)
-            parts.append(fig_to_img(fig))
+    # ---- Loppet ----
+    if keys:
+        last = h.iloc[-1]
+        vals = {k: float(last[k]) for k in keys if pd.notna(last[k])}
+        ranking = sorted(vals, key=lambda k: -vals[k])
+        spread = (vals[ranking[0]] - vals[ranking[-1]]) / START_CASH
+        leader = PORT_INFO[ranking[0]]["namn"]
+        days = len(h)
+        if spread < 0.002:
+            headline = "Jämnt lopp än så länge"
+            sub = (f"Efter {days} {'dag' if days == 1 else 'dagar'} skiljer det mindre än 0,2 % mellan "
+                   "portföljerna. Det behövs några veckor innan det betyder något.")
+        else:
+            headline = f"{leader} leder"
+            sub = (f"Efter {days} handelsdagar ligger den {signed_pct(spread * 100)} före sista plats. "
+                   "Kortare perioder än ett par månader säger ofta mest om tur.")
+        spy = float(last["jamforelse_spy"]) if "jamforelse_spy" in last and pd.notna(last["jamforelse_spy"]) else None
+        lo = min(list(vals.values()) + ([spy] if spy else [])) / START_CASH - 1
+        hi = max(list(vals.values()) + ([spy] if spy else [])) / START_CASH - 1
+        span = max(abs(lo), abs(hi), 0.01)
+        lanes = ""
+        for pos, k in enumerate(ranking, 1):
+            info, v = PORT_INFO[k], vals[k]
+            r = v / START_CASH - 1
+            width = 50 + 50 * r / span  # 50 % = startlinjen
+            lanes += f"""
+<li class="lane" style="--c:{info['farg']}">
+  <div class="lane-head"><span class="place">{pos}</span><span class="pname">{info['namn']}</span>
+    <span class="pval">{kr(v)}</span></div>
+  <div class="track"><div class="startline"></div><div class="runner" style="left:{width:.1f}%"></div></div>
+  <div class="lane-foot"><span class="{'up' if r >= 0 else 'down'}">{signed_pct(r * 100, 2)}</span>
+    <span class="desc">{info['kort']}</span></div>
+</li>"""
+        spy_txt = (f"<p class='pace'>Som jämförelse: 100 000 kr i hela den amerikanska börsen (SPY) "
+                   f"hade varit värt <b>{kr(spy)}</b> ({signed_pct((spy / START_CASH - 1) * 100, 2)}).</p>"
+                   if spy else "")
+        sec.append(f"""
+<section class="race" aria-labelledby="race-h">
+  <p class="kicker">Tre botar, 100&nbsp;000 låtsaskronor var, start {esc(pf['start'] if pf else '')}</p>
+  <h1 id="race-h">{headline}</h1>
+  <p class="lede">{sub}</p>
+  <ol class="lanes">{lanes}</ol>
+  {spy_txt}
+  <figure class="chart-wrap {'hidden' if days < 2 else ''}"><canvas id="raceChart" height="220"
+    aria-label="Portföljernas värde dag för dag"></canvas></figure>
+</section>""")
+        chart_data["race"] = {"labels": h["datum"].tolist(),
+                              "series": [{"namn": PORT_INFO[k]["namn"], "farg": PORT_INFO[k]["farg"],
+                                          "data": [None if pd.isna(x) else round(float(x)) for x in h[k]]}
+                                         for k in keys],
+                              "spy": [None if pd.isna(x) else round(float(x)) for x in h.get("jamforelse_spy", [])]}
+
+    # ---- Idag i korthet ----
+    if pf:
         mk = pf.get("marknad", {})
-        if mk:
-            def mtxt(k, n):
-                v = mk[k]
-                return (f"<li><b>{n}</b>: {v:+.1%} mot 200-dagars snitt – "
-                        + ("<span class='neg'>under, halv insats</span>" if v < 0
-                           else "<span class='pos'>över, full insats</span>") + "</li>")
-            parts.append(f"<h2>Marknadsfiltret</h2><ul>{mtxt('us', 'USA (SPY)')}{mtxt('se', 'Sverige (OMX)')}</ul>")
+        lights = ""
+        for k, n in (("us", "USA-börsen"), ("se", "Stockholmsbörsen")):
+            if k in mk:
+                ok = mk[k] >= 0
+                lights += (f"<li class='light {'go' if ok else 'stop'}'><span class='dot' aria-hidden='true'></span>"
+                           f"<div><b>{n}: {'grönt ljus' if ok else 'rött ljus'}</b><br>"
+                           f"{'Ligger' if ok else 'Ligger'} {signed_pct(abs(mk[k]) * 100)} "
+                           f"{'över' if ok else 'under'} sitt 200-dagars snitt, så alla portföljer har "
+                           f"{'full insats' if ok else 'bara halv insats'} där.</div></li>")
+        trades_today = 0
+        if os.path.exists(F_TRADES):
+            tr = pd.read_csv(F_TRADES)
+            if "datum" in tr:
+                trades_today = int((tr["datum"] == tr["datum"].max()).sum())
         sig = sorted(pf.get("signaler", []), key=lambda s: -s["poang"])
+        nxt = []
+        for k in keys:
+            lr = pf["portfoljer"][k].get("senast_ombalans")
+            if lr:
+                nxt.append(pd.Timestamp(lr) + pd.Timedelta(days=28))
+        nxt_txt = f"Nästa planerade ombalansering: runt {min(nxt):%-d %B}.".replace(
+            "January", "januari").replace("February", "februari").replace("March", "mars").replace(
+            "April", "april").replace("May", "maj").replace("June", "juni").replace("July", "juli").replace(
+            "August", "augusti").replace("September", "september").replace("October", "oktober").replace(
+            "November", "november").replace("December", "december") if nxt else ""
+        sec.append(f"""
+<section aria-labelledby="today-h">
+  <h2 id="today-h">Läget idag</h2>
+  <ul class="lights">{lights}</ul>
+  <p>Senaste handelsdagen gjordes <b>{trades_today} affärer</b>. Portföljerna byter bara innehav en gång i
+  månaden, eller direkt om ett ljus slår om. {nxt_txt}</p>
+</section>""")
+
+        # ---- AI:ns favoriter ----
         if sig:
             vik = pf["portfoljer"]["ai"].get("vikter", {})
-            vr = pf["portfoljer"].get("risk", {}).get("vikter", {})
-            rows = ""
-            for s in sig:
-                risk = f"{s['risk']:.0%}" if s.get("risk") == s.get("risk") and s.get("risk") else "–"
-                rows += (f"<tr><td>{s['aktie']}</td><td>{s['ml']:.0%}</td><td>{s['nyheter']:+.2f}</td>"
-                         f"<td><b>{s['poang']:.0%}</b></td><td>{vik.get(s['aktie'], 0):.1%}</td>"
-                         f"<td>{risk}</td><td>{vr.get(s['aktie'], 0):.1%}</td></tr>")
-            parts.append("<h2>AI:ns bedömning idag</h2><p class='note'>Poäng = chans att slå mitten-aktien "
-                         "nästa månad (styr AI-portföljen). Svängning = hur mycket riskmodellen tror att "
-                         "aktien rör sig per år (styr Risk-portföljen: stormigare aktie får mindre).</p>"
-                         "<table><tr><th>Aktie</th><th>ML</th><th>Nyh.</th><th>Poäng</th>"
-                         f"<th>Vikt AI</th><th>Sväng.</th><th>Vikt Risk</th></tr>{rows}</table>")
-            news = ""
-            for s in sig:
-                for n in s.get("nyhetslista", [])[:2]:
-                    cls = "pos" if n["poang"] > 0.1 else "neg" if n["poang"] < -0.1 else ""
-                    rel = "" if n.get("relevant", True) else " <i>(fel bolag – räknas ej)</i>"
-                    why = f"<br><small>{esc(n['motivering'])}</small>" if n.get("motivering") else ""
-                    news += (f"<li><span class='{cls}'>{n['poang']:+.2f}</span> <b>{s['aktie']}</b> "
-                             f"{esc(n['rubrik'])}{rel}{why}</li>")
-            if news:
-                metod = next((n["metod"] for s in sig for n in s.get("nyhetslista", [])), "")
-                parts.append(f"<h2>Nyheter boten läst ({metod})</h2><ul class='news'>{news}</ul>")
-        if pf.get("viktigast"):
-            parts.append("<h2>Vad AI:n tittar mest på</h2><p>" +
-                         ", ".join(n for n, _ in pf["viktigast"]) + "</p>")
-    if os.path.exists(F_TRADES):
-        tr = pd.read_csv(F_TRADES)
-        if "portfolj" in tr:
-            tr = tr.tail(20).iloc[::-1]
-            rows = "".join(f"<tr><td>{r.datum}</td><td>{r.portfolj.split('-')[0].split()[0]}</td>"
-                           f"<td>{r.handling}</td><td>{r.aktie}</td><td>{r.belopp_sek:,.0f} kr</td></tr>"
-                           for r in tr.itertuples())
-            parts.append(f"<h2>Senaste affärer</h2><table>{rows}</table>")
+
+            def row(s):
+                p = s["poang"]
+                news = s.get("nyheter", 0)
+                wtxt = f"{vik.get(s['aktie'], 0) * 100:.1f}".replace(".", ",")
+                ntag = ("<span class='tag pos'>bra nyheter</span>" if news > 0.3 else
+                        "<span class='tag neg'>dåliga nyheter</span>" if news < -0.3 else "")
+                return (f"<li><span class='tick'>{esc(s['aktie'].replace('.ST', ''))}</span>"
+                        f"<span class='meter' style='--p:{p * 100:.0f}%'><span></span></span>"
+                        f"<span class='num'>{p * 100:.0f} %</span>{ntag}"
+                        f"<span class='w'>{wtxt} % av AI-portföljen</span></li>")
+            top = "".join(row(s) for s in sig[:5])
+            bottom = "".join(row(s) for s in sig[-5:][::-1])
+            full = "".join(row(s) for s in sig)
+            seen = []
+            for n, _ in pf.get("viktigast", []):
+                fn = FEATURE_NAMES.get(n.replace("_rank", ""), n)
+                if fn not in seen:
+                    seen.append(fn)
+            feats = seen[:4]
+            feat_txt = ("<p class='note'>Det AI:n tittar mest på just nu: " +
+                        ", ".join(esc(f) for f in feats) + ".</p>") if feats else ""
+            sec.append(f"""
+<section aria-labelledby="fav-h">
+  <h2 id="fav-h">AI:ns favoriter</h2>
+  <p>Procenten är AI:ns bedömning av chansen att aktien går bättre än mittenaktien den kommande månaden.
+  50 % betyder att den inte vet. Över 55 % är ovanligt säkert för den här modellen.</p>
+  <h3>Tror mest på</h3><ul class="bars">{top}</ul>
+  <h3>Tror minst på</h3><ul class="bars">{bottom}</ul>
+  <details><summary>Visa alla {len(sig)} aktier</summary><ul class="bars">{full}</ul></details>
+  {feat_txt}
+</section>""")
+
+            # ---- Nyheter ----
+            items = [(s["aktie"], n) for s in sig for n in s.get("nyhetslista", [])
+                     if n.get("relevant", True)]
+            items.sort(key=lambda x: -abs(x[1]["poang"]))
+            if items:
+                def news_li(a, n):
+                    cls = "pos" if n["poang"] > 0.1 else "neg" if n["poang"] < -0.1 else "neu"
+                    label = "positiv" if cls == "pos" else "negativ" if cls == "neg" else "neutral"
+                    why = f"<span class='why'>{esc(n['motivering'])}</span>" if n.get("motivering") else ""
+                    return (f"<li class='{cls}'><span class='sent'>{label}</span>"
+                            f"<span class='nt'><b>{esc(a.replace('.ST', ''))}</b> {esc(n['rubrik'])}</span>{why}</li>")
+                first = "".join(news_li(a, n) for a, n in items[:6])
+                rest = "".join(news_li(a, n) for a, n in items[6:30])
+                metod = items[0][1].get("metod", "")
+                how = ("Claude läser nyheterna och bedömer dem." if metod == "Claude" else
+                       "Nyheterna bedöms med en enkel ordlista (VADER), som ibland missförstår rubriker.")
+                sec.append(f"""
+<section aria-labelledby="news-h">
+  <h2 id="news-h">Nyheter boten har läst</h2>
+  <p>De starkaste nyheterna från senaste veckan. De kan flytta AI:ns bedömning högst 5 procentenheter.
+  {how}</p>
+  <ul class="news">{first}</ul>
+  {f'<details><summary>Fler nyheter</summary><ul class="news">{rest}</ul></details>' if rest else ''}
+</section>""")
+
+    # ---- Facit ----
+    facit = ""
     if os.path.exists(F_PRED):
         p = pd.read_csv(F_PRED)
         if "ratt_ml" in p and p["ratt_ml"].notna().any():
             d = p.dropna(subset=["ratt_ml"])
-            parts.append(f"<h2>Facit i verkligheten</h2><p>{len(d)} gissningar har fått facit. "
-                         f"AI rätt: <b>{d['ratt_ml'].mean():.0%}</b> · med nyheter: "
-                         f"<b>{d['ratt_med_nyheter'].mean():.0%}</b> (50 % = slumpen)</p>")
-        else:
-            parts.append(f"<h2>Facit i verkligheten</h2><p class='note'>Första facit kommer efter "
-                         f"{HORIZON} handelsdagar (ungefär en månad).</p>")
+            hit = d["ratt_ml"].mean()
+            verdict = ("bättre än slumpen" if hit > 0.53 else "sämre än slumpen" if hit < 0.47
+                       else "ungefär som slumpen")
+            facit = (f"<p class='big'>{hit * 100:.0f} %</p><p>av AI:ns {len(d)} gissningar har slagit in, "
+                     f"vilket är <b>{verdict}</b> (50 %). Med nyheterna inräknade: "
+                     f"{d['ratt_med_nyheter'].mean() * 100:.0f} %.</p>")
+    if not facit:
+        facit = (f"<p>Varje dag gissar AI:n vilka aktier som går bäst den kommande månaden. Efter "
+                 f"{HORIZON} handelsdagar, ungefär en månad, kan vi se hur ofta den hade rätt. "
+                 f"Första facit kommer i mitten av december.</p>")
+    sec.append(f"<section aria-labelledby='facit-h'><h2 id='facit-h'>Facit: har AI:n rätt?</h2>{facit}</section>")
 
-    if os.path.exists(F_BACKTEST):
-        bt = json.load(open(F_BACKTEST))
-        if bt.get("version") == VERSION:
-            L = pd.DataFrame(bt["larande"])
-            fig, ax = plt.subplots(figsize=(7, 2.4))
-            ax.bar(pd.to_datetime(L["period"]), L["auc"] - 0.5, bottom=0.5, width=150,
-                   color=["#16a34a" if a > 0.5 else "#dc2626" for a in L["auc"]])
-            ax.axhline(0.5, color="#111", lw=0.8)
-            ax.set_ylim(0.44, 0.58)
-            ax.set_ylabel("AUC")
-            parts.append("<h2>Hur AI:n lärt sig genom åren</h2><p class='note'>Varje stapel är ett "
-                         "halvår den aldrig sett. Grönt = bättre än slumpen (0,5), rött = sämre.</p>"
-                         + fig_to_img(fig))
-            if "risk_fel_ai" in L:
-                fig, ax = plt.subplots(figsize=(7, 2.2))
-                dts_l = pd.to_datetime(L["period"])
-                ax.plot(dts_l, L["risk_fel_enkel"], color="#9ca3af", lw=1.5, label="Enkel gissning")
-                ax.plot(dts_l, L["risk_fel_ai"], color="#f59e0b", lw=2, label="AI-riskmodellen")
-                ax.set_ylabel("Fel (lägre = bättre)")
-                ax.legend(frameon=False)
-                parts.append("<h2>Hur riskmodellen lärt sig</h2><p class='note'>Hur fel den gissar "
-                             "aktiernas svängningar nästa månad, jämfört med att bara anta att de svänger "
-                             "som förra månaden.</p>" + fig_to_img(fig))
-            fig, ax = plt.subplots(figsize=(7, 2.6))
-            dts = pd.to_datetime(bt["kurvor"]["datum"])
-            for name, col in (("AI-portföljen", "#2563eb"), ("Enkla portföljen", "#16a34a"),
-                              ("Risk-portföljen", "#f59e0b"),
-                              ("Lika vikt utan filter", "#9ca3af")):
-                ax.plot(dts, bt["kurvor"][name], label=name, color=col, lw=1.6)
-            ax.set_yscale("log")
-            ax.legend(frameon=False)
-            rows = "".join(
-                f"<tr><td>{n}</td><td>{s['fore_2022']['arlig']:+.1%}</td><td>{s['fran_2022']['arlig']:+.1%}</td>"
-                f"<td>{s['hela']['sharpe']:.2f}</td><td>{s['hela']['max_ras']:.0%}</td></tr>"
-                for n, s in bt["strategier"].items())
-            parts.append("<h2>Backtest 2014–idag</h2>" + fig_to_img(fig) +
-                         "<table><tr><th>Strategi</th><th>Per år t.o.m. 2021</th><th>Per år 2022–</th>"
-                         f"<th>Sharpe</th><th>Värsta ras</th></tr>{rows}</table>"
-                         "<p class='note'>Aktierna är dagens stora bolag, vilket gör alla historiska "
-                         "siffror lite för bra (de som gick dåligt finns inte med).</p>")
+    # ---- Historiktest ----
+    if bt:
+        names = [("AI-portföljen", PORT_INFO["ai"]["farg"]), ("Enkla portföljen", PORT_INFO["enkel"]["farg"]),
+                 ("Risk-portföljen", PORT_INFO["risk"]["farg"]), ("Lika vikt utan filter", "#adb5bd")]
+        chart_data["bt"] = {"labels": bt["kurvor"]["datum"],
+                            "series": [{"namn": n, "farg": c, "data": [round(x * 100_000) for x in bt["kurvor"][n]]}
+                                       for n, c in names if n in bt["kurvor"]]}
+        rows = ""
+        for n, c in names:
+            s = bt["strategier"].get(n)
+            if s:
+                rows += (f"<tr><th scope='row'><span class='sw' style='background:{c}'></span>{n}</th>"
+                         f"<td>{signed_pct(s['hela']['arlig'] * 100)}</td>"
+                         f"<td>{signed_pct(s['hela']['max_ras'] * 100, 0)}</td></tr>")
+        L = pd.DataFrame(bt["larande"])
+        chart_data["auc"] = {"labels": L["period"].tolist(), "data": [round(a, 3) for a in L["auc"]]}
+        if "risk_fel_ai" in L:
+            chart_data["risk"] = {"labels": L["period"].tolist(),
+                                  "ai": [round(a * 100, 1) for a in L["risk_fel_ai"]],
+                                  "enkel": [round(a * 100, 1) for a in L["risk_fel_enkel"]]}
+        better = int((L["auc"] > 0.5).sum())
+        sec.append(f"""
+<section aria-labelledby="bt-h">
+  <h2 id="bt-h">Så hade det gått sedan 2014</h2>
+  <p>Ett test där varje portfölj bara fick se det som hade hänt fram till varje dag. Kurvan visar vad
+  100&nbsp;000&nbsp;kr hade blivit. Courtage är inräknat.</p>
+  <figure class="chart-wrap"><canvas id="btChart" height="240" aria-label="Historiktest sedan 2014"></canvas></figure>
+  <table class="bt"><thead><tr><th scope="col">Portfölj</th><th scope="col">Per år</th>
+  <th scope="col">Värsta fall</th></tr></thead><tbody>{rows}</tbody></table>
+  <p class="note">Värsta fall är hur mycket portföljen som mest tappade från en topp. Aktierna är dagens
+  stora bolag, så alla siffror är lite för bra: bolag som gick dåligt finns inte med.</p>
 
-    html = f"""<!DOCTYPE html><html lang="sv"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>Tradingbot</title>
-<meta http-equiv="refresh" content="1800"><link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#2563eb">
-<link rel="apple-touch-icon" href="ikon.png">
-<style>body{{font-family:system-ui,sans-serif;max-width:760px;margin:auto;padding:16px;color:#111;background:#fafafa}}
-h1{{font-size:22px}}h2{{font-size:16px;margin-top:28px;border-bottom:1px solid #e5e7eb;padding-bottom:4px}}
-img{{max-width:100%}}table{{border-collapse:collapse;width:100%;font-size:13px}}
-td,th{{padding:5px 6px;border-bottom:1px solid #eee;text-align:left}}
-.cards{{display:flex;gap:10px;flex-wrap:wrap}}.card{{flex:1;min-width:150px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:10px}}
-.card small{{display:block;color:#666}}.card b{{display:block;font-size:22px;margin:2px 0}}
-.pos{{color:#16a34a;font-weight:600}}.neg{{color:#dc2626;font-weight:600}}
-.note{{color:#666;font-size:13px}}.news li{{margin-bottom:8px;font-size:13px}}
-.warn{{background:#fff7ed;border:1px solid #fed7aa;padding:10px;border-radius:8px;font-size:13px}}</style></head>
-<body><h1>Tradingbot</h1><p class="note">Uppdaterad {datetime.now():%Y-%m-%d %H:%M}</p>
-<div class="warn">Låtsaspengar. Historiskt resultat är ingen garanti för framtiden.</div>
-{''.join(parts)}</body></html>"""
+  <h3>Kan AI:n välja vinnare?</h3>
+  <p>Varje stapel är ett halvår som AI:n aldrig sett. Över mittlinjen betyder att den valde bättre än slumpen.
+  Det lyckades {better} av {len(L)} halvår, och marginalen är liten.</p>
+  <figure class="chart-wrap"><canvas id="aucChart" height="170" aria-label="AI:ns träffsäkerhet per halvår"></canvas></figure>
+  {'''<h3>Kan AI:n förutse risk?</h3>
+  <p>Hur fel riskmodellen gissade aktiernas svängningar, jämfört med att bara anta att de svänger som förra
+  månaden. Lägre är bättre. Här är AI:n faktiskt lite bättre.</p>
+  <figure class="chart-wrap"><canvas id="riskChart" height="170" aria-label="Riskmodellens fel per halvår"></canvas></figure>''' if "risk" in chart_data else ""}
+</section>""")
+
+    # ---- Affärer + ordlista ----
+    if os.path.exists(F_TRADES):
+        tr = pd.read_csv(F_TRADES)
+        if "portfolj" in tr and len(tr):
+            tr = tr.tail(40).iloc[::-1]
+            rows = "".join(f"<tr><td>{r.datum}</td><td>{esc(r.portfolj.replace('-portföljen', '').replace(' portföljen', ''))}</td>"
+                           f"<td class='{'buy' if r.handling == 'KÖP' else 'sell'}'>{r.handling.capitalize()}</td>"
+                           f"<td>{esc(r.aktie.replace('.ST', ''))}</td><td class='r'>{kr(r.belopp_sek)}</td></tr>"
+                           for r in tr.itertuples())
+            sec.append(f"""<section aria-labelledby="tr-h"><h2 id="tr-h">Affärer</h2>
+<details><summary>Visa de senaste {len(tr)} affärerna</summary>
+<table class="trades"><tbody>{rows}</tbody></table></details></section>""")
+    sec.append("""<section aria-labelledby="ord-h"><h2 id="ord-h">Ord som används</h2>
+<dl class="glossary">
+<dt>200-dagars snitt</dt><dd>Genomsnittspriset de senaste 200 handelsdagarna. Ligger börsen under det har
+den ofta varit i en nedgång, och då tar portföljerna mindre risk.</dd>
+<dt>Ombalansering</dt><dd>När portföljen säljer och köper för att komma tillbaka till sina önskade andelar.</dd>
+<dt>Courtage</dt><dd>Avgiften för varje affär. Boten räknar med 0,15 %.</dd>
+<dt>SPY</dt><dd>En fond som följer de 500 största bolagen i USA. Används som jämförelse.</dd>
+<dt>Svängning (volatilitet)</dt><dd>Hur mycket en aktie brukar röra sig upp och ner.</dd>
+</dl></section>""")
+
+    updated = datetime.now().strftime("%Y-%m-%d %H:%M")
+    html = HTML_TEMPLATE.replace("{{UPDATED}}", updated).replace("{{SECTIONS}}", "\n".join(sec)) \
+        .replace("{{DATA}}", json.dumps(chart_data, ensure_ascii=False))
     open(F_REPORT, "w").write(html)
     docs = os.path.join(DIR, "docs")
     os.makedirs(docs, exist_ok=True)
     open(os.path.join(docs, "index.html"), "w").write(html)
     json.dump({"name": "Tradingbot", "short_name": "Tradingbot", "start_url": ".",
-               "display": "standalone", "background_color": "#fafafa", "theme_color": "#2563eb",
+               "display": "standalone", "background_color": "#eef2f7", "theme_color": "#14213d",
                "icons": [{"src": "ikon.png", "sizes": "512x512", "type": "image/png"}]},
               open(os.path.join(docs, "manifest.json"), "w"))
     icon = os.path.join(docs, "ikon.png")
-    if not os.path.exists(icon):
-        fig = plt.figure(figsize=(5.12, 5.12), dpi=100)
-        ax = fig.add_axes([0, 0, 1, 1])
-        ax.plot([0.12, 0.32, 0.48, 0.62, 0.88], [0.25, 0.5, 0.4, 0.65, 0.8], color="white",
-                lw=22, solid_capstyle="round", solid_joinstyle="round")
-        ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
-        fig.patch.set_facecolor("#2563eb")
-        fig.savefig(icon); plt.close(fig)
+    fig = plt.figure(figsize=(5.12, 5.12), dpi=100)
+    ax = fig.add_axes([0, 0, 1, 1])
+    for y, c, x in ((0.28, PORT_INFO["risk"]["farg"], 0.62), (0.5, PORT_INFO["enkel"]["farg"], 0.78),
+                    (0.72, PORT_INFO["ai"]["farg"], 0.7)):
+        ax.plot([0.14, 0.86], [y, y], color="#33415c", lw=10, solid_capstyle="round")
+        ax.scatter([x], [y], s=2600, color=c, zorder=3)
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
+    fig.patch.set_facecolor("#14213d")
+    fig.savefig(icon); plt.close(fig)
     print("Rapport sparad: rapport.html + docs/")
+
+
+HTML_TEMPLATE = r"""<!DOCTYPE html>
+<html lang="sv"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tradingbot</title>
+<meta http-equiv="refresh" content="1800">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="ikon.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#14213d">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f7;--paper:#fff;--ink:#14213d;--soft:#4a5672;--line:#d6dde8;--up:#2b8a3e;--down:#c92a2a;
+--ai:#3b5bdb;--enkel:#0c8599;--risk:#e67700;--track:#e3e9f2}
+@media (prefers-color-scheme:dark){:root{--bg:#0f172a;--paper:#16213a;--ink:#e8edf6;--soft:#a7b3c9;--line:#2a3756;
+--up:#51cf66;--down:#ff8787;--track:#24314f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Figtree",system-ui,sans-serif;
+-webkit-font-smoothing:antialiased}
+.top{background:var(--ink);color:var(--bg);padding:14px 20px}
+@media (prefers-color-scheme:dark){.top{background:#08101f;color:var(--ink)}}
+.top-in{max-width:680px;margin:auto;display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand{font:800 20px/1 "Bricolage Grotesque",sans-serif;letter-spacing:-.01em}
+.top small{opacity:.75;font-size:14px}
+main{max-width:680px;margin:auto;padding:8px 20px 60px}
+section{padding:28px 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;line-height:1.1;margin:0 0 10px}
+h1{font-size:clamp(34px,9vw,48px);font-weight:800;letter-spacing:-.02em}
+h2{font-size:24px;font-weight:800}
+h3{font-size:17px;font-weight:600;margin-top:22px;color:var(--soft)}
+p{margin:0 0 12px;max-width:62ch}
+.kicker{color:var(--soft);font-size:15px;margin-bottom:6px}
+.lede{font-size:18px;color:var(--soft)}
+.note{font-size:15px;color:var(--soft)}
+b{font-weight:700}
+/* Loppet */
+.lanes{list-style:none;padding:0;margin:22px 0 8px;display:grid;gap:14px}
+.lane{background:var(--paper);border-radius:14px;padding:14px 16px 12px;border-left:6px solid var(--c)}
+.lane-head{display:flex;align-items:baseline;gap:10px}
+.place{font:800 22px/1 "Bricolage Grotesque",sans-serif;color:var(--c);min-width:18px}
+.pname{font-weight:700;flex:1}
+.pval{font:800 20px/1 "Bricolage Grotesque",sans-serif;font-variant-numeric:tabular-nums}
+.track{position:relative;height:10px;background:var(--track);border-radius:5px;margin:12px 0 8px}
+.startline{position:absolute;left:50%;top:-4px;bottom:-4px;width:2px;background:var(--soft);opacity:.5}
+.runner{position:absolute;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;
+background:var(--c);box-shadow:0 0 0 4px var(--paper);animation:run 1.1s cubic-bezier(.2,.8,.2,1) both}
+@keyframes run{from{left:50%}}
+@media (prefers-reduced-motion:reduce){.runner{animation:none}}
+.lane-foot{display:flex;gap:12px;font-size:14px;color:var(--soft);align-items:baseline}
+.lane-foot .up,.lane-foot .down{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.up{color:var(--up)}.down{color:var(--down)}
+.pace{font-size:15px;color:var(--soft);margin-top:12px}
+.chart-wrap{position:relative;overflow:hidden;margin:18px 0 6px;background:var(--paper);border-radius:14px;padding:12px}
+.hidden{display:none}
+/* Ljus */
+.lights{list-style:none;padding:0;margin:0 0 14px;display:grid;gap:10px}
+.light{display:flex;gap:12px;align-items:flex-start;background:var(--paper);border-radius:12px;padding:12px 14px;font-size:15px}
+.light .dot{flex:none;width:16px;height:16px;border-radius:50%;margin-top:3px}
+.go .dot{background:var(--up);box-shadow:0 0 0 4px color-mix(in srgb,var(--up) 22%,transparent)}
+.stop .dot{background:var(--down);box-shadow:0 0 0 4px color-mix(in srgb,var(--down) 22%,transparent)}
+/* Favoriter */
+.bars{list-style:none;padding:0;margin:0;display:grid;gap:2px}
+.bars li{display:grid;grid-template-columns:78px 1fr 48px;grid-template-areas:"t m n" "w w g";
+align-items:center;column-gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.tick{grid-area:t;font-weight:700}
+.meter{grid-area:m;height:8px;background:var(--track);border-radius:4px;position:relative;overflow:hidden}
+.meter::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--bg)}
+.meter span{display:block;height:100%;width:var(--p);background:var(--ai);border-radius:4px}
+.num{grid-area:n;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.w{grid-area:w;font-size:13px;color:var(--soft)}
+.tag{grid-area:g;justify-self:end;white-space:nowrap;font-size:12px;padding:1px 8px;border-radius:99px}
+.tag.pos{background:color-mix(in srgb,var(--up) 15%,transparent);color:var(--up)}
+.tag.neg{background:color-mix(in srgb,var(--down) 15%,transparent);color:var(--down)}
+details{margin-top:14px}
+summary{cursor:pointer;font-weight:700;color:var(--ai);padding:6px 0}
+summary:focus-visible,a:focus-visible{outline:3px solid var(--ai);outline-offset:3px;border-radius:4px}
+/* Nyheter */
+.news{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.news li{background:var(--paper);border-radius:12px;padding:12px 14px;font-size:15px;display:grid;gap:4px;
+border-left:4px solid var(--soft)}
+.news li.pos{border-left-color:var(--up)}.news li.neg{border-left-color:var(--down)}
+.sent{font-size:13px;color:var(--soft)}
+.news li.pos .sent{color:var(--up)}.news li.neg .sent{color:var(--down)}
+.why{font-size:14px;color:var(--soft)}
+/* Facit */
+.big{font:800 64px/1 "Bricolage Grotesque",sans-serif;margin:8px 0}
+/* Tabeller */
+table{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+thead th{font-size:13px;color:var(--soft);font-weight:400}
+td.r{text-align:right}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
+.buy{color:var(--up)}.sell{color:var(--down)}
+.glossary dt{font-weight:700;margin-top:12px}.glossary dd{margin:2px 0 0;color:var(--soft);font-size:15px}
+footer{max-width:680px;margin:auto;padding:0 20px 40px;font-size:14px;color:var(--soft)}
+</style></head>
+<body>
+<header class="top"><div class="top-in"><span class="brand">Tradingbot</span>
+<small>Låtsaspengar, uppdaterad {{UPDATED}}</small></div></header>
+<main>
+{{SECTIONS}}
+</main>
+<footer>Ingen riktig handel sker. Historiska resultat är ingen garanti för framtiden.</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const D = {{DATA}};
+if (window.Chart) {
+  const css = getComputedStyle(document.documentElement);
+  const soft = css.getPropertyValue('--soft').trim(), line = css.getPropertyValue('--line').trim();
+  Chart.defaults.font.family = '"Figtree", system-ui, sans-serif';
+  Chart.defaults.color = soft;
+  const kr = v => Math.round(v).toLocaleString('sv-SE') + ' kr';
+  const base = (extra = {}) => ({responsive: true, maintainAspectRatio: false, animation: false,
+    interaction: {mode: 'index', intersect: false},
+    plugins: {legend: {position: 'bottom', labels: {boxWidth: 10, boxHeight: 10, usePointStyle: true}}},
+    scales: {x: {grid: {display: false}, ticks: {maxTicksLimit: 6}},
+             y: {grid: {color: line}, border: {display: false}}}, ...extra});
+  const fit = id => { const c = document.getElementById(id); if (c) c.parentElement.style.height = c.getAttribute('height') + 'px'; return c; };
+  if (D.race && D.race.labels.length > 1 && fit('raceChart')) {
+    const ds = D.race.series.map(s => ({label: s.namn, data: s.data, borderColor: s.farg, backgroundColor: s.farg,
+      borderWidth: 3, pointRadius: 0, tension: .25}));
+    if (D.race.spy.length) ds.push({label: 'SPY', data: D.race.spy, borderColor: soft, borderDash: [5, 4],
+      borderWidth: 1.5, pointRadius: 0});
+    const o = base(); o.scales.y.ticks = {callback: kr};
+    o.plugins.tooltip = {callbacks: {label: c => c.dataset.label + ': ' + kr(c.parsed.y)}};
+    new Chart(document.getElementById('raceChart'), {type: 'line', data: {labels: D.race.labels, datasets: ds}, options: o});
+  }
+  if (D.bt && fit('btChart')) {
+    const ds = D.bt.series.map((s, i) => ({label: s.namn, data: s.data, borderColor: s.farg, backgroundColor: s.farg,
+      borderWidth: i === 3 ? 1.5 : 2.5, pointRadius: 0, tension: .2}));
+    const o = base(); o.scales.y.type = 'logarithmic';
+    o.scales.y.ticks = {callback: v => [100000, 200000, 400000, 800000].includes(v) ? Math.round(v / 1000) + ' tkr' : ''};
+    o.scales.x.ticks = {maxTicksLimit: 7, callback: function(v) { return this.getLabelForValue(v).slice(0, 4); }};
+    o.plugins.tooltip = {callbacks: {label: c => c.dataset.label + ': ' + kr(c.parsed.y)}};
+    new Chart(document.getElementById('btChart'), {type: 'line', data: {labels: D.bt.labels, datasets: ds}, options: o});
+  }
+  if (D.auc && fit('aucChart')) {
+    const up = css.getPropertyValue('--up').trim(), down = css.getPropertyValue('--down').trim();
+    const o = base({plugins: {legend: {display: false}, tooltip: {callbacks: {label: c => 'Träffsäkerhet ' + (D.auc.data[c.dataIndex] * 100).toFixed(1) + ' %'}}}});
+    const m = Math.max(...D.auc.data.map(a => Math.abs(a - .5))) + .005; o.scales.y.min = -m; o.scales.y.max = m;
+    o.scales.y.ticks = {callback: v => Math.abs(v) < 1e-9 ? 'slumpen' : (Math.abs(Math.abs(v) - m) < 1e-9 ? (v > 0 ? 'bättre' : 'sämre') : ''), stepSize: m};
+    o.scales.x.ticks = {maxTicksLimit: 7, callback: function(v) { return this.getLabelForValue(v).slice(0, 4); }};
+    new Chart(document.getElementById('aucChart'), {type: 'bar', data: {labels: D.auc.labels, datasets: [{
+      data: D.auc.data.map(a => a - 0.5), backgroundColor: D.auc.data.map(a => a > .5 ? up : down), borderRadius: 3}]}, options: o});
+  }
+  if (D.risk && fit('riskChart')) {
+    const o = base(); o.scales.y.ticks = {callback: v => v + ' %'};
+    o.scales.x.ticks = {maxTicksLimit: 7, callback: function(v) { return this.getLabelForValue(v).slice(0, 4); }};
+    new Chart(document.getElementById('riskChart'), {type: 'line', data: {labels: D.risk.labels, datasets: [
+      {label: 'AI-riskmodellen', data: D.risk.ai, borderColor: '#e67700', backgroundColor: '#e67700', borderWidth: 2.5, pointRadius: 0, tension: .3},
+      {label: 'Enkel gissning', data: D.risk.enkel, borderColor: soft, backgroundColor: soft, borderWidth: 1.5, borderDash: [5, 4], pointRadius: 0, tension: .3}]}, options: o});
+  }
+}
+</script>
+</body></html>"""
 
 
 def backtest_current() -> bool:
