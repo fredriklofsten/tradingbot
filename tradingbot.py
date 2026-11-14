@@ -52,7 +52,7 @@ NEWS_DAYS = 7
 START_CASH = 100_000
 MIN_TRADE = 0.005       # handla inte om skillnaden är under 0,5 % av portföljen
 CLAUDE_MODEL = "claude-haiku-5-5"
-VERSION = 2
+VERSION = 3
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 F_PORTFOLIO = os.path.join(DIR, "papper_portfolj.json")
@@ -61,7 +61,9 @@ F_HISTORY = os.path.join(DIR, "papper_historik.csv")
 F_PRED = os.path.join(DIR, "prediktioner.csv")
 F_BACKTEST = os.path.join(DIR, "backtest.json")
 F_REPORT = os.path.join(DIR, "rapport.html")
-PORTS = {"ai": "AI-portföljen", "enkel": "Enkla portföljen"}
+PORTS = {"ai": "AI-portföljen", "enkel": "Enkla portföljen", "risk": "Risk-portföljen"}
+F_NEWS = os.path.join(DIR, "nyheter_arkiv.csv")
+MACRO = ["vix", "vix_chg20", "ranta10", "ranta_chg60", "usdsek_chg60"]
 
 MODEL_PARAMS = dict(max_iter=300, learning_rate=0.03, max_depth=4,
                     min_samples_leaf=200, l2_regularization=1.0, random_state=42)
@@ -154,7 +156,27 @@ def build_panel() -> tuple[pd.DataFrame, list]:
     med = p.groupby("Date")["fwd"].transform("median")
     p["y"] = (p["fwd"] > med).astype(float).where(p["fwd"].notna())
     feats = [c for c in p.columns if c not in ("Date", "fwd", "ret1", "pris", "aktie", "y")]
+    # Makrodata (används av riskmodellen)
+    vix, tnx = load_data("^VIX")["Close"], load_data("^TNX")["Close"]
+    fx = load_data("USDSEK=X")["Close"]
+    macro = pd.DataFrame({"vix": vix, "vix_chg20": vix.pct_change(20), "ranta10": tnx,
+                          "ranta_chg60": tnx.diff(60), "usdsek_chg60": fx.pct_change(60)}).ffill()
+    p = p.merge(macro, left_on="Date", right_index=True, how="left")
+    # Mål för riskmodellen: hur mycket aktien svänger kommande månad (årstakt)
+    p["fwd_vol"] = p.groupby("aktie")["ret1"].transform(
+        lambda r: r.rolling(20).std().shift(-19)) * np.sqrt(252)
+    p["log_fwd_vol"] = np.log(p["fwd_vol"] + 1e-4)
     return p, feats
+
+
+def risk_feats(feats):
+    return feats + MACRO
+
+
+def new_risk_model():
+    from sklearn.ensemble import HistGradientBoostingRegressor
+    return HistGradientBoostingRegressor(max_iter=300, learning_rate=0.05, max_depth=4,
+                                         min_samples_leaf=200, random_state=42)
 
 
 def new_model():
@@ -162,11 +184,14 @@ def new_model():
 
 
 # ---------------- Portföljvikter ----------------
-def target_weights(scores: pd.Series, below: dict, use_ai: bool) -> pd.Series:
-    """scores: AI-poäng per aktie. below: {'us': bool, 'se': bool} marknad under MA200."""
-    if use_ai:
+def target_weights(scores: pd.Series, below: dict, mode: str, pred_vol=None) -> pd.Series:
+    """mode: 'ai' (mer i aktier AI:n tror på), 'enkel' (lika), 'risk' (mindre i stormiga aktier).
+    below: {'us': bool, 'se': bool} – marknaden under sitt 200-dagars snitt."""
+    if mode == "ai":
         z = (scores.rank(pct=True) - 0.5) * 2 * TILT
         w = (1 + z).clip(lower=0)
+    elif mode == "risk" and pred_vol is not None:
+        w = 1 / pred_vol.reindex(scores.index).fillna(pred_vol.median()).clip(lower=0.05)
     else:
         w = pd.Series(1.0, index=scores.index)
     w = w / w.sum()
@@ -189,6 +214,8 @@ def cmd_backtest():
     print("Bygger data för alla aktier...")
     p, feats = build_panel()
     p["prob"] = np.nan
+    p["pred_vol"] = np.nan
+    rf = risk_feats(feats)
     learning = []
     start = pd.Timestamp("2014-01-01")
     while start < p["Date"].max():
@@ -198,10 +225,16 @@ def cmd_backtest():
         if te.any():
             m = new_model().fit(tr[feats], tr["y"])
             p.loc[te, "prob"] = m.predict_proba(p.loc[te, feats])[:, 1]
+            trv = p[p["Date"] < start - pd.Timedelta(days=35)].dropna(subset=["log_fwd_vol"])
+            mv = new_risk_model().fit(trv[rf], trv["log_fwd_vol"])
+            p.loc[te, "pred_vol"] = np.exp(mv.predict(p.loc[te, rf]))
             sc = p.loc[te].dropna(subset=["y"])
             if len(sc) > 200 and sc["y"].nunique() == 2:
+                sv = p.loc[te].dropna(subset=["fwd_vol"])
                 learning.append({"period": start.strftime("%Y-%m"),
                                  "auc": float(roc_auc_score(sc["y"], sc["prob"])),
+                                 "risk_fel_ai": float((sv["pred_vol"] - sv["fwd_vol"]).abs().mean()),
+                                 "risk_fel_enkel": float((sv["vol_20"] * np.sqrt(252) - sv["fwd_vol"]).abs().mean()),
                                  "traningsrader": len(tr)})
                 print(f"   {start:%Y-%m}: AUC {learning[-1]['auc']:.3f}")
         start = end
@@ -210,8 +243,9 @@ def cmd_backtest():
     R = q.pivot(index="Date", columns="aktie", values="ret1").fillna(0)
     P = q.pivot(index="Date", columns="aktie", values="prob")
     reg = q.pivot(index="Date", columns="aktie", values="marknad_avst_ma200")
+    PV = q.pivot(index="Date", columns="aktie", values="pred_vol")
 
-    def run(use_ai, use_filter=True):
+    def run(mode, use_filter=True):
         W = pd.DataFrame(0.0, index=R.index, columns=R.columns)
         w, last_below = None, None
         for i, d in enumerate(R.index):
@@ -223,7 +257,7 @@ def cmd_backtest():
             if w is None or i % REBALANCE_DAYS == 0 or below != last_below:
                 s = P.loc[d].dropna()
                 if len(s) > 10:
-                    w = target_weights(s, below, use_ai).reindex(R.columns).fillna(0)
+                    w = target_weights(s, below, mode, PV.loc[d]).reindex(R.columns).fillna(0)
                     last_below = below
             if w is not None:
                 W.loc[d] = w
@@ -231,8 +265,8 @@ def cmd_backtest():
         turn = W.diff().abs().sum(axis=1).fillna(0)
         return gross - turn * COST
 
-    res = {"AI-portföljen": run(True), "Enkla portföljen": run(False),
-           "Lika vikt utan filter": run(False, use_filter=False)}
+    res = {"AI-portföljen": run("ai"), "Enkla portföljen": run("enkel"),
+           "Risk-portföljen": run("risk"), "Lika vikt utan filter": run("enkel", use_filter=False)}
     out = {"version": VERSION, "skapad": datetime.now().isoformat(timespec="minutes"),
            "larande": learning, "strategier": {}, "kurvor": {}}
     for name, r in res.items():
@@ -325,7 +359,15 @@ def load_portfolio():
         pf = json.load(open(F_PORTFOLIO))
         if pf.get("version") == VERSION:
             return pf
-        print("Gammal portfölj hittad – startar om med två nya portföljer.")
+        if pf.get("version") == 2:
+            # Behåll AI- och Enkla portföljen, lägg till Risk-portföljen
+            for k in PORTS:
+                pf["portfoljer"].setdefault(k, {"kassa": START_CASH, "innehav": {},
+                                                "senast_ombalans": None, "senaste_filter": None})
+            pf["version"] = VERSION
+            print("Lägger till Risk-portföljen.")
+            return pf
+        print("Gammal portfölj hittad – startar om med nya portföljer.")
         for f in (F_TRADES, F_HISTORY, F_PRED):
             if os.path.exists(f):
                 os.replace(f, f.replace(".csv", "_v1.csv"))
@@ -379,15 +421,31 @@ def cmd_papper():
     imp = permutation_importance(model, sample[feats], sample["y"], n_repeats=3,
                                  random_state=0, scoring="roc_auc")
     top_feats = sorted(zip(feats, imp.importances_mean), key=lambda z: -z[1])[:8]
+    # Riskmodellen: hur mycket väntas varje aktie svänga kommande månad?
+    rf = risk_feats(feats)
+    trv = panel.dropna(subset=["log_fwd_vol"])
+    last_r = panel.sort_values("Date").groupby("aktie").tail(1).set_index("aktie")
+    pred_vol = pd.Series(np.exp(new_risk_model().fit(trv[rf], trv["log_fwd_vol"]).predict(last_r[rf])),
+                         index=last_r.index)
 
     print("   läser nyheter...")
-    sigs = []
+    sigs, archive = [], []
     for t, r in last.iterrows():
         sent, items = news_score(t)
+        archive += [{"hamtad": today, "aktie": t, "publicerad": x["datum"], "rubrik": x["rubrik"],
+                     "sammanfattning": x["sammanfattning"], "poang": round(x["poang"], 3),
+                     "relevant": x.get("relevant", True), "metod": x.get("metod", "")} for x in items]
         sigs.append({"aktie": t, "datum": r["Date"].strftime("%Y-%m-%d"), "pris": float(r["pris"]),
                      "ml": float(r["ml"]), "nyheter": sent,
                      "poang": float(np.clip(r["ml"] + NEWS_WEIGHT * sent, 0, 1)),
-                     "nyhetslista": items[:4]})
+                     "risk": float(pred_vol.get(t, np.nan)), "nyhetslista": items[:4]})
+    # Nyhetsarkiv – samlas för framtida träning
+    if archive:
+        new = pd.DataFrame(archive)
+        if os.path.exists(F_NEWS):
+            old = pd.read_csv(F_NEWS)
+            new = new[~(new["aktie"] + new["rubrik"]).isin(old["aktie"] + old["rubrik"])]
+        append_csv(F_NEWS, new.to_dict("records"))
     scores = pd.Series({s["aktie"]: s["poang"] for s in sigs})
     prices = {s["aktie"]: to_sek(s["aktie"], s["pris"], fx) for s in sigs}
 
@@ -406,7 +464,7 @@ def cmd_papper():
         due = (last_reb is None or (pd.Timestamp(today) - pd.Timestamp(last_reb)).days >= 28
                or port["senaste_filter"] != below)
         if due:
-            w = target_weights(scores, below, use_ai=(key == "ai"))
+            w = target_weights(scores, below, key, pred_vol)
             for t in sorted(w.index, key=lambda t: w[t] * equity - hold.get(t, 0) * prices[t]):
                 diff = w[t] * equity - hold.get(t, 0) * prices[t]
                 if abs(diff) < MIN_TRADE * equity:
@@ -472,7 +530,7 @@ def cmd_rapport():
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     plt.rcParams.update({"font.size": 9, "axes.spines.top": False, "axes.spines.right": False})
-    colors = {"ai": "#2563eb", "enkel": "#16a34a", "jamforelse_spy": "#9ca3af"}
+    colors = {"ai": "#2563eb", "enkel": "#16a34a", "risk": "#f59e0b", "jamforelse_spy": "#9ca3af"}
     parts = []
 
     if os.path.exists(F_PORTFOLIO) and os.path.exists(F_HISTORY):
@@ -481,7 +539,9 @@ def cmd_rapport():
         lastrow = h.iloc[-1]
         cards = ""
         for key, label in PORTS.items():
-            v = lastrow[key]
+            v = lastrow.get(key, np.nan)
+            if pd.isna(v):
+                continue
             d = v / START_CASH - 1
             cards += (f"<div class='card'><small>{label}</small><b>{v:,.0f} kr</b>"
                       f"<span class='{'pos' if d >= 0 else 'neg'}'>{d:+.2%}</span></div>")
@@ -493,6 +553,8 @@ def cmd_rapport():
             fig, ax = plt.subplots(figsize=(7, 2.6))
             dts = pd.to_datetime(h["datum"])
             for k, lab in list(PORTS.items()) + [("jamforelse_spy", "SPY")]:
+                if k not in h:
+                    continue
                 ax.plot(dts, h[k], label=lab, color=colors[k], lw=2 if k != "jamforelse_spy" else 1.3)
             ax.axhline(START_CASH, color="#e5e7eb", lw=1)
             ax.legend(frameon=False)
@@ -508,15 +570,18 @@ def cmd_rapport():
         sig = sorted(pf.get("signaler", []), key=lambda s: -s["poang"])
         if sig:
             vik = pf["portfoljer"]["ai"].get("vikter", {})
+            vr = pf["portfoljer"].get("risk", {}).get("vikter", {})
             rows = ""
             for s in sig:
-                own = f"{vik.get(s['aktie'], 0):.1%}"
+                risk = f"{s['risk']:.0%}" if s.get("risk") == s.get("risk") and s.get("risk") else "–"
                 rows += (f"<tr><td>{s['aktie']}</td><td>{s['ml']:.0%}</td><td>{s['nyheter']:+.2f}</td>"
-                         f"<td><b>{s['poang']:.0%}</b></td><td>{own}</td></tr>")
-            parts.append("<h2>AI:ns rangordning idag</h2><p class='note'>Högst upp får mest pengar i "
-                         "AI-portföljen. Poäng = chans att slå mitten-aktien nästa månad.</p>"
-                         "<table><tr><th>Aktie</th><th>ML</th><th>Nyheter</th><th>Poäng</th>"
-                         f"<th>Vikt i AI</th></tr>{rows}</table>")
+                         f"<td><b>{s['poang']:.0%}</b></td><td>{vik.get(s['aktie'], 0):.1%}</td>"
+                         f"<td>{risk}</td><td>{vr.get(s['aktie'], 0):.1%}</td></tr>")
+            parts.append("<h2>AI:ns bedömning idag</h2><p class='note'>Poäng = chans att slå mitten-aktien "
+                         "nästa månad (styr AI-portföljen). Svängning = hur mycket riskmodellen tror att "
+                         "aktien rör sig per år (styr Risk-portföljen: stormigare aktie får mindre).</p>"
+                         "<table><tr><th>Aktie</th><th>ML</th><th>Nyh.</th><th>Poäng</th>"
+                         f"<th>Vikt AI</th><th>Sväng.</th><th>Vikt Risk</th></tr>{rows}</table>")
             news = ""
             for s in sig:
                 for n in s.get("nyhetslista", [])[:2]:
@@ -563,9 +628,20 @@ def cmd_rapport():
             parts.append("<h2>Hur AI:n lärt sig genom åren</h2><p class='note'>Varje stapel är ett "
                          "halvår den aldrig sett. Grönt = bättre än slumpen (0,5), rött = sämre.</p>"
                          + fig_to_img(fig))
+            if "risk_fel_ai" in L:
+                fig, ax = plt.subplots(figsize=(7, 2.2))
+                dts_l = pd.to_datetime(L["period"])
+                ax.plot(dts_l, L["risk_fel_enkel"], color="#9ca3af", lw=1.5, label="Enkel gissning")
+                ax.plot(dts_l, L["risk_fel_ai"], color="#f59e0b", lw=2, label="AI-riskmodellen")
+                ax.set_ylabel("Fel (lägre = bättre)")
+                ax.legend(frameon=False)
+                parts.append("<h2>Hur riskmodellen lärt sig</h2><p class='note'>Hur fel den gissar "
+                             "aktiernas svängningar nästa månad, jämfört med att bara anta att de svänger "
+                             "som förra månaden.</p>" + fig_to_img(fig))
             fig, ax = plt.subplots(figsize=(7, 2.6))
             dts = pd.to_datetime(bt["kurvor"]["datum"])
             for name, col in (("AI-portföljen", "#2563eb"), ("Enkla portföljen", "#16a34a"),
+                              ("Risk-portföljen", "#f59e0b"),
                               ("Lika vikt utan filter", "#9ca3af")):
                 ax.plot(dts, bt["kurvor"][name], label=name, color=col, lw=1.6)
             ax.set_yscale("log")
