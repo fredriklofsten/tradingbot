@@ -1,0 +1,1 @@
+{"name": "Tradingbot", "short_name": "Tradingbot", "start_url": ".", "display": "standalone", "background_color": "#fafafa", "theme_color": "#2563eb", "icons": [{"src": "ikon.png", "sizes": "512x512", "type": "image/png"}]}

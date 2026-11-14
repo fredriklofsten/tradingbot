@@ -13,10 +13,19 @@
    "aktie": "SPY",
    "datum": "2026-11-13",
    "pris": 754.3699951171875,
-   "ml": 0.6584473160158663,
-   "nyheter": 0.20725000000000002,
-   "poang": 0.6688098160158663,
+   "ml": 0.6610840761817912,
+   "nyheter": 0.14600999999999997,
+   "poang": 0.6683845761817913,
    "nyhetslista": [
+    {
+     "rubrik": "Think politicians have an unfair edge in the stock market? These investments can help you trade the way they do",
+     "sammanfattning": "While a ban on Congressional trading remains elusive, some companies offer ways to mimic Washington’s money moves.",
+     "datum": "2026-11-14",
+     "poang": -0.6124,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
     {
      "rubrik": "‘65% of the S&P Is Basically AI’: Eisman’s Warning as Ramsey Tells Disabled Veteran His $500,000 Is ‘Safe’",
      "sammanfattning": "Dave Ramsey called a disabled veteran's $500,000 index fund conservative, while Steve Eisman says the same index hides a giant bet on one theme. One question about when he might need the money decides who is right.",
@@ -97,37 +106,28 @@
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
-    },
-    {
-     "rubrik": "PPI +6.5% YoY: Highest in Nearly 4 Years",
-     "sammanfattning": "The Producer Price Index (PPI) at +6.5% is the highest we've seen since November of 2022.",
-     "datum": "2026-11-13",
-     "poang": 0.0,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
     }
    ],
    "viktigast": [
     [
-     "vol_60",
-     0.12259923175416139
+     "fran_arshogsta",
+     0.12680324370465226
     ],
     [
-     "fran_arshogsta",
-     0.11933418693982085
+     "vol_60",
+     0.11495945369184817
     ],
     [
      "manad",
-     0.05695689287238589
+     0.059731113956466096
     ],
     [
      "avk_120d",
-     0.027699530516431814
+     0.030089628681178038
     ],
     [
-     "avk_60d",
-     0.019953051643192537
+     "avst_ma200",
+     0.018693982074263798
     ]
    ],
    "handling": "KÖP/BEHÅLL"
@@ -136,10 +136,19 @@
    "aktie": "AAPL",
    "datum": "2026-11-13",
    "pris": 356.2699890136719,
-   "ml": 0.48155239772365627,
-   "nyheter": 0.14337,
-   "poang": 0.4887208977236563,
+   "ml": 0.4699338170723643,
+   "nyheter": 0.11524999999999999,
+   "poang": 0.4756963170723643,
    "nyhetslista": [
+    {
+     "rubrik": "Elon Musk, Trump, Kress, Nvidia’s Board On Jensen Huang’s Exit: Mag 7 Voices This Week",
+     "sammanfattning": "This week, Nvidia's Jensen Huang resigned as president, CEO, and a board member, just four days after the board publicly expressed confidence in his leadership.",
+     "datum": "2026-11-14",
+     "poang": 0.3182,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
     {
      "rubrik": "In Jensen Huang’s Ouster, Tech Billionaires See a Mistake—and a Lesson",
      "sammanfattning": "Elon Musk, Palmer Luckey and other founders blasted the Nvidia CEO’s removal after his affairs. Some likened it to Apple firing Steve Jobs.",
@@ -220,37 +229,28 @@
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
-    },
-    {
-     "rubrik": "Ackman on Huang's Exit, Anthropic IPO Roadshow",
-     "sammanfattning": "Bill Ackman, Pershing Square founder and CEO, says it's sad to see Jensen Huang leave Nvidia and he'll go on to do something great. Ackman also says he was impressed with the presentation given by Anthropic CEO Dario Amodei at the company's IPO roadshow event in New York. He speaks to Bloomberg's Isabelle Lee.",
-     "datum": "2026-11-13",
-     "poang": 0.5994,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
     }
    ],
    "viktigast": [
     [
      "manad",
-     0.08216676810712109
+     0.08029575528053912
     ],
     [
      "vol_kvot",
-     0.03881788057077162
-    ],
-    [
-     "avk_20d",
-     0.027118414823831666
+     0.038727711277924216
     ],
     [
      "avst_ma200",
-     0.025472825229368112
+     0.029981289871734096
     ],
     [
-     "vol_60",
-     0.017763350690922164
+     "avk_20d",
+     0.022046392101169838
+    ],
+    [
+     "avst_ma50",
+     0.019318770992538425
     ]
    ],
    "handling": "BEHÅLL"
@@ -259,9 +259,9 @@
    "aktie": "MSFT",
    "datum": "2026-11-13",
    "pris": 523.8800048828125,
-   "ml": 0.4822278458154566,
+   "ml": 0.4675439341833707,
    "nyheter": -0.06252000000000002,
-   "poang": 0.47910184581545656,
+   "poang": 0.4644179341833707,
    "nyhetslista": [
     {
      "rubrik": "Cerebras stock surges on Microsoft deal: What it means for Nvidia",
@@ -357,23 +357,23 @@
    "viktigast": [
     [
      "vol_60",
-     0.14050170013472751
-    ],
-    [
-     "fran_arshogsta",
-     0.0403755266140586
+     0.14405166698744684
     ],
     [
      "marknad_avst_ma200",
-     0.04022582921665482
+     0.03875024058510301
     ],
     [
      "manad",
-     0.03827976305040518
+     0.0381514509954877
+    ],
+    [
+     "fran_arshogsta",
+     0.036953871816257165
     ],
     [
      "avk_120d",
-     0.023930198242124723
+     0.023737730159748487
     ]
    ],
    "handling": "BEHÅLL"
@@ -382,9 +382,9 @@
    "aktie": "NVDA",
    "datum": "2026-11-13",
    "pris": 162.85000610351562,
-   "ml": 0.32424467541553775,
-   "nyheter": 0.06976,
-   "poang": 0.32773267541553774,
+   "ml": 0.3242443673434624,
+   "nyheter": -0.1482,
+   "poang": 0.3168343673434624,
    "nyhetslista": [
     {
      "rubrik": "Nvidia and Jensen Huang fallout: Here's everything we know after a momentous week",
@@ -423,19 +423,37 @@
      "metod": "VADER"
     },
     {
-     "rubrik": "'Nothing has changed': Why some Nvidia stock bulls aren't wavering after Jensen Huang ouster",
-     "sammanfattning": "The bulls refuse to completely throw in the towel on Nvidia.",
-     "datum": "2026-11-13",
-     "poang": -0.1916,
+     "rubrik": "Jim Cramer says Jensen Huang betrayed shareholders as Nvidia sinks up to 13%. Is your 401(k) too tied to one stock?",
+     "sammanfattning": "Big-name players can account for more of your savings than you realize.",
+     "datum": "2026-11-14",
+     "poang": -0.6124,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Rene Haas, Ian Buck, Chris Malachowsky: Wall Street zeroes in on potential Nvidia CEO successors",
-     "sammanfattning": "Wall Street has a list of names that could replace Jensen Huang, including Rene Haas, Ian Buck, and others.",
-     "datum": "2026-11-13",
-     "poang": 0.2732,
+     "rubrik": "Elon Musk, Trump, Kress, Nvidia’s Board On Jensen Huang’s Exit: Mag 7 Voices This Week",
+     "sammanfattning": "This week, Nvidia's Jensen Huang resigned as president, CEO, and a board member, just four days after the board publicly expressed confidence in his leadership.",
+     "datum": "2026-11-14",
+     "poang": 0.3182,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Regeneron Has $16 Billion in Net Cash and Trades Near 20 Times Earnings. Is It the Cheapest Big Biotech?",
+     "sammanfattning": "The stock has climbed more than 40% in one year.",
+     "datum": "2026-11-14",
+     "poang": 0.0,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "3 Broker Stocks Retail Investors Are Watching After Nvidia Volatility",
+     "sammanfattning": "Volatility around Nvidia after Jensen Huang’s abrupt exit has turned trading screens into a heat map of fear and opportunism, and brokers are right in the slipstream of that surge in activity. Spikes in options volume, frantic dip buying, and shifting views on AI leadership can all feed into higher trading engagement. This article walks through three stocks linked to this news shock and how this turbulence might matter for your portfolio decisions. The stocks covered below are only a sample...",
+     "datum": "2026-11-14",
+     "poang": -0.6369,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
@@ -454,24 +472,6 @@
      "sammanfattning": "Two major investment banks see very different futures for the AI giant.",
      "datum": "2026-11-14",
      "poang": -0.3818,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Strategy's Michael Saylor Says Bitcoin Is Now a Bipartisan Issue That Crosses Party Lines. Here's Why He's Right.",
-     "sammanfattning": "Even with a Democratic majority in Congress, Bitcoin can still soar higher over the next two years.",
-     "datum": "2026-11-14",
-     "poang": 0.4019,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Not Only Did President Donald Trump Fail to Keep His Social Security Promise, but He May Have Accelerated the Program's Path to Insolvency",
-     "sammanfattning": "Donald Trump’s pledge to end the taxation of Social Security benefits hasn’t gone as planned.",
-     "datum": "2026-11-14",
-     "poang": 0.765,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
@@ -537,9 +537,9 @@
    "aktie": "ERIC-B.ST",
    "datum": "2026-11-13",
    "pris": 106.30000305175781,
-   "ml": 0.4596303179886868,
+   "ml": 0.468075989181478,
    "nyheter": 0.8020428571428571,
-   "poang": 0.4997324608458297,
+   "poang": 0.5081781320386208,
    "nyhetslista": [
     {
      "rubrik": "TMUS vs. NOK: Which Telecom Stock is the Better Buy Now?",
@@ -608,23 +608,23 @@
    "viktigast": [
     [
      "avst_ma200",
-     0.06391497880859591
+     0.07151832683747587
     ],
     [
      "vol_60",
-     0.06142312525291257
+     0.05550231082145981
     ],
     [
      "manad",
-     0.04187165889293546
+     0.04668498285519566
     ],
     [
      "fran_arshogsta",
-     0.029667965838178618
+     0.027367793325240235
     ],
     [
      "vol_kvot",
-     0.027261303857048502
+     0.025259301855046584
     ]
    ],
    "handling": "BEHÅLL"
@@ -633,30 +633,30 @@
    "aktie": "INVE-B.ST",
    "datum": "2026-11-13",
    "pris": 436.25,
-   "ml": 0.6882924673949422,
+   "ml": 0.7100061206666858,
    "nyheter": 0.0,
-   "poang": 0.6882924673949422,
+   "poang": 0.7100061206666858,
    "nyhetslista": [],
    "viktigast": [
     [
      "relativ_styrka_60d",
-     0.11868915398327158
-    ],
-    [
-     "vol_60",
-     0.07165775401069518
+     0.10058960647195943
     ],
     [
      "manad",
-     0.06524064171122997
+     0.0707253530782943
+    ],
+    [
+     "vol_60",
+     0.06702317290552588
     ],
     [
      "avk_120d",
-     0.03378582202111613
+     0.03743315508021391
     ],
     [
      "marknad_avk_20d",
-     0.032634032634032605
+     0.022501028383381343
     ]
    ],
    "handling": "KÖP/BEHÅLL"
@@ -665,9 +665,9 @@
    "aktie": "ATCO-A.ST",
    "datum": "2026-11-13",
    "pris": 192.25,
-   "ml": 0.6928928398136774,
+   "ml": 0.6967878291193449,
    "nyheter": 0.9678,
-   "poang": 0.7412828398136775,
+   "poang": 0.7451778291193449,
    "nyhetslista": [
     {
      "rubrik": "Atlas Copco (OM:ATCO A) Stock Looks Undervalued Despite Its 52% Five Year Run",
@@ -682,28 +682,28 @@
    "viktigast": [
     [
      "marknad_avk_20d",
-     0.14364035087719293
+     0.14237938596491237
     ],
     [
      "manad",
-     0.07513157894736844
+     0.07679824561403514
     ],
     [
      "relativ_styrka_60d",
-     0.07337719298245611
+     0.06603070175438604
     ],
     [
      "macd_hist",
-     0.059144736842105305
+     0.05844298245614036
     ],
     [
      "avk_60d",
-     0.05907894736842104
+     0.055811403508772006
     ]
    ],
    "handling": "KÖP/BEHÅLL"
   }
  ],
  "spy_start_sek": 7598.693386837724,
- "uppdaterad": "2026-11-14T13:20"
+ "uppdaterad": "2026-11-14T13:02"
 }
