@@ -551,7 +551,24 @@ td,th{{padding:5px 6px;border-bottom:1px solid #eee;text-align:left}}
 <div class="warn">Låtsaspengar. Historiskt resultat är ingen garanti för framtiden.</div>
 {''.join(parts)}</body></html>"""
     open(F_REPORT, "w").write(html)
-    print(f"Rapport sparad: {os.path.basename(F_REPORT)}")
+    # Webbappen (GitHub Pages) läser mappen docs/
+    docs = os.path.join(DIR, "docs")
+    os.makedirs(docs, exist_ok=True)
+    open(os.path.join(docs, "index.html"), "w").write(html)
+    json.dump({"name": "Tradingbot", "short_name": "Tradingbot", "start_url": ".",
+               "display": "standalone", "background_color": "#fafafa", "theme_color": "#2563eb",
+               "icons": [{"src": "ikon.png", "sizes": "512x512", "type": "image/png"}]},
+              open(os.path.join(docs, "manifest.json"), "w"))
+    icon = os.path.join(docs, "ikon.png")
+    if not os.path.exists(icon):
+        fig = plt.figure(figsize=(5.12, 5.12), dpi=100)
+        ax = fig.add_axes([0, 0, 1, 1])
+        ax.plot([0.12, 0.32, 0.48, 0.62, 0.88], [0.25, 0.5, 0.4, 0.65, 0.8], color="white",
+                lw=22, solid_capstyle="round", solid_joinstyle="round")
+        ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
+        fig.patch.set_facecolor("#2563eb")
+        fig.savefig(icon); plt.close(fig)
+    print(f"Rapport sparad: {os.path.basename(F_REPORT)} + docs/")
 
 
 if __name__ == "__main__":
