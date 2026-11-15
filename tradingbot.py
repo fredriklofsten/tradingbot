@@ -7,7 +7,7 @@ AI-tradingbot v2 – två låtsasportföljer sida vid sida.
   Båda:            halverar insatsen i en marknad (USA/Sverige) när marknaden ligger
                    under sitt 200-dagars snitt. Ombalanserar en gång i månaden.
 
-Varför: i testerna 2014–idag gav spridning + marknadsfilter bäst riskjusterad
+Varför: i testerna 2003–idag gav spridning + marknadsfilter bäst riskjusterad
 avkastning. AI-delen hade nästan ingen förmåga att välja vinnare. Nu får
 verkligheten avgöra om AI:n tillför något.
 
@@ -41,7 +41,9 @@ SE = ["VOLV-B.ST", "ERIC-B.ST", "INVE-B.ST", "ATCO-A.ST", "ABB.ST", "AZN.ST", "S
       "TELIA.ST", "EVO.ST", "SWED-A.ST", "ALFA.ST"]
 TICKERS = US + SE
 MARKET_US, MARKET_SE = "SPY", "^OMX"
-START = "2010-01-01"
+START = "2000-01-01"
+TEST_START = "2003-01-01"   # AI:n behöver några år att träna på innan första testet
+STEP_MONTHS = 12            # AI:n tränas om en gång per år i historiktestet
 HORIZON = 20            # förutsäg ca 1 månad framåt
 COST = 0.0015           # courtage + spread per affär
 FX_FEE = 0.0025         # valutaväxling hos Avanza/Nordnet för amerikanska aktier, per affär
@@ -58,7 +60,7 @@ NEWS_DAYS = 7
 START_CASH = 100_000
 MIN_TRADE = 0.005       # handla inte om skillnaden är under 0,5 % av portföljen
 CLAUDE_MODEL = "claude-haiku-5-5"
-VERSION = 5
+VERSION = 7
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 F_PORTFOLIO = os.path.join(DIR, "papper_portfolj.json")
@@ -67,7 +69,9 @@ F_HISTORY = os.path.join(DIR, "papper_historik.csv")
 F_PRED = os.path.join(DIR, "prediktioner.csv")
 F_BACKTEST = os.path.join(DIR, "backtest.json")
 F_REPORT = os.path.join(DIR, "rapport.html")
-PORTS = {"ai": "AI-portföljen", "enkel": "Enkla portföljen", "risk": "Risk-portföljen"}
+PORTS = {"ai": "AI-portföljen", "enkel": "Enkla portföljen", "risk": "Risk-portföljen",
+         "hold": "Gör ingenting"}
+INDEX_FUND = "ACWI"   # global indexfond (MSCI All Country World) som måttstock
 F_NEWS = os.path.join(DIR, "nyheter_arkiv.csv")
 F_SHORT = os.path.join(DIR, "blankning.csv")
 MACRO = ["vix", "vix_chg20", "ranta10", "ranta_chg60", "usdsek_chg60"]
@@ -83,17 +87,47 @@ _cache: dict = {}
 def load_data(ticker: str) -> pd.DataFrame:
     if ticker in _cache:
         return _cache[ticker]
+    if ticker == MARKET_SE:
+        _cache[ticker] = _omx_spliced()
+        return _cache[ticker]
     import yfinance as yf
     df = yf.download(ticker, start=START, auto_adjust=True, progress=False)
     if isinstance(df.columns, pd.MultiIndex):
         df.columns = df.columns.get_level_values(0)
     df = df[["Open", "High", "Low", "Close", "Volume"]].dropna()
+    # Använd bara färdiga dagar: släng dagens stapel om marknaden inte har stängt än
+    now = pd.Timestamp.now(tz="Europe/Stockholm")
+    closes_at = (17, 45) if ticker.endswith(".ST") or ticker == MARKET_SE else (22, 15)
+    if len(df) and df.index[-1].date() == now.date() and (now.hour, now.minute) < closes_at:
+        df = df.iloc[:-1]
     _cache[ticker] = df
     return df
 
 
+def _omx_spliced() -> pd.DataFrame:
+    """Stockholmsbörsens index (^OMX) finns bara från nov 2008. Före det används ett eget
+    likaviktat index av de svenska aktierna, skarvat så att nivåerna möts."""
+    import yfinance as yf
+    df = yf.download(MARKET_SE, start=START, auto_adjust=True, progress=False)
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = df.columns.get_level_values(0)
+    omx = df["Close"].dropna()
+    rets = pd.DataFrame({t: load_data(t)["Close"].pct_change() for t in SE}).mean(axis=1, skipna=True)
+    proxy = (1 + rets.fillna(0)).cumprod()
+    first = omx.index[0]
+    proxy = proxy[proxy.index < first] * (omx.iloc[0] / proxy[proxy.index <= first].iloc[-1])
+    close = pd.concat([proxy, omx])
+    return pd.DataFrame({"Open": close, "High": close, "Low": close, "Close": close, "Volume": 0.0})
+
+
 def market_of(t: str) -> str:
     return MARKET_SE if t.endswith(".ST") else MARKET_US
+
+
+def close_on(ticker: str, day) -> float:
+    """Senaste stängningskurs på eller före en viss dag."""
+    c = load_data(ticker)["Close"].dropna()
+    return float(c[c.index <= pd.Timestamp(day)].iloc[-1])
 
 
 def to_sek(t: str, price: float, fx: float) -> float:
@@ -136,6 +170,10 @@ def make_features(df: pd.DataFrame, market: pd.Series) -> pd.DataFrame:
 RANK_COLS = ["avk_20d", "avk_60d", "avk_120d", "vol_60", "relativ_styrka_60d", "fran_arshogsta"]
 
 
+def fx_series() -> pd.Series:
+    return load_data("USDSEK=X")["Close"]
+
+
 def build_panel() -> tuple[pd.DataFrame, list]:
     frames = []
     for t in TICKERS:
@@ -148,8 +186,10 @@ def build_panel() -> tuple[pd.DataFrame, list]:
         if len(df) < 1000:
             continue
         f = make_features(df, mkt)
-        f["fwd"] = df["Close"].shift(-HORIZON) / df["Close"] - 1
-        f["ret1"] = df["Close"].pct_change().shift(-1)
+        # Avkastning räknas i kronor (amerikanska aktier räknas om med dollarkursen)
+        px = df["Close"] if t.endswith(".ST") else df["Close"] * fx_series().reindex(df.index).ffill().bfill()
+        f["fwd"] = px.shift(-HORIZON) / px - 1
+        f["ret1"] = px.pct_change().shift(-1)
         f["pris"] = df["Close"]
         f["aktie"] = t
         f["se"] = int(t.endswith(".ST"))
@@ -157,8 +197,8 @@ def build_panel() -> tuple[pd.DataFrame, list]:
     p = pd.concat(frames)
     p.index.name = "Date"
     p = p.reset_index().dropna(subset=["avst_ma200", "fran_arshogsta"])
-    for c in RANK_COLS:
-        p[c + "_rank"] = p.groupby("Date")[c].rank(pct=True)
+    for c in RANK_COLS:  # jämför bara med aktier på samma börs (USA stänger senare än Stockholm)
+        p[c + "_rank"] = p.groupby(["Date", "se"])[c].rank(pct=True)
     # Mål: slår aktien mitten-aktien den kommande månaden?
     med = p.groupby("Date")["fwd"].transform("median")
     p["y"] = (p["fwd"] > med).astype(float).where(p["fwd"].notna())
@@ -167,7 +207,7 @@ def build_panel() -> tuple[pd.DataFrame, list]:
     vix, tnx = load_data("^VIX")["Close"], load_data("^TNX")["Close"]
     fx = load_data("USDSEK=X")["Close"]
     macro = pd.DataFrame({"vix": vix, "vix_chg20": vix.pct_change(20), "ranta10": tnx,
-                          "ranta_chg60": tnx.diff(60), "usdsek_chg60": fx.pct_change(60)}).ffill()
+                          "ranta_chg60": tnx.diff(60), "usdsek_chg60": fx.pct_change(60)}).ffill().shift(1)
     p = p.merge(macro, left_on="Date", right_index=True, how="left")
     # Mål för riskmodellen: hur mycket aktien svänger kommande månad (årstakt)
     p["fwd_vol"] = p.groupby("aktie")["ret1"].transform(
@@ -282,22 +322,23 @@ def target_weights(scores: pd.Series, below: dict, mode: str, pred_vol=None, bla
 # ---------------- Backtest ----------------
 def stats(r: pd.Series) -> dict:
     eq = (1 + r).cumprod()
-    years = len(r) / 252
+    years = max((r.index[-1] - r.index[0]).days / 365.25, 1 / 365)
+    per_year = len(r) / years
     return {"arlig": float(eq.iloc[-1] ** (1 / years) - 1),
-            "sharpe": float(r.mean() / r.std() * np.sqrt(252)) if r.std() > 0 else 0.0,
+            "sharpe": float(r.mean() / r.std() * np.sqrt(per_year)) if r.std() > 0 else 0.0,
             "max_ras": float((eq / eq.cummax() - 1).min())}
 
 
-def walk_forward(p: pd.DataFrame, feats: list, model_fn=None, risk=True, verbose=False):
-    """Tränar om var sjätte månad och förutsäger halvåret efter, som modellen aldrig sett."""
+def walk_forward(p: pd.DataFrame, feats: list, model_fn=None, risk=True, verbose=False, start=TEST_START):
+    """Tränar om varje år (STEP_MONTHS) och förutsäger perioden efter, som modellen aldrig sett."""
     model_fn = model_fn or new_model
     p = p.copy()
     p["prob"], p["pred_vol"] = np.nan, np.nan
     rf = risk_feats(feats)
     learning = []
-    start = pd.Timestamp("2014-01-01")
+    start = pd.Timestamp(start)
     while start < p["Date"].max():
-        end = start + pd.DateOffset(months=6)
+        end = start + pd.DateOffset(months=STEP_MONTHS)
         tr = p[p["Date"] < start - pd.Timedelta(days=35)].dropna(subset=["y"])
         te = (p["Date"] >= start) & (p["Date"] < end)
         if te.any():
@@ -319,51 +360,96 @@ def walk_forward(p: pd.DataFrame, feats: list, model_fn=None, risk=True, verbose
                 if verbose:
                     print(f"   {start:%Y-%m}: AUC {e['auc']:.3f}")
         start = end
-    return p.dropna(subset=["prob"]), learning
+    return p, learning
 
 
-def simulate(q: pd.DataFrame, mode: str, cfg=None, use_filter=True, score_col="prob") -> pd.Series:
-    """Daglig avkastning för en portfölj, med courtage."""
+def simulate(q: pd.DataFrame, mode: str, cfg=None, use_filter=True, score_col="prob",
+             start=None) -> pd.Series:
+    """Daglig avkastning för en portfölj, med courtage. Portföljer som behöver AI:ns prognos
+    startar först när prognoserna finns (2003); regelportföljer kan starta tidigare."""
     cfg = {**BASE_CFG, **(cfg or {})}
+    needs_model = mode in ("ai", "ai_risk", "risk") or score_col != "prob"
+    if needs_model:
+        mask = q[score_col].notna()
+        if mode in ("risk", "ai_risk"):
+            mask &= q["pred_vol"].notna()
+        first = q.loc[mask, "Date"].min()
+    else:
+        first = q.loc[q["avst_ma200"].notna(), "Date"].min()
+    q = q[q["Date"] >= max(pd.Timestamp(start or first), first)]
     R = q.pivot(index="Date", columns="aktie", values="ret1").fillna(0)
-    P = q.pivot(index="Date", columns="aktie", values=score_col)
-    reg = q.pivot(index="Date", columns="aktie", values="marknad_avst_ma200")
-    PV = q.pivot(index="Date", columns="aktie", values="pred_vol")
-    BL = q.pivot(index="Date", columns="aktie", values="blankning") if "blankning" in q else None
+    # Fyll i helgdagar (när bara den ena börsen är öppen) med senaste kända värde
+    piv = lambda c: q.pivot(index="Date", columns="aktie", values=c).ffill(limit=5)
+    P, reg, PV = piv(score_col), piv("marknad_avst_ma200"), piv("pred_vol")
+    BL = piv("blankning") if "blankning" in q else None
+    AV = piv("avst_ma200").notna()
     us = [c for c in R.columns if not c.endswith(".ST")]
     se = [c for c in R.columns if c.endswith(".ST")]
     W = pd.DataFrame(0.0, index=R.index, columns=R.columns)
-    w, last_below = None, None
+    w, last_below, since = None, None, 0
     for i, d in enumerate(R.index):
         r_d = reg.loc[d]
         below = {"us": bool((r_d[us] < 0).mean() > 0.5), "se": bool((r_d[se] < 0).mean() > 0.5)}
         if not use_filter:
             below = {"us": False, "se": False}
-        if w is None or i % cfg["reb_days"] == 0 or below != last_below:
-            s = P.loc[d].dropna()
+        since += 1
+        if w is None or since >= cfg["reb_days"] or below != last_below:
+            if needs_model:
+                s = P.loc[d].dropna()
+            else:
+                avail = AV.loc[d]
+                s = pd.Series(0.5, index=avail[avail].index)
             if len(s) > 10:
                 w = target_weights(s, below, mode, PV.loc[d], BL.loc[d] if BL is not None else None,
                                    cfg).reindex(R.columns).fillna(0)
-                last_below = below
+                last_below, since = below, 0
         if w is not None:
             W.loc[d] = w
+    W = W.shift(1).fillna(0.0)  # beslut vid stängning dag d, affären görs till stängning dag d+1
     gross = (W * R).sum(axis=1)
     costs = pd.Series({c: cost_of(c) for c in R.columns})
     turn_cost = (W.diff().abs().fillna(W.abs()) * costs).sum(axis=1)
     return gross - turn_cost
 
 
+def buy_and_hold(q: pd.DataFrame, start=None) -> pd.Series:
+    """Köper alla aktier lika mycket första dagen och rör dem sedan aldrig."""
+    R = q.pivot(index="Date", columns="aktie", values="ret1")
+    AV = q.pivot(index="Date", columns="aktie", values="avst_ma200").notna()
+    d0 = R.index[R.index >= pd.Timestamp(start)][0] if start else AV.index[AV.sum(axis=1) > 10][0]
+    R, names = R.loc[d0:], AV.loc[d0][AV.loc[d0]].index
+    growth = (1 + R[names].fillna(0)).cumprod()
+    value = growth.mean(axis=1)
+    r = value.pct_change()
+    r.iloc[0] = value.iloc[0] - 1
+    costs = np.mean([cost_of(t) for t in names])
+    r.iloc[0] -= costs  # köpet första dagen
+    return r
+
+
+CRISES = {"IT-kraschen 2001–2002": ("2001-01-02", "2002-10-09"),  # testet kan starta först 2001
+          "Finanskrisen 2007–2009": ("2007-10-09", "2009-03-09"),
+          "Coronakraschen 2020": ("2020-02-19", "2020-03-23"),
+          "Räntechocken 2022": ("2022-01-03", "2022-10-12")}
+
+
 def cmd_backtest():
-    print("Bygger data för alla aktier...")
+    print("Bygger data för alla aktier (från år 2000)...")
     p, feats = build_panel()
     p = add_short_interest(p)
     q, learning = walk_forward(p, feats, verbose=True)
-    res = {"AI-portföljen": simulate(q, "ai"), "Enkla portföljen": simulate(q, "enkel"),
-           "Risk-portföljen": simulate(q, "risk"),
-           "Lika vikt utan filter": simulate(q, "enkel", {"blank_factor": 1.0}, use_filter=False)}
+    long = {"Enkla portföljen": simulate(q, "enkel"), "Gör ingenting": buy_and_hold(q)}
+    spy = (load_data("SPY")["Close"] * fx_series().reindex(load_data("SPY").index).ffill().bfill()).pct_change()
+    long["USA-börsen (SPY)"] = spy.shift(-1).reindex(q["Date"].drop_duplicates().sort_values()).fillna(0)
+    res = {"AI-portföljen": simulate(q, "ai"), "Enkla portföljen": long["Enkla portföljen"],
+           "Risk-portföljen": simulate(q, "risk"), "Gör ingenting": buy_and_hold(q, TEST_START),
+           "USA-börsen (SPY)": long["USA-börsen (SPY)"]}
     out = {"version": VERSION, "skapad": datetime.now().isoformat(timespec="minutes"),
-           "larande": learning, "strategier": {}, "kurvor": {}}
+           "larande": learning, "strategier": {}, "kurvor": {}, "kriser": {}, "sakerhet": {},
+           "period": f"{TEST_START[:4]}–idag"}
     for name, r in res.items():
+        r = r.loc[TEST_START:]
+        res[name] = r
         out["strategier"][name] = {"hela": stats(r), "fore_2022": stats(r.loc[:"2021-12-31"]),
                                    "fran_2022": stats(r.loc["2022-01-01":])}
         wk = (1 + r).cumprod().resample("W").last()
@@ -371,6 +457,26 @@ def cmd_backtest():
         out["kurvor"]["datum"] = [d.strftime("%Y-%m-%d") for d in wk.index]
         s = out["strategier"][name]["hela"]
         print(f"{name:22} {s['arlig']:+.1%}/år  Sharpe {s['sharpe']:.2f}  ras {s['max_ras']:.0%}")
+    # Hur gick det i kriserna? (regelportföljerna går att testa redan från år 2000)
+    series = {"AI-portföljen": res["AI-portföljen"], "Enkla portföljen": long["Enkla portföljen"],
+              "Risk-portföljen": res["Risk-portföljen"], "Gör ingenting": long["Gör ingenting"],
+              "USA-börsen (SPY)": long["USA-börsen (SPY)"]}
+    for crisis, (a, b) in CRISES.items():
+        row = {}
+        for name, r in series.items():
+            r = r.dropna()
+            row[name] = (float((1 + r.loc[a:b]).prod() - 1) if len(r) and r.index[0] <= pd.Timestamp(a)
+                         else None)
+        out["kriser"][crisis] = row
+        print(crisis, {k: (None if v is None else round(v, 3)) for k, v in row.items()})
+    # Hur länge måste vi vänta innan en skillnad i verkligheten betyder något?
+    for a_, b_ in (("AI-portföljen", "Gör ingenting"), ("Enkla portföljen", "Gör ingenting"),
+                   ("AI-portföljen", "Enkla portföljen")):
+        diff = (np.log1p(res[a_]) - np.log1p(res[b_])).dropna()  # log: jämför verklig tillväxt
+        per_year = len(diff) / max((diff.index[-1] - diff.index[0]).days / 365.25, 1)
+        d, te = float(diff.mean() * per_year), float(diff.std() * np.sqrt(per_year))
+        out["sakerhet"][f"{a_}|{b_}"] = {"skillnad": d, "spridning": te,
+                                          "ar": float((2 * te / abs(d)) ** 2) if abs(d) > 1e-6 else None}
     json.dump(out, open(F_BACKTEST, "w"), ensure_ascii=False, indent=1)
     try:
         lab = load_lab()
@@ -384,8 +490,11 @@ def cmd_backtest():
 # ---------------- AI-forskaren ----------------
 # Förregistrerade idéer, testas en i taget i den här ordningen. Listan är bestämd i förväg så att
 # forskaren inte kan leta tills den råkar hitta något som ser bra ut.
-DEV_END = "2023-12-31"      # idéer prövas på 2014–2023 ...
-LOCKED_START = "2024-01-01"  # ... och bara de som klarar det får möta den låsta perioden 2024–idag
+DEV_START = TEST_START
+DEV_END = "2023-12-31"      # idéer prövas på 2003–2023 ...
+LOCKED_START = "2024-01-01"  # ... och bara de som klarar det kontrolleras på 2024–idag. Den perioden har
+#                              redan setts när grundinställningarna valdes, så det riktiga provet för en idé
+#                              som klarar båda är att köras med låtsaspengar.
 MIN_GAIN = 0.03             # kräver minst så här mycket bättre Sharpe för att räknas som förbättring
 
 IDEAS = [
@@ -460,14 +569,14 @@ def research_step(p, feats, q):
         qq = qq.merge(q[["Date", "aktie", "pred_vol"]], on=["Date", "aktie"], how="left", suffixes=("_x", ""))
     base = simulate(q, base_mode)
     var = simulate(qq, idea.get("mode", base_mode), idea["cfg"], score_col=score)
-    dev_b, dev_v = stats(base.loc[:DEV_END]), stats(var.loc[:DEV_END])
+    dev_b, dev_v = stats(base.loc[DEV_START:DEV_END]), stats(var.loc[DEV_START:DEV_END])
     entry = {"id": idea["id"], "datum": datetime.now().strftime("%Y-%m-%d"), "titel": idea["titel"],
              "fraga": idea["fraga"], "portfolj": PORTS.get(base_mode, base_mode),
              "utveckling": {"fore": dev_b, "efter": dev_v}}
     if dev_v["sharpe"] - dev_b["sharpe"] >= MIN_GAIN:
         lk_b, lk_v = stats(base.loc[LOCKED_START:]), stats(var.loc[LOCKED_START:])
         entry["kontroll"] = {"fore": lk_b, "efter": lk_v}
-        ok = lk_v["sharpe"] >= lk_b["sharpe"]
+        ok = lk_v["sharpe"] - lk_b["sharpe"] >= MIN_GAIN
         entry["beslut"] = "klarade" if ok else "foll_i_kontroll"
     else:
         entry["beslut"] = "forkastad"
@@ -480,19 +589,19 @@ def research_step(p, feats, q):
 def summarize_entry(e) -> str:
     f, a = e["utveckling"]["fore"], e["utveckling"]["efter"]
     fp = lambda x: f"{x * 100:+.1f}".replace(".", ",").replace("-", "−") + " %"
-    txt = (f"På 2014–2023 gav idén {fp(a['arlig'])} per år mot {fp(f['arlig'])} för nuvarande "
+    txt = (f"På {DEV_START[:4]}–2023 gav idén {fp(a['arlig'])} per år mot {fp(f['arlig'])} för nuvarande "
            f"{e['portfolj']}, och värsta fallet blev {fp(a['max_ras'])} mot {fp(f['max_ras'])}.")
     if e["beslut"] == "forkastad":
         txt += " Det räckte inte som förbättring, så idén förkastas."
     elif e["beslut"] == "foll_i_kontroll":
         k = e["kontroll"]
-        txt += (f" Den såg lovande ut, men på den låsta perioden 2024–idag blev den sämre "
+        txt += (f" Den såg lovande ut, men på kontrollperioden 2024–idag räckte den inte "
                 f"({fp(k['efter']['arlig'])} mot {fp(k['fore']['arlig'])} per år). "
                 "Troligen var förbättringen tur.")
     else:
         k = e["kontroll"]
-        txt += (f" Den höll även på den låsta perioden 2024–idag ({fp(k['efter']['arlig'])} mot "
-                f"{fp(k['fore']['arlig'])} per år). Föreslås för införande.")
+        txt += (f" Den höll även på kontrollperioden 2024–idag ({fp(k['efter']['arlig'])} mot "
+                f"{fp(k['fore']['arlig'])} per år). Nästa steg är att prova den med låtsaspengar.")
     key = os.environ.get("ANTHROPIC_API_KEY")
     if key:
         try:
@@ -587,7 +696,7 @@ def load_portfolio():
         pf = json.load(open(F_PORTFOLIO))
         if pf.get("version") == VERSION:
             return pf
-        if pf.get("version") in (2, 3, 4):
+        if pf.get("version") in (2, 3, 4, 5, 6):
             # Behåll befintliga portföljer, lägg till de som saknas
             for k in PORTS:
                 pf["portfoljer"].setdefault(k, {"kassa": START_CASH, "innehav": {},
@@ -637,6 +746,10 @@ def cmd_papper():
     today = datetime.now().strftime("%Y-%m-%d")
     print(f"Papperstrading {today} (USD/SEK {fx:.2f})")
     panel, feats = build_panel()
+    last_date = panel["Date"].max().strftime("%Y-%m-%d")
+    if pf.get("senaste_data") == last_date:
+        print(f"   Ingen ny handelsdag sedan {last_date} – inga affärer idag")
+        return
     panel = add_short_interest(panel)
     evaluate_predictions(panel)
 
@@ -644,6 +757,8 @@ def cmd_papper():
     train = panel.dropna(subset=["y"])
     model = new_model().fit(train[feats], train["y"])
     last = panel.sort_values("Date").groupby("aktie").tail(1).set_index("aktie")
+    for c in RANK_COLS:  # senaste raden kan vara från olika dagar – räkna om rangordningen
+        last[c + "_rank"] = last.groupby("se")[c].rank(pct=True)
     last["ml"] = model.predict_proba(last[feats])[:, 1]
     sample = train[train["Date"] > train["Date"].max() - pd.Timedelta(days=365)]
     sample = sample.sample(min(4000, len(sample)), random_state=0)
@@ -653,9 +768,8 @@ def cmd_papper():
     # Riskmodellen: hur mycket väntas varje aktie svänga kommande månad?
     rf = risk_feats(feats)
     trv = panel.dropna(subset=["log_fwd_vol"])
-    last_r = panel.sort_values("Date").groupby("aktie").tail(1).set_index("aktie")
-    pred_vol = pd.Series(np.exp(new_risk_model().fit(trv[rf], trv["log_fwd_vol"]).predict(last_r[rf])),
-                         index=last_r.index)
+    pred_vol = pd.Series(np.exp(new_risk_model().fit(trv[rf], trv["log_fwd_vol"]).predict(last[rf])),
+                         index=last.index)
 
     print("   läser nyheter...")
     sigs, archive = [], []
@@ -677,9 +791,17 @@ def cmd_papper():
             old = pd.read_csv(F_NEWS)
             new = new[~(new["aktie"] + new["rubrik"]).isin(old["aktie"] + old["rubrik"])]
         append_csv(F_NEWS, new.to_dict("records"))
-    scores = pd.Series({s["aktie"]: s["poang"] for s in sigs})
+    # Affärerna styrs bara av den testade AI-modellen. Nyheterna sparas och utvärderas separat
+    # (facit "med nyheter") innan de får påverka något.
+    scores = pd.Series({s["aktie"]: s["ml"] for s in sigs})
     blank = last["blankning"] if "blankning" in last else None
     prices = {s["aktie"]: to_sek(s["aktie"], s["pris"], fx) for s in sigs}
+    # Om en kurs saknas idag: använd senast kända pris, och ombalansera inte på ofullständig data
+    known = {**pf.get("senaste_priser", {}), **prices}
+    missing = [t for p_ in pf["portfoljer"].values() for t in p_.get("innehav", {}) if t not in prices]
+    if missing:
+        print(f"   Kurs saknas idag för {sorted(set(missing))} – använder senast kända pris, ingen ombalansering")
+    prices = known
 
     mk = {}
     for key, tick in (("us", MARKET_US), ("se", MARKET_SE)):
@@ -691,10 +813,29 @@ def cmd_papper():
     for key, label in PORTS.items():
         port = pf["portfoljer"][key]
         hold = {t: float(n) for t, n in port["innehav"].items()}
+        if key == "hold":
+            # Gör ingenting: köper alla aktier lika mycket på startdagen och rör dem sedan aldrig
+            if not hold:
+                d0 = pf["start"]
+                fx0 = close_on("USDSEK=X", d0)
+                each = START_CASH / len(scores)
+                for t in scores.index:
+                    p0 = to_sek(t, close_on(t, d0), fx0)
+                    hold[t] = each * (1 - cost_of(t)) / p0
+                    all_trades.append({"datum": d0, "portfolj": label, "aktie": t, "handling": "KÖP",
+                                       "belopp_sek": round(each, 2), "vikt": round(1 / len(scores), 4)})
+                port["kassa"] = 0.0
+                port["senast_ombalans"] = d0
+                port["vikter"] = {t: round(1 / len(scores), 4) for t in scores.index}
+            port["innehav"] = hold
+            equity = sum(n * prices.get(t, 0) for t, n in hold.items())
+            hist_row[key] = round(equity, 2)
+            print(f"   {label}: {equity:,.0f} kr (rör aldrig något)")
+            continue
         equity = port["kassa"] + sum(n * prices.get(t, 0) for t, n in hold.items())
         last_reb = port["senast_ombalans"]
         due = (last_reb is None or (pd.Timestamp(today) - pd.Timestamp(last_reb)).days >= 28
-               or port["senaste_filter"] != below)
+               or port["senaste_filter"] != below) and not missing
         if due:
             w = target_weights(scores, below, key, pred_vol, blank)
             for t in sorted(w.index, key=lambda t: w[t] * equity - hold.get(t, 0) * prices[t]):
@@ -711,7 +852,7 @@ def cmd_papper():
                 all_trades.append({"datum": today, "portfolj": label, "aktie": t,
                                    "handling": "KÖP" if diff > 0 else "SÄLJ",
                                    "belopp_sek": round(abs(diff), 2), "vikt": round(float(w[t]), 4)})
-            hold = {t: n for t, n in hold.items() if n * prices.get(t, 0) > 1}
+            hold = {t: n for t, n in hold.items() if n * prices.get(t, 1e9) > 1}
             port["senast_ombalans"], port["senaste_filter"] = today, below
             port["vikter"] = {t: round(float(v), 4) for t, v in w.items()}
         port["innehav"] = hold
@@ -722,7 +863,16 @@ def cmd_papper():
     spy = prices.get("SPY") or to_sek("SPY", float(load_data("SPY")["Close"].iloc[-1]), fx)
     pf.setdefault("spy_start", spy)
     hist_row["jamforelse_spy"] = round(START_CASH * spy / pf["spy_start"], 2)
+    # Global indexfond som måttstock, räknad från samma startdag som portföljerna
+    try:
+        idx_now = close_on(INDEX_FUND, today) * fx
+        pf.setdefault("index_start", close_on(INDEX_FUND, pf["start"]) * close_on("USDSEK=X", pf["start"]))
+        hist_row["jamforelse_index"] = round(START_CASH * idx_now / pf["index_start"], 2)
+    except Exception as e:
+        print(f"   Indexfonden gick inte att hämta ({e})")
 
+    pf["senaste_priser"] = {t: float(v) for t, v in prices.items()}
+    pf["senaste_data"] = last_date
     pf.update(signaler=sigs, marknad=mk, viktigast=[(n, float(v)) for n, v in top_feats],
               uppdaterad=datetime.now().isoformat(timespec="minutes"))
     json.dump(pf, open(F_PORTFOLIO, "w"), ensure_ascii=False, indent=1)
@@ -752,6 +902,8 @@ PORT_INFO = {
               "kort": "Lika mycket i alla 33 aktier. Ingen AI."},
     "risk": {"namn": "Risk-portföljen", "farg": "#e67700",
              "kort": "Mindre pengar i aktier som AI:n tror kommer svänga mycket."},
+    "hold": {"namn": "Gör ingenting", "farg": "#6c757d",
+             "kort": "Köpte alla 33 aktier första dagen och rör dem aldrig. Måttstocken att slå."},
 }
 
 FEATURE_NAMES = {
@@ -811,7 +963,8 @@ def cmd_rapport():
             headline = f"{leader} leder"
             sub = (f"Efter {days} handelsdagar ligger den {signed_pct(spread * 100)} före sista plats. "
                    "Kortare perioder än ett par månader säger ofta mest om tur.")
-        spy = float(last["jamforelse_spy"]) if "jamforelse_spy" in last and pd.notna(last["jamforelse_spy"]) else None
+        col = "jamforelse_index" if "jamforelse_index" in last and pd.notna(last["jamforelse_index"]) else "jamforelse_spy"
+        spy = float(last[col]) if col in last and pd.notna(last[col]) else None
         lo = min(list(vals.values()) + ([spy] if spy else [])) / START_CASH - 1
         hi = max(list(vals.values()) + ([spy] if spy else [])) / START_CASH - 1
         span = max(abs(lo), abs(hi), 0.01)
@@ -828,12 +981,14 @@ def cmd_rapport():
   <div class="lane-foot"><span class="{'up' if r >= 0 else 'down'}">{signed_pct(r * 100, 2)}</span>
     <span class="desc">{info['kort']}</span></div>
 </li>"""
-        spy_txt = (f"<p class='pace'>Som jämförelse: 100 000 kr i hela den amerikanska börsen (SPY) "
+        bench = ("en global indexfond (hela världens börser)" if col == "jamforelse_index"
+                 else "hela den amerikanska börsen (SPY)")
+        spy_txt = (f"<p class='pace'>Som jämförelse: 100 000 kr i {bench} "
                    f"hade varit värt <b>{kr(spy)}</b> ({signed_pct((spy / START_CASH - 1) * 100, 2)}).</p>"
                    if spy else "")
         sec.append(f"""
 <section class="race" aria-labelledby="race-h">
-  <p class="kicker">Tre botar, 100&nbsp;000 låtsaskronor var, start {esc(pf['start'] if pf else '')}</p>
+  <p class="kicker">Fyra portföljer, 100&nbsp;000 låtsaskronor var, start {esc(pf['start'] if pf else '')}</p>
   <h1 id="race-h">{headline}</h1>
   <p class="lede">{sub}</p>
   <ol class="lanes">{lanes}</ol>
@@ -845,7 +1000,8 @@ def cmd_rapport():
                               "series": [{"namn": PORT_INFO[k]["namn"], "farg": PORT_INFO[k]["farg"],
                                           "data": [None if pd.isna(x) else round(float(x)) for x in h[k]]}
                                          for k in keys],
-                              "spy": [None if pd.isna(x) else round(float(x)) for x in h.get("jamforelse_spy", [])]}
+                              "spy": [None if pd.isna(x) else round(float(x)) for x in h.get(col, [])],
+                              "spy_namn": "Global indexfond" if col == "jamforelse_index" else "SPY"}
 
     # ---- Idag i korthet ----
     if pf:
@@ -864,7 +1020,7 @@ def cmd_rapport():
             tr = pd.read_csv(F_TRADES)
             if "datum" in tr:
                 trades_today = int((tr["datum"] == tr["datum"].max()).sum())
-        sig = sorted(pf.get("signaler", []), key=lambda s: -s["poang"])
+        sig = sorted(pf.get("signaler", []), key=lambda s: -s["ml"])
         nxt = []
         for k in keys:
             lr = pf["portfoljer"][k].get("senast_ombalans")
@@ -888,7 +1044,7 @@ def cmd_rapport():
             vik = pf["portfoljer"]["ai"].get("vikter", {})
 
             def row(s):
-                p = s["poang"]
+                p = s["ml"]
                 news = s.get("nyheter", 0)
                 wtxt = f"{vik.get(s['aktie'], 0) * 100:.1f}".replace(".", ",")
                 ntag = ("<span class='tag pos'>bra nyheter</span>" if news > 0.3 else
@@ -941,7 +1097,8 @@ def cmd_rapport():
                 sec.append(f"""
 <section aria-labelledby="news-h">
   <h2 id="news-h">Nyheter boten har läst</h2>
-  <p>De starkaste nyheterna från senaste veckan. De kan flytta AI:ns bedömning högst 5 procentenheter.
+  <p>De starkaste nyheterna från senaste veckan. Nyheterna påverkar inte affärerna än:
+  boten sparar dem och mäter först om de hade hjälpt.
   {how}</p>
   <ul class="news">{first}</ul>
   {f'<details><summary>Fler nyheter</summary><ul class="news">{rest}</ul></details>' if rest else ''}
@@ -970,7 +1127,7 @@ def cmd_rapport():
     done = {e["id"] for e in lab}
     nxt = next((i for i in IDEAS if i["id"] not in done), None)
     status = {"forkastad": ("Förkastad", "neg"), "foll_i_kontroll": ("Föll i kontrollen", "neg"),
-              "klarade": ("Klarade båda testen", "pos")}
+              "klarade": ("Lovande – prova live", "pos")}
     entries = ""
     for e in reversed(lab):
         lab_txt, cls = status.get(e["beslut"], (e["beslut"], ""))
@@ -985,8 +1142,9 @@ def cmd_rapport():
 <section aria-labelledby="lab-h">
   <h2 id="lab-h">AI-forskarens labbdagbok</h2>
   <p>Varje måndag testar boten en ny idé för att bli bättre. Reglerna är stränga så att den inte lurar sig själv:
-  idéerna är bestämda i förväg, de prövas först på 2014–2023, och bara de som klarar det får möta den
-  låsta perioden 2024–idag. Inget ändras i portföljerna utan att du och jag bestämmer det.</p>
+  idéerna är bestämda i förväg, de prövas först på 2003–2023, och bara de som klarar det kontrolleras på
+  2024–idag. Klarar en idé båda är nästa steg att prova den med låtsaspengar, eftersom det är det enda
+  provet som är helt fritt från efterhandskunskap. Inget ändras i portföljerna utan att du och jag bestämmer det.</p>
   <ul class="lab">{entries}</ul>
   {nxt_txt}
 </section>""")
@@ -994,7 +1152,8 @@ def cmd_rapport():
     # ---- Historiktest ----
     if bt:
         names = [("AI-portföljen", PORT_INFO["ai"]["farg"]), ("Enkla portföljen", PORT_INFO["enkel"]["farg"]),
-                 ("Risk-portföljen", PORT_INFO["risk"]["farg"]), ("Lika vikt utan filter", "#adb5bd")]
+                 ("Risk-portföljen", PORT_INFO["risk"]["farg"]), ("Gör ingenting", PORT_INFO["hold"]["farg"]),
+                 ("USA-börsen (SPY)", "#adb5bd")]
         chart_data["bt"] = {"labels": bt["kurvor"]["datum"],
                             "series": [{"namn": n, "farg": c, "data": [round(x * 100_000) for x in bt["kurvor"][n]]}
                                        for n, c in names if n in bt["kurvor"]]}
@@ -1012,25 +1171,75 @@ def cmd_rapport():
                                   "ai": [round(a * 100, 1) for a in L["risk_fel_ai"]],
                                   "enkel": [round(a * 100, 1) for a in L["risk_fel_enkel"]]}
         better = int((L["auc"] > 0.5).sum())
+        # Kriserna
+        crisis_html = ""
+        if bt.get("kriser"):
+            head = "".join(f"<th scope='col'>{n.replace('-portföljen', '').replace(' portföljen', '')}</th>"
+                           for n, _ in names)
+            body = ""
+            for crisis, row in bt["kriser"].items():
+                cells = ""
+                for n, _ in names:
+                    v = row.get(n)
+                    cells += ("<td class='na'>–</td>" if v is None else
+                              f"<td class='{'up' if v >= 0 else 'down'}'>{signed_pct(v * 100, 0)}</td>")
+                body += f"<tr><th scope='row'>{crisis}</th>{cells}</tr>"
+            crisis_html = f"""
+  <h3>Hur gick det i kriserna?</h3>
+  <p>Hur mycket varje portfölj tappade från toppen till botten av de stora börsfallen. Det är här
+  marknadsfiltret och riskmodellen ska göra nytta.</p>
+  <div class="scroll"><table class="crisis"><thead><tr><th></th>{head}</tr></thead><tbody>{body}</tbody></table></div>
+  <p class="note">Streck betyder att AI:n inte hade hunnit tränas än. Den behöver några års historik,
+  så AI-portföljerna kan testas först från 2003.</p>"""
+        # Säkerhetsmätaren
+        sure_html = ""
+        sk = bt.get("sakerhet", {})
+        def years_txt(key):
+            v = sk.get(key, {})
+            y = v.get("ar")
+            if y is None:
+                return None, v
+            return (f"{y:.0f} år" if y < 50 else "mer än 50 år"), v
+        rows_s = ""
+        for key, label in (("AI-portföljen|Gör ingenting", "AI-portföljen mot Gör ingenting"),
+                           ("Enkla portföljen|Gör ingenting", "Enkla portföljen mot Gör ingenting"),
+                           ("AI-portföljen|Enkla portföljen", "AI-portföljen mot Enkla portföljen")):
+            yt, v = years_txt(key)
+            if yt:
+                rows_s += (f"<tr><th scope='row'>{label}</th><td>{signed_pct(v['skillnad'] * 100)}</td>"
+                           f"<td><b>{yt}</b></td></tr>")
+        if rows_s:
+            sure_html = f"""
+  <h3>Hur länge måste vi vänta?</h3>
+  <p>Portföljerna går upp och ner av slumpen, så en skillnad måste vara stor och hålla länge innan vi kan
+  lita på den. Tabellen visar hur länge vi skulle behöva följa portföljerna för att vara säkra, om skillnaden
+  blir lika stor som i historiken.</p>
+  <table class="bt"><thead><tr><th scope="col">Jämförelse</th><th scope="col">Skillnad per år</th>
+  <th scope="col">Tid som behövs</th></tr></thead><tbody>{rows_s}</tbody></table>
+  <p class="note">Därför ska vi inte dra slutsatser av några veckors eller månaders resultat.</p>"""
         sec.append(f"""
 <section aria-labelledby="bt-h">
-  <h2 id="bt-h">Så hade det gått sedan 2014</h2>
+  <h2 id="bt-h">Så hade det gått sedan 2003</h2>
   <p>Ett test där varje portfölj bara fick se det som hade hänt fram till varje dag. Kurvan visar vad
   100&nbsp;000&nbsp;kr hade blivit. Courtage och valutaväxling är inräknat.</p>
-  <figure class="chart-wrap"><canvas id="btChart" height="240" aria-label="Historiktest sedan 2014"></canvas></figure>
+  <figure class="chart-wrap"><canvas id="btChart" height="240" aria-label="Historiktest sedan 2003"></canvas></figure>
   <table class="bt"><thead><tr><th scope="col">Portfölj</th><th scope="col">Per år</th>
   <th scope="col">Värsta fall</th></tr></thead><tbody>{rows}</tbody></table>
   <p class="note">Värsta fall är hur mycket portföljen som mest tappade från en topp. Aktierna är dagens
-  stora bolag, så alla siffror är lite för bra: bolag som gick dåligt finns inte med.</p>
+  stora bolag, alltså de som lyckades. Det gör alla portföljernas siffror för bra: utan de fem största
+  vinnarna sjunker avkastningen med flera procentenheter per år. USA-börsen (SPY) har inte det problemet
+  och är därför en ärligare jämförelse.</p>
+  {crisis_html}
+  {sure_html}
 
   <h3>Kan AI:n välja vinnare?</h3>
-  <p>Varje stapel är ett halvår som AI:n aldrig sett. Över mittlinjen betyder att den valde bättre än slumpen.
-  Det lyckades {better} av {len(L)} halvår, och marginalen är liten.</p>
-  <figure class="chart-wrap"><canvas id="aucChart" height="170" aria-label="AI:ns träffsäkerhet per halvår"></canvas></figure>
+  <p>Varje stapel är ett år som AI:n aldrig sett. Över mittlinjen betyder att den valde bättre än slumpen.
+  Det lyckades {better} av {len(L)} år, och marginalen är liten.</p>
+  <figure class="chart-wrap"><canvas id="aucChart" height="170" aria-label="AI:ns träffsäkerhet per år"></canvas></figure>
   {'''<h3>Kan AI:n förutse risk?</h3>
   <p>Hur fel riskmodellen gissade aktiernas svängningar, jämfört med att bara anta att de svänger som förra
   månaden. Lägre är bättre. Här är AI:n faktiskt lite bättre.</p>
-  <figure class="chart-wrap"><canvas id="riskChart" height="170" aria-label="Riskmodellens fel per halvår"></canvas></figure>''' if "risk" in chart_data else ""}
+  <figure class="chart-wrap"><canvas id="riskChart" height="170" aria-label="Riskmodellens fel per år"></canvas></figure>''' if "risk" in chart_data else ""}
 </section>""")
 
     # ---- Affärer + ordlista ----
@@ -1181,6 +1390,9 @@ th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
 thead th{font-size:13px;color:var(--soft);font-weight:400}
 td.r{text-align:right}
 .sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
+.scroll{overflow-x:auto}
+table.crisis th,table.crisis td{white-space:nowrap;font-size:14px}
+td.na{color:var(--soft)}
 .buy{color:var(--up)}.sell{color:var(--down)}
 .glossary dt{font-weight:700;margin-top:12px}.glossary dd{margin:2px 0 0;color:var(--soft);font-size:15px}
 .stale{background:var(--down);color:#fff;padding:14px 20px;font-size:15px}
@@ -1197,14 +1409,14 @@ footer{max-width:680px;margin:auto;padding:0 20px 40px;font-size:14px;color:var(
 <footer>Ingen riktig handel sker. Historiska resultat är ingen garanti för framtiden.</footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-// Varna om boten inte har uppdaterats efter senaste vardagskörning (17:40)
+// Varna om boten inte har uppdaterats efter senaste vardagskörning (22:40, efter att USA stängt)
 (function () {
   const upd = new Date("{{UPDATED_ISO}}");
   const now = new Date();
-  const exp = new Date(now); exp.setHours(18, 30, 0, 0);
+  const exp = new Date(now); exp.setHours(23, 30, 0, 0);
   if (now < exp) exp.setDate(exp.getDate() - 1);
   while (exp.getDay() === 0 || exp.getDay() === 6) exp.setDate(exp.getDate() - 1);
-  exp.setHours(17, 0, 0, 0);
+  exp.setHours(22, 0, 0, 0);
   if (upd < exp) {
     const el = document.getElementById('stale');
     el.hidden = false;
@@ -1227,8 +1439,9 @@ if (window.Chart) {
   const fit = id => { const c = document.getElementById(id); if (c) c.parentElement.style.height = c.getAttribute('height') + 'px'; return c; };
   if (D.race && D.race.labels.length > 1 && fit('raceChart')) {
     const ds = D.race.series.map(s => ({label: s.namn, data: s.data, borderColor: s.farg, backgroundColor: s.farg,
-      borderWidth: 3, pointRadius: 0, tension: .25}));
-    if (D.race.spy.length) ds.push({label: 'SPY', data: D.race.spy, borderColor: soft, borderDash: [5, 4],
+      borderWidth: s.namn === 'Gör ingenting' ? 2 : 3, borderDash: s.namn === 'Gör ingenting' ? [2, 3] : [],
+      pointRadius: 0, tension: .25, spanGaps: true}));
+    if (D.race.spy.length) ds.push({label: D.race.spy_namn, data: D.race.spy, borderColor: soft, borderDash: [5, 4],
       borderWidth: 1.5, pointRadius: 0});
     const o = base(); o.scales.y.ticks = {callback: kr};
     o.plugins.tooltip = {callbacks: {label: c => c.dataset.label + ': ' + kr(c.parsed.y)}};
