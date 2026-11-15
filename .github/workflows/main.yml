@@ -1,7 +1,7 @@
 name: Daglig papperstrading
 on:
   schedule:
-    - cron: "40 16 * * 1-5"
+    - cron: "40 21 * * 1-5"   # 22:40 svensk vintertid, efter att både Stockholm och USA stängt
   workflow_dispatch:
 permissions:
   contents: write
