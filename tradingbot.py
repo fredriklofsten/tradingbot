@@ -52,7 +52,7 @@ NEWS_DAYS = 7
 START_CASH = 100_000
 MIN_TRADE = 0.005       # handla inte om skillnaden är under 0,5 % av portföljen
 CLAUDE_MODEL = "claude-haiku-5-5"
-VERSION = 3
+VERSION = 4
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 F_PORTFOLIO = os.path.join(DIR, "papper_portfolj.json")
@@ -63,6 +63,7 @@ F_BACKTEST = os.path.join(DIR, "backtest.json")
 F_REPORT = os.path.join(DIR, "rapport.html")
 PORTS = {"ai": "AI-portföljen", "enkel": "Enkla portföljen", "risk": "Risk-portföljen"}
 F_NEWS = os.path.join(DIR, "nyheter_arkiv.csv")
+F_SHORT = os.path.join(DIR, "blankning.csv")
 MACRO = ["vix", "vix_chg20", "ranta10", "ranta_chg60", "usdsek_chg60"]
 
 MODEL_PARAMS = dict(max_iter=300, learning_rate=0.03, max_depth=4,
@@ -183,21 +184,92 @@ def new_model():
     return HistGradientBoostingClassifier(**MODEL_PARAMS)
 
 
+# ---------------- Blankning (Finansinspektionen) ----------------
+BLANK_LIMIT = 2.0       # aktier där minst 2 % av aktierna är blankade ...
+BLANK_FACTOR = 0.3      # ... får bara 30 % av sin vanliga vikt
+BLANK_NAMN = {"VOLV-B.ST": r"^(?:Aktiebolaget|AB) Volvo", "ERIC-B.ST": "Ericsson", "INVE-B.ST": r"^Investor",
+              "ATCO-A.ST": "Atlas Copco", "ABB.ST": r"^ABB", "AZN.ST": "ASTRAZENECA|AstraZeneca",
+              "SEB-A.ST": "Skandinaviska Enskilda", "SHB-A.ST": "Handelsbanken", "HM-B.ST": "Hennes",
+              "SAND.ST": "Sandvik", "ASSA-B.ST": "ASSA ABLOY", "ESSITY-B.ST": "Essity",
+              "HEXA-B.ST": r"^Hexagon", "SKF-B.ST": "SKF", "TELIA.ST": "Telia",
+              "EVO.ST": r"^Evolution (?:AB|Gaming)", "SWED-A.ST": "Swedbank", "ALFA.ST": "Alfa Laval"}
+
+
+def load_short_interest() -> pd.DataFrame:
+    """Summan av alla rapporterade blankningspositioner (≥0,5 %) per svensk aktie och dag.
+    Byggs från Finansinspektionens historikfil. Tom tabell om FI inte går att nå."""
+    import requests
+    import time
+    raw = None
+    for attempt in range(8):  # FI:s server svarar ibland 404 – försök igen
+        try:
+            r = requests.get("https://www.fi.se/BlankningsRegister/GetHistFile", timeout=180,
+                             headers={"User-Agent": "Mozilla/5.0 tradingbot"})
+            if "opendocument" in r.headers.get("content-type", ""):
+                raw = pd.read_excel(io.BytesIO(r.content), engine="odf", header=None, skiprows=6).iloc[:, :6]
+                break
+        except Exception:
+            pass
+        time.sleep(4)
+    if raw is None:
+        if os.path.exists(F_SHORT):
+            print("   Blankningsregistret svarade inte – använder senast sparade kopia")
+            return pd.read_csv(F_SHORT, index_col=0, parse_dates=True)
+        print("   Blankningsregistret gick inte att hämta – regeln används inte idag")
+        return pd.DataFrame()
+    raw.columns = ["holder", "emittent", "isin", "pct", "datum", "kommentar"]
+    raw["datum"] = pd.to_datetime(raw["datum"], errors="coerce")
+    raw["pct"] = pd.to_numeric(raw["pct"].astype(str).str.replace("<0,5", "0").str.replace(",", "."),
+                               errors="coerce")
+    raw = raw.dropna(subset=["pct", "datum", "emittent"])
+    days = pd.bdate_range("2012-01-01", pd.Timestamp.today())
+    out = {}
+    for t, rx in BLANK_NAMN.items():
+        d = raw[raw["emittent"].str.contains(rx, regex=True, na=False)]
+        tot = pd.Series(0.0, index=days)
+        for _, g in d.groupby("holder"):
+            s = g.sort_values("datum").groupby("datum")["pct"].last()
+            s = s.where(s >= 0.5, 0.0)
+            tot += s.reindex(days.union(s.index)).ffill().fillna(0).reindex(days)
+        out[t] = tot
+    sh = pd.DataFrame(out).shift(1)  # publiceras dagen efter
+    sh.loc["2016-01-01":].round(2).to_csv(F_SHORT)
+    return sh
+
+
+def add_short_interest(p: pd.DataFrame) -> pd.DataFrame:
+    sh = load_short_interest()
+    if sh.empty:
+        p["blankning"] = np.nan
+        return p
+    long = sh.stack().rename("blankning").reset_index()
+    long.columns = ["Date", "aktie", "blankning"]
+    return p.merge(long, on=["Date", "aktie"], how="left")
+
+
 # ---------------- Portföljvikter ----------------
-def target_weights(scores: pd.Series, below: dict, mode: str, pred_vol=None) -> pd.Series:
-    """mode: 'ai' (mer i aktier AI:n tror på), 'enkel' (lika), 'risk' (mindre i stormiga aktier).
-    below: {'us': bool, 'se': bool} – marknaden under sitt 200-dagars snitt."""
-    if mode == "ai":
-        z = (scores.rank(pct=True) - 0.5) * 2 * TILT
-        w = (1 + z).clip(lower=0)
-    elif mode == "risk" and pred_vol is not None:
-        w = 1 / pred_vol.reindex(scores.index).fillna(pred_vol.median()).clip(lower=0.05)
-    else:
-        w = pd.Series(1.0, index=scores.index)
+BASE_CFG = {"tilt": TILT, "filter_factor": FILTER_FACTOR, "reb_days": REBALANCE_DAYS,
+            "blank_limit": BLANK_LIMIT, "blank_factor": BLANK_FACTOR}
+
+
+def target_weights(scores: pd.Series, below: dict, mode: str, pred_vol=None, blank=None,
+                   cfg=None) -> pd.Series:
+    """mode: 'ai' (mer i aktier AI:n tror på), 'enkel' (lika), 'risk' (mindre i stormiga aktier),
+    'ai_risk' (båda). below: {'us': bool, 'se': bool} – marknaden under sitt 200-dagars snitt.
+    blank: blankning i procent per aktie – mycket blankade aktier får lägre vikt."""
+    cfg = {**BASE_CFG, **(cfg or {})}
+    w = pd.Series(1.0, index=scores.index)
+    if mode in ("ai", "ai_risk"):
+        w *= (1 + (scores.rank(pct=True) - 0.5) * 2 * cfg["tilt"]).clip(lower=0)
+    if mode in ("risk", "ai_risk") and pred_vol is not None:
+        w /= pred_vol.reindex(scores.index).fillna(pred_vol.median()).clip(lower=0.05)
+    if blank is not None:
+        heavy = (blank.reindex(scores.index) >= cfg["blank_limit"]).fillna(False)
+        w[heavy] *= cfg["blank_factor"]
     w = w / w.sum()
     for t in w.index:
         if below["se" if t.endswith(".ST") else "us"]:
-            w[t] *= FILTER_FACTOR
+            w[t] *= cfg["filter_factor"]
     return w
 
 
@@ -210,11 +282,11 @@ def stats(r: pd.Series) -> dict:
             "max_ras": float((eq / eq.cummax() - 1).min())}
 
 
-def cmd_backtest():
-    print("Bygger data för alla aktier...")
-    p, feats = build_panel()
-    p["prob"] = np.nan
-    p["pred_vol"] = np.nan
+def walk_forward(p: pd.DataFrame, feats: list, model_fn=None, risk=True, verbose=False):
+    """Tränar om var sjätte månad och förutsäger halvåret efter, som modellen aldrig sett."""
+    model_fn = model_fn or new_model
+    p = p.copy()
+    p["prob"], p["pred_vol"] = np.nan, np.nan
     rf = risk_feats(feats)
     learning = []
     start = pd.Timestamp("2014-01-01")
@@ -223,50 +295,65 @@ def cmd_backtest():
         tr = p[p["Date"] < start - pd.Timedelta(days=35)].dropna(subset=["y"])
         te = (p["Date"] >= start) & (p["Date"] < end)
         if te.any():
-            m = new_model().fit(tr[feats], tr["y"])
+            m = model_fn().fit(tr[feats], tr["y"])
             p.loc[te, "prob"] = m.predict_proba(p.loc[te, feats])[:, 1]
-            trv = p[p["Date"] < start - pd.Timedelta(days=35)].dropna(subset=["log_fwd_vol"])
-            mv = new_risk_model().fit(trv[rf], trv["log_fwd_vol"])
-            p.loc[te, "pred_vol"] = np.exp(mv.predict(p.loc[te, rf]))
+            if risk:
+                trv = p[p["Date"] < start - pd.Timedelta(days=35)].dropna(subset=["log_fwd_vol"])
+                mv = new_risk_model().fit(trv[rf], trv["log_fwd_vol"])
+                p.loc[te, "pred_vol"] = np.exp(mv.predict(p.loc[te, rf]))
             sc = p.loc[te].dropna(subset=["y"])
             if len(sc) > 200 and sc["y"].nunique() == 2:
-                sv = p.loc[te].dropna(subset=["fwd_vol"])
-                learning.append({"period": start.strftime("%Y-%m"),
-                                 "auc": float(roc_auc_score(sc["y"], sc["prob"])),
-                                 "risk_fel_ai": float((sv["pred_vol"] - sv["fwd_vol"]).abs().mean()),
-                                 "risk_fel_enkel": float((sv["vol_20"] * np.sqrt(252) - sv["fwd_vol"]).abs().mean()),
-                                 "traningsrader": len(tr)})
-                print(f"   {start:%Y-%m}: AUC {learning[-1]['auc']:.3f}")
+                e = {"period": start.strftime("%Y-%m"), "auc": float(roc_auc_score(sc["y"], sc["prob"])),
+                     "traningsrader": len(tr)}
+                if risk:
+                    sv = p.loc[te].dropna(subset=["fwd_vol"])
+                    e["risk_fel_ai"] = float((sv["pred_vol"] - sv["fwd_vol"]).abs().mean())
+                    e["risk_fel_enkel"] = float((sv["vol_20"] * np.sqrt(252) - sv["fwd_vol"]).abs().mean())
+                learning.append(e)
+                if verbose:
+                    print(f"   {start:%Y-%m}: AUC {e['auc']:.3f}")
         start = end
+    return p.dropna(subset=["prob"]), learning
 
-    q = p.dropna(subset=["prob"])
+
+def simulate(q: pd.DataFrame, mode: str, cfg=None, use_filter=True, score_col="prob") -> pd.Series:
+    """Daglig avkastning för en portfölj, med courtage."""
+    cfg = {**BASE_CFG, **(cfg or {})}
     R = q.pivot(index="Date", columns="aktie", values="ret1").fillna(0)
-    P = q.pivot(index="Date", columns="aktie", values="prob")
+    P = q.pivot(index="Date", columns="aktie", values=score_col)
     reg = q.pivot(index="Date", columns="aktie", values="marknad_avst_ma200")
     PV = q.pivot(index="Date", columns="aktie", values="pred_vol")
+    BL = q.pivot(index="Date", columns="aktie", values="blankning") if "blankning" in q else None
+    us = [c for c in R.columns if not c.endswith(".ST")]
+    se = [c for c in R.columns if c.endswith(".ST")]
+    W = pd.DataFrame(0.0, index=R.index, columns=R.columns)
+    w, last_below = None, None
+    for i, d in enumerate(R.index):
+        r_d = reg.loc[d]
+        below = {"us": bool((r_d[us] < 0).mean() > 0.5), "se": bool((r_d[se] < 0).mean() > 0.5)}
+        if not use_filter:
+            below = {"us": False, "se": False}
+        if w is None or i % cfg["reb_days"] == 0 or below != last_below:
+            s = P.loc[d].dropna()
+            if len(s) > 10:
+                w = target_weights(s, below, mode, PV.loc[d], BL.loc[d] if BL is not None else None,
+                                   cfg).reindex(R.columns).fillna(0)
+                last_below = below
+        if w is not None:
+            W.loc[d] = w
+    gross = (W * R).sum(axis=1)
+    turn = W.diff().abs().sum(axis=1).fillna(0)
+    return gross - turn * COST
 
-    def run(mode, use_filter=True):
-        W = pd.DataFrame(0.0, index=R.index, columns=R.columns)
-        w, last_below = None, None
-        for i, d in enumerate(R.index):
-            r_d = reg.loc[d]
-            below = {"us": bool((r_d[[c for c in r_d.index if not c.endswith(".ST")]] < 0).mean() > 0.5),
-                     "se": bool((r_d[[c for c in r_d.index if c.endswith(".ST")]] < 0).mean() > 0.5)}
-            if not use_filter:
-                below = {"us": False, "se": False}
-            if w is None or i % REBALANCE_DAYS == 0 or below != last_below:
-                s = P.loc[d].dropna()
-                if len(s) > 10:
-                    w = target_weights(s, below, mode, PV.loc[d]).reindex(R.columns).fillna(0)
-                    last_below = below
-            if w is not None:
-                W.loc[d] = w
-        gross = (W * R).sum(axis=1)
-        turn = W.diff().abs().sum(axis=1).fillna(0)
-        return gross - turn * COST
 
-    res = {"AI-portföljen": run("ai"), "Enkla portföljen": run("enkel"),
-           "Risk-portföljen": run("risk"), "Lika vikt utan filter": run("enkel", use_filter=False)}
+def cmd_backtest():
+    print("Bygger data för alla aktier...")
+    p, feats = build_panel()
+    p = add_short_interest(p)
+    q, learning = walk_forward(p, feats, verbose=True)
+    res = {"AI-portföljen": simulate(q, "ai"), "Enkla portföljen": simulate(q, "enkel"),
+           "Risk-portföljen": simulate(q, "risk"),
+           "Lika vikt utan filter": simulate(q, "enkel", {"blank_factor": 1.0}, use_filter=False)}
     out = {"version": VERSION, "skapad": datetime.now().isoformat(timespec="minutes"),
            "larande": learning, "strategier": {}, "kurvor": {}}
     for name, r in res.items():
@@ -278,6 +365,137 @@ def cmd_backtest():
         s = out["strategier"][name]["hela"]
         print(f"{name:22} {s['arlig']:+.1%}/år  Sharpe {s['sharpe']:.2f}  ras {s['max_ras']:.0%}")
     json.dump(out, open(F_BACKTEST, "w"), ensure_ascii=False, indent=1)
+    try:
+        research_step(p, feats, q)
+    except Exception as e:
+        print(f"Forskningssteget misslyckades: {e}")
+
+
+# ---------------- AI-forskaren ----------------
+# Förregistrerade idéer, testas en i taget i den här ordningen. Listan är bestämd i förväg så att
+# forskaren inte kan leta tills den råkar hitta något som ser bra ut.
+DEV_END = "2023-12-31"      # idéer prövas på 2014–2023 ...
+LOCKED_START = "2024-01-01"  # ... och bara de som klarar det får möta den låsta perioden 2024–idag
+MIN_GAIN = 0.03             # kräver minst så här mycket bättre Sharpe för att räknas som förbättring
+
+IDEAS = [
+    {"id": "tilt2", "titel": "Låt AI:n bestämma mer",
+     "fraga": "Blir AI-portföljen bättre om AI:n får flytta pengarna dubbelt så mycket?",
+     "portfolj": "ai", "cfg": {"tilt": 2.0}},
+    {"id": "tilt05", "titel": "Låt AI:n bestämma mindre",
+     "fraga": "Blir AI-portföljen bättre om AI:n bara får flytta pengarna hälften så mycket?",
+     "portfolj": "ai", "cfg": {"tilt": 0.5}},
+    {"id": "filter_ut", "titel": "Gå ur helt i nedgångar",
+     "fraga": "Är det bättre att sälja allt (i stället för hälften) när börsen är under sitt 200-dagars snitt?",
+     "portfolj": "enkel", "cfg": {"filter_factor": 0.0}},
+    {"id": "reb40", "titel": "Byt innehav mer sällan",
+     "fraga": "Blir det bättre att ombalansera varannan månad, så att courtaget blir lägre?",
+     "portfolj": "enkel", "cfg": {"reb_days": 40}},
+    {"id": "blank1", "titel": "Strängare blankningsregel",
+     "fraga": "Blir det bättre att dra ner på aktier redan när 1 % är blankat (i stället för 2 %)?",
+     "portfolj": "enkel", "cfg": {"blank_limit": 1.0}},
+    {"id": "ai_risk", "titel": "Kombinera AI och risk",
+     "fraga": "Blir det bättre att både följa AI:ns favoriter och undvika stormiga aktier?",
+     "portfolj": "ai", "mode": "ai_risk", "cfg": {}},
+    {"id": "momentum", "titel": "Momentum utan AI",
+     "fraga": "Klarar en enkel regel (mer i aktier som gått bäst senaste halvåret) sig lika bra som AI:n?",
+     "portfolj": "ai", "score": "avk_120d", "cfg": {}},
+    {"id": "reb10", "titel": "Byt innehav oftare",
+     "fraga": "Blir AI-portföljen bättre om den följer AI:ns senaste bedömning varannan vecka?",
+     "portfolj": "ai", "cfg": {"reb_days": 10}},
+    {"id": "logistisk", "titel": "Enklare AI-modell",
+     "fraga": "Gör en mycket enklare modell (logistisk regression) samma nytta som den avancerade?",
+     "portfolj": "ai", "modell": "logistisk", "cfg": {}},
+    {"id": "bara_rank", "titel": "Bara jämförelser mellan aktier",
+     "fraga": "Blir AI:n bättre om den bara får se hur aktierna står sig mot varandra, inte råa siffror?",
+     "portfolj": "ai", "modell": "bara_rank", "cfg": {}},
+    {"id": "filter_kvart", "titel": "Mildare marknadsfilter",
+     "fraga": "Är det bättre att bara dra ner till 75 % (i stället för 50 %) när börsen är svag?",
+     "portfolj": "enkel", "cfg": {"filter_factor": 0.75}},
+    {"id": "blank_ut", "titel": "Undvik blankade aktier helt",
+     "fraga": "Blir det bättre att inte äga mycket blankade aktier alls?",
+     "portfolj": "enkel", "cfg": {"blank_factor": 0.0}},
+]
+F_LAB = os.path.join(DIR, "labbdagbok.json")
+
+
+def load_lab():
+    try:
+        return json.load(open(F_LAB))
+    except Exception:
+        return []
+
+
+def research_step(p, feats, q):
+    lab = load_lab()
+    done = {e["id"] for e in lab}
+    idea = next((i for i in IDEAS if i["id"] not in done), None)
+    if idea is None:
+        print("AI-forskaren har testat alla idéer på listan.")
+        return
+    print(f"AI-forskaren testar: {idea['titel']}")
+    base_mode = idea["portfolj"]
+    qq, score = q, idea.get("score", "prob")
+    if idea.get("modell") == "logistisk":
+        from sklearn.linear_model import LogisticRegression
+        from sklearn.pipeline import make_pipeline
+        from sklearn.preprocessing import StandardScaler
+        from sklearn.impute import SimpleImputer
+        fn = lambda: make_pipeline(SimpleImputer(), StandardScaler(), LogisticRegression(C=0.1, max_iter=500))
+        qq, _ = walk_forward(p, feats, model_fn=fn, risk=False)
+        qq = qq.merge(q[["Date", "aktie", "pred_vol"]], on=["Date", "aktie"], how="left", suffixes=("_x", ""))
+    elif idea.get("modell") == "bara_rank":
+        fr = [f for f in feats if f.endswith("_rank")] + ["se"]
+        qq, _ = walk_forward(p, fr, risk=False)
+        qq = qq.merge(q[["Date", "aktie", "pred_vol"]], on=["Date", "aktie"], how="left", suffixes=("_x", ""))
+    base = simulate(q, base_mode)
+    var = simulate(qq, idea.get("mode", base_mode), idea["cfg"], score_col=score)
+    dev_b, dev_v = stats(base.loc[:DEV_END]), stats(var.loc[:DEV_END])
+    entry = {"id": idea["id"], "datum": datetime.now().strftime("%Y-%m-%d"), "titel": idea["titel"],
+             "fraga": idea["fraga"], "portfolj": PORTS.get(base_mode, base_mode),
+             "utveckling": {"fore": dev_b, "efter": dev_v}}
+    if dev_v["sharpe"] - dev_b["sharpe"] >= MIN_GAIN:
+        lk_b, lk_v = stats(base.loc[LOCKED_START:]), stats(var.loc[LOCKED_START:])
+        entry["kontroll"] = {"fore": lk_b, "efter": lk_v}
+        ok = lk_v["sharpe"] >= lk_b["sharpe"]
+        entry["beslut"] = "klarade" if ok else "foll_i_kontroll"
+    else:
+        entry["beslut"] = "forkastad"
+    entry["sammanfattning"] = summarize_entry(entry)
+    lab.append(entry)
+    json.dump(lab, open(F_LAB, "w"), ensure_ascii=False, indent=1)
+    print(f"   → {entry['beslut']}: {entry['sammanfattning']}")
+
+
+def summarize_entry(e) -> str:
+    f, a = e["utveckling"]["fore"], e["utveckling"]["efter"]
+    fp = lambda x: f"{x * 100:+.1f}".replace(".", ",").replace("-", "−") + " %"
+    txt = (f"På 2014–2023 gav idén {fp(a['arlig'])} per år mot {fp(f['arlig'])} för nuvarande "
+           f"{e['portfolj']}, och värsta fallet blev {fp(a['max_ras'])} mot {fp(f['max_ras'])}.")
+    if e["beslut"] == "forkastad":
+        txt += " Det räckte inte som förbättring, så idén förkastas."
+    elif e["beslut"] == "foll_i_kontroll":
+        k = e["kontroll"]
+        txt += (f" Den såg lovande ut, men på den låsta perioden 2024–idag blev den sämre "
+                f"({fp(k['efter']['arlig'])} mot {fp(k['fore']['arlig'])} per år). "
+                "Troligen var förbättringen tur.")
+    else:
+        k = e["kontroll"]
+        txt += (f" Den höll även på den låsta perioden 2024–idag ({fp(k['efter']['arlig'])} mot "
+                f"{fp(k['fore']['arlig'])} per år). Föreslås för införande.")
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if key:
+        try:
+            import anthropic
+            msg = anthropic.Anthropic(api_key=key).messages.create(
+                model=CLAUDE_MODEL, max_tokens=300, messages=[{"role": "user", "content":
+                    "Förklara för en nybörjare, på 2–3 korta meningar på svenska, vad det här testet av en "
+                    "tradingbot visade och vad man kan lära sig av det. Inga rubriker, ingen hype.\n\n"
+                    f"Fråga: {e['fraga']}\nResultat: {txt}"}])
+            return msg.content[0].text.strip()
+        except Exception:
+            pass
+    return txt
 
 
 # ---------------- Nyheter ----------------
@@ -359,13 +577,13 @@ def load_portfolio():
         pf = json.load(open(F_PORTFOLIO))
         if pf.get("version") == VERSION:
             return pf
-        if pf.get("version") == 2:
-            # Behåll AI- och Enkla portföljen, lägg till Risk-portföljen
+        if pf.get("version") in (2, 3):
+            # Behåll befintliga portföljer, lägg till de som saknas
             for k in PORTS:
                 pf["portfoljer"].setdefault(k, {"kassa": START_CASH, "innehav": {},
                                                 "senast_ombalans": None, "senaste_filter": None})
             pf["version"] = VERSION
-            print("Lägger till Risk-portföljen.")
+            print("Uppgraderar portföljfilen.")
             return pf
         print("Gammal portfölj hittad – startar om med nya portföljer.")
         for f in (F_TRADES, F_HISTORY, F_PRED):
@@ -409,6 +627,7 @@ def cmd_papper():
     today = datetime.now().strftime("%Y-%m-%d")
     print(f"Papperstrading {today} (USD/SEK {fx:.2f})")
     panel, feats = build_panel()
+    panel = add_short_interest(panel)
     evaluate_predictions(panel)
 
     # Träna AI-modellen på all historik med kända utfall
@@ -438,7 +657,9 @@ def cmd_papper():
         sigs.append({"aktie": t, "datum": r["Date"].strftime("%Y-%m-%d"), "pris": float(r["pris"]),
                      "ml": float(r["ml"]), "nyheter": sent,
                      "poang": float(np.clip(r["ml"] + NEWS_WEIGHT * sent, 0, 1)),
-                     "risk": float(pred_vol.get(t, np.nan)), "nyhetslista": items[:4]})
+                     "risk": float(pred_vol.get(t, np.nan)),
+                     "blankning": None if pd.isna(r.get("blankning", np.nan)) else float(r["blankning"]),
+                     "nyhetslista": items[:4]})
     # Nyhetsarkiv – samlas för framtida träning
     if archive:
         new = pd.DataFrame(archive)
@@ -447,6 +668,7 @@ def cmd_papper():
             new = new[~(new["aktie"] + new["rubrik"]).isin(old["aktie"] + old["rubrik"])]
         append_csv(F_NEWS, new.to_dict("records"))
     scores = pd.Series({s["aktie"]: s["poang"] for s in sigs})
+    blank = last["blankning"] if "blankning" in last else None
     prices = {s["aktie"]: to_sek(s["aktie"], s["pris"], fx) for s in sigs}
 
     mk = {}
@@ -464,7 +686,7 @@ def cmd_papper():
         due = (last_reb is None or (pd.Timestamp(today) - pd.Timestamp(last_reb)).days >= 28
                or port["senaste_filter"] != below)
         if due:
-            w = target_weights(scores, below, key, pred_vol)
+            w = target_weights(scores, below, key, pred_vol, blank)
             for t in sorted(w.index, key=lambda t: w[t] * equity - hold.get(t, 0) * prices[t]):
                 diff = w[t] * equity - hold.get(t, 0) * prices[t]
                 if abs(diff) < MIN_TRADE * equity:
@@ -661,6 +883,9 @@ def cmd_rapport():
                 wtxt = f"{vik.get(s['aktie'], 0) * 100:.1f}".replace(".", ",")
                 ntag = ("<span class='tag pos'>bra nyheter</span>" if news > 0.3 else
                         "<span class='tag neg'>dåliga nyheter</span>" if news < -0.3 else "")
+                if (s.get("blankning") or 0) >= BLANK_LIMIT:
+                    ntag += (f"<span class='tag neg'>blankad "
+                             f"{str(round(s['blankning'], 1)).replace('.', ',')} %</span>")
                 return (f"<li><span class='tick'>{esc(s['aktie'].replace('.ST', ''))}</span>"
                         f"<span class='meter' style='--p:{p * 100:.0f}%'><span></span></span>"
                         f"<span class='num'>{p * 100:.0f} %</span>{ntag}"
@@ -730,6 +955,32 @@ def cmd_rapport():
                  f"Första facit kommer i mitten av december.</p>")
     sec.append(f"<section aria-labelledby='facit-h'><h2 id='facit-h'>Facit: har AI:n rätt?</h2>{facit}</section>")
 
+    # ---- AI-forskarens labbdagbok ----
+    lab = load_lab()
+    done = {e["id"] for e in lab}
+    nxt = next((i for i in IDEAS if i["id"] not in done), None)
+    status = {"forkastad": ("Förkastad", "neg"), "foll_i_kontroll": ("Föll i kontrollen", "neg"),
+              "klarade": ("Klarade båda testen", "pos")}
+    entries = ""
+    for e in reversed(lab):
+        lab_txt, cls = status.get(e["beslut"], (e["beslut"], ""))
+        entries += (f"<li><div class='lab-head'><b>{esc(e['titel'])}</b><span class='tag {cls}'>{lab_txt}</span></div>"
+                    f"<p class='lab-q'>{esc(e['fraga'])}</p><p class='lab-a'>{esc(e['sammanfattning'])}</p>"
+                    f"<small>{e['datum']}</small></li>")
+    if not entries:
+        entries = "<li><p>Första experimentet körs nästa måndag kväll.</p></li>"
+    nxt_txt = (f"<p class='note'>Nästa experiment: <b>{esc(nxt['titel'])}</b>. {esc(nxt['fraga'])}</p>"
+               if nxt else "<p class='note'>Alla idéer på listan är testade.</p>")
+    sec.append(f"""
+<section aria-labelledby="lab-h">
+  <h2 id="lab-h">AI-forskarens labbdagbok</h2>
+  <p>Varje måndag testar boten en ny idé för att bli bättre. Reglerna är stränga så att den inte lurar sig själv:
+  idéerna är bestämda i förväg, de prövas först på 2014–2023, och bara de som klarar det får möta den
+  låsta perioden 2024–idag. Inget ändras i portföljerna utan att du och jag bestämmer det.</p>
+  <ul class="lab">{entries}</ul>
+  {nxt_txt}
+</section>""")
+
     # ---- Historiktest ----
     if bt:
         names = [("AI-portföljen", PORT_INFO["ai"]["farg"]), ("Enkla portföljen", PORT_INFO["enkel"]["farg"]),
@@ -789,6 +1040,9 @@ def cmd_rapport():
 <dt>200-dagars snitt</dt><dd>Genomsnittspriset de senaste 200 handelsdagarna. Ligger börsen under det har
 den ofta varit i en nedgång, och då tar portföljerna mindre risk.</dd>
 <dt>Ombalansering</dt><dd>När portföljen säljer och köper för att komma tillbaka till sina önskade andelar.</dd>
+<dt>Blankning</dt><dd>När någon lånar och säljer en aktie för att tjäna på att den faller. Finansinspektionen
+publicerar alla stora blankningar. Aktier där minst 2 % av aktierna är blankade får bara 30 % av sin vanliga
+vikt i alla portföljer, eftersom de i testerna har gått något sämre.</dd>
 <dt>Courtage</dt><dd>Avgiften för varje affär. Boten räknar med 0,15 %.</dd>
 <dt>SPY</dt><dd>En fond som följer de 500 största bolagen i USA. Används som jämförelse.</dd>
 <dt>Svängning (volatilitet)</dt><dd>Hur mycket en aktie brukar röra sig upp och ner.</dd>
@@ -902,6 +1156,12 @@ border-left:4px solid var(--soft)}
 .news li.pos .sent{color:var(--up)}.news li.neg .sent{color:var(--down)}
 .why{font-size:14px;color:var(--soft)}
 /* Facit */
+.lab{list-style:none;padding:0;margin:14px 0;display:grid;gap:10px}
+.lab li{background:var(--paper);border-radius:12px;padding:12px 14px}
+.lab-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.lab .tag{grid-area:auto}
+.lab-q{color:var(--soft);font-size:15px;margin:6px 0}.lab-a{font-size:15px;margin:0 0 4px}
+.lab small{color:var(--soft)}
 .big{font:800 64px/1 "Bricolage Grotesque",sans-serif;margin:8px 0}
 /* Tabeller */
 table{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums}
