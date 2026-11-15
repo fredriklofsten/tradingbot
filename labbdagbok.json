@@ -1,0 +1,23 @@
+[
+ {
+  "id": "tilt2",
+  "datum": "2026-11-15",
+  "titel": "Låt AI:n bestämma mer",
+  "fraga": "Blir AI-portföljen bättre om AI:n får flytta pengarna dubbelt så mycket?",
+  "portfolj": "AI-portföljen",
+  "utveckling": {
+   "fore": {
+    "arlig": 0.14667997888456186,
+    "sharpe": 1.1510041423259423,
+    "max_ras": -0.2210564405263452
+   },
+   "efter": {
+    "arlig": 0.14667937489827287,
+    "sharpe": 1.0982653052029523,
+    "max_ras": -0.21712063961077555
+   }
+  },
+  "beslut": "forkastad",
+  "sammanfattning": "På 2014–2023 gav idén +14,7 % per år mot +14,7 % för nuvarande AI-portföljen, och värsta fallet blev −21,7 % mot −22,1 %. Det räckte inte som förbättring, så idén förkastas."
+ }
+]
