@@ -43,7 +43,13 @@ TICKERS = US + SE
 MARKET_US, MARKET_SE = "SPY", "^OMX"
 START = "2010-01-01"
 HORIZON = 20            # förutsäg ca 1 månad framåt
-COST = 0.0015           # courtage + spread
+COST = 0.0015           # courtage + spread per affär
+FX_FEE = 0.0025         # valutaväxling hos Avanza/Nordnet för amerikanska aktier, per affär
+
+
+def cost_of(t: str) -> float:
+    """Kostnad per affär som andel av beloppet: svenska 0,15 %, amerikanska 0,40 %."""
+    return COST + (0.0 if t.endswith(".ST") else FX_FEE)
 REBALANCE_DAYS = 20     # ombalansera ungefär en gång i månaden
 FILTER_FACTOR = 0.5     # insats när marknaden är under 200-dagars snitt
 TILT = 1.0              # hur mycket AI:n får flytta vikterna (0 = ingen AI)
@@ -52,7 +58,7 @@ NEWS_DAYS = 7
 START_CASH = 100_000
 MIN_TRADE = 0.005       # handla inte om skillnaden är under 0,5 % av portföljen
 CLAUDE_MODEL = "claude-haiku-5-5"
-VERSION = 4
+VERSION = 5
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 F_PORTFOLIO = os.path.join(DIR, "papper_portfolj.json")
@@ -342,8 +348,9 @@ def simulate(q: pd.DataFrame, mode: str, cfg=None, use_filter=True, score_col="p
         if w is not None:
             W.loc[d] = w
     gross = (W * R).sum(axis=1)
-    turn = W.diff().abs().sum(axis=1).fillna(0)
-    return gross - turn * COST
+    costs = pd.Series({c: cost_of(c) for c in R.columns})
+    turn_cost = (W.diff().abs().fillna(W.abs()) * costs).sum(axis=1)
+    return gross - turn_cost
 
 
 def cmd_backtest():
@@ -366,7 +373,10 @@ def cmd_backtest():
         print(f"{name:22} {s['arlig']:+.1%}/år  Sharpe {s['sharpe']:.2f}  ras {s['max_ras']:.0%}")
     json.dump(out, open(F_BACKTEST, "w"), ensure_ascii=False, indent=1)
     try:
-        research_step(p, feats, q)
+        lab = load_lab()
+        last = pd.Timestamp(lab[-1]["datum"]) if lab else None
+        if last is None or (pd.Timestamp.today() - last).days >= 6:  # en idé per vecka
+            research_step(p, feats, q)
     except Exception as e:
         print(f"Forskningssteget misslyckades: {e}")
 
@@ -577,7 +587,7 @@ def load_portfolio():
         pf = json.load(open(F_PORTFOLIO))
         if pf.get("version") == VERSION:
             return pf
-        if pf.get("version") in (2, 3):
+        if pf.get("version") in (2, 3, 4):
             # Behåll befintliga portföljer, lägg till de som saknas
             for k in PORTS:
                 pf["portfoljer"].setdefault(k, {"kassa": START_CASH, "innehav": {},
@@ -692,12 +702,12 @@ def cmd_papper():
                 if abs(diff) < MIN_TRADE * equity:
                     continue
                 if diff > 0:
-                    diff = min(diff, port["kassa"] / (1 + COST))
+                    diff = min(diff, port["kassa"] / (1 + cost_of(t)))
                     if diff <= 0:
                         continue
                 n = diff / prices[t]
                 hold[t] = hold.get(t, 0) + n
-                port["kassa"] -= diff + abs(diff) * COST
+                port["kassa"] -= diff + abs(diff) * cost_of(t)
                 all_trades.append({"datum": today, "portfolj": label, "aktie": t,
                                    "handling": "KÖP" if diff > 0 else "SÄLJ",
                                    "belopp_sek": round(abs(diff), 2), "vikt": round(float(w[t]), 4)})
@@ -1006,7 +1016,7 @@ def cmd_rapport():
 <section aria-labelledby="bt-h">
   <h2 id="bt-h">Så hade det gått sedan 2014</h2>
   <p>Ett test där varje portfölj bara fick se det som hade hänt fram till varje dag. Kurvan visar vad
-  100&nbsp;000&nbsp;kr hade blivit. Courtage är inräknat.</p>
+  100&nbsp;000&nbsp;kr hade blivit. Courtage och valutaväxling är inräknat.</p>
   <figure class="chart-wrap"><canvas id="btChart" height="240" aria-label="Historiktest sedan 2014"></canvas></figure>
   <table class="bt"><thead><tr><th scope="col">Portfölj</th><th scope="col">Per år</th>
   <th scope="col">Värsta fall</th></tr></thead><tbody>{rows}</tbody></table>
@@ -1043,13 +1053,15 @@ den ofta varit i en nedgång, och då tar portföljerna mindre risk.</dd>
 <dt>Blankning</dt><dd>När någon lånar och säljer en aktie för att tjäna på att den faller. Finansinspektionen
 publicerar alla stora blankningar. Aktier där minst 2 % av aktierna är blankade får bara 30 % av sin vanliga
 vikt i alla portföljer, eftersom de i testerna har gått något sämre.</dd>
-<dt>Courtage</dt><dd>Avgiften för varje affär. Boten räknar med 0,15 %.</dd>
+<dt>Courtage och valutaväxling</dt><dd>Avgifterna för varje affär. Boten räknar med 0,15 % för svenska
+aktier och 0,40 % för amerikanska, eftersom banken också tar cirka 0,25 % för att växla kronor till dollar.</dd>
 <dt>SPY</dt><dd>En fond som följer de 500 största bolagen i USA. Används som jämförelse.</dd>
 <dt>Svängning (volatilitet)</dt><dd>Hur mycket en aktie brukar röra sig upp och ner.</dd>
 </dl></section>""")
 
     updated = datetime.now().strftime("%Y-%m-%d %H:%M")
-    html = HTML_TEMPLATE.replace("{{UPDATED}}", updated).replace("{{SECTIONS}}", "\n".join(sec)) \
+    html = HTML_TEMPLATE.replace("{{UPDATED_ISO}}", datetime.now().strftime("%Y-%m-%dT%H:%M:%S")) \
+        .replace("{{UPDATED}}", updated).replace("{{SECTIONS}}", "\n".join(sec)) \
         .replace("{{DATA}}", json.dumps(chart_data, ensure_ascii=False))
     open(F_REPORT, "w").write(html)
     docs = os.path.join(DIR, "docs")
@@ -1171,17 +1183,35 @@ td.r{text-align:right}
 .sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
 .buy{color:var(--up)}.sell{color:var(--down)}
 .glossary dt{font-weight:700;margin-top:12px}.glossary dd{margin:2px 0 0;color:var(--soft);font-size:15px}
+.stale{background:var(--down);color:#fff;padding:14px 20px;font-size:15px}
+.stale b{display:block}
 footer{max-width:680px;margin:auto;padding:0 20px 40px;font-size:14px;color:var(--soft)}
 </style></head>
 <body>
 <header class="top"><div class="top-in"><span class="brand">Tradingbot</span>
 <small>Låtsaspengar, uppdaterad {{UPDATED}}</small></div></header>
+<div id="stale" class="stale" hidden role="alert"></div>
 <main>
 {{SECTIONS}}
 </main>
 <footer>Ingen riktig handel sker. Historiska resultat är ingen garanti för framtiden.</footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
+// Varna om boten inte har uppdaterats efter senaste vardagskörning (17:40)
+(function () {
+  const upd = new Date("{{UPDATED_ISO}}");
+  const now = new Date();
+  const exp = new Date(now); exp.setHours(18, 30, 0, 0);
+  if (now < exp) exp.setDate(exp.getDate() - 1);
+  while (exp.getDay() === 0 || exp.getDay() === 6) exp.setDate(exp.getDate() - 1);
+  exp.setHours(17, 0, 0, 0);
+  if (upd < exp) {
+    const el = document.getElementById('stale');
+    el.hidden = false;
+    el.innerHTML = '<b>Boten har inte uppdaterats sedan ' + upd.toLocaleString('sv-SE', {weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit'}) +
+      '.</b> Den dagliga körningen kan ha misslyckats. Titta under Issues på GitHub eller fråga Claude.';
+  }
+})();
 const D = {{DATA}};
 if (window.Chart) {
   const css = getComputedStyle(document.documentElement);
