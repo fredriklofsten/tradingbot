@@ -19,5 +19,26 @@
   },
   "beslut": "forkastad",
   "sammanfattning": "På 2014–2023 gav idén +14,7 % per år mot +14,7 % för nuvarande AI-portföljen, och värsta fallet blev −21,7 % mot −22,1 %. Det räckte inte som förbättring, så idén förkastas."
+ },
+ {
+  "id": "risk_grad",
+  "datum": "2026-11-16",
+  "titel": "Låt riskprognosen styra hur mycket som är investerat",
+  "fraga": "Blir Enkla portföljen bättre om den drar ner på aktier när AI:n väntar sig stora svängningar?",
+  "portfolj": "Enkla portföljen",
+  "utveckling": {
+   "fore": {
+    "arlig": 0.1648060366134949,
+    "sharpe": 1.2027754433209077,
+    "max_ras": -0.2988650024739109
+   },
+   "efter": {
+    "arlig": 0.148230023109736,
+    "sharpe": 1.210186060171947,
+    "max_ras": -0.23854955244802944
+   }
+  },
+  "beslut": "forkastad",
+  "sammanfattning": "På 2003–2023 gav idén +14,8 % per år mot +16,5 % för nuvarande Enkla portföljen, och värsta fallet blev −24 % mot −30 %. Resan blev lugnare men avkastningen lägre, så det räckte inte som förbättring. Utan marknadsfiltret blev det sämre, och AI:ns riskprognos var inte bättre än att bara titta på de senaste 20 dagarnas svängningar. Idén förkastas. (Testad manuellt, utanför den förregistrerade listan.)"
  }
 ]
