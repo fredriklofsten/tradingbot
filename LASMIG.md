@@ -1,6 +1,6 @@
 # Tradingbot (låtsaspengar)
 
-Webbappen ligger i `docs/` och uppdateras automatiskt varje vardag 17:40 av GitHub Actions.
+Webbappen ligger i `docs/` och uppdateras automatiskt varje vardag 22:40 (svensk vintertid) av GitHub Actions.
 
 ## Kom igång (en gång)
 1. Skapa ett nytt repo på github.com, t.ex. `tradingbot` (Public, så GitHub Pages är gratis).
