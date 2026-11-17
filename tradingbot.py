@@ -934,6 +934,60 @@ def signed_pct(x, d=1) -> str:
     return f"{x:+.{d}f} %".replace(".", ",").replace("-", "−")
 
 
+def luck_test(h: pd.DataFrame, port: str, base: str, min_days: int = 20) -> dict:
+    """Skicklighet eller tur? Jämför en portfölj mot en bas (t.ex. enkla portföljen) dag för dag.
+    Slumptest: vi slår om tecknet på varje dags över-/underprestation slumpmässigt 5000 gånger.
+    p = hur ofta ren tur ger minst lika bra resultat som det boten faktiskt fick."""
+    if port not in h or base not in h:
+        return {"dagar": 0, "klar": False}
+    v = h[[port, base]].dropna()
+    r = v.pct_change().dropna()
+    ex = (r[port] - r[base]).to_numpy()
+    n = len(ex)
+    out = {"dagar": n, "klar": n >= min_days, "snitt": float(ex.mean()) if n else 0.0}
+    if n < min_days or ex.std(ddof=1) == 0:
+        out["behover"] = min_days
+        return out
+    rng = np.random.default_rng(42)
+    flips = rng.choice([-1.0, 1.0], size=(5000, n))
+    perm = (flips * ex).mean(axis=1)
+    out["p"] = float((perm >= ex.mean()).mean())
+    out["t"] = float(ex.mean() / (ex.std(ddof=1) / np.sqrt(n)))
+    if ex.mean() > 0:
+        out["dagar_till_saker"] = int(np.ceil((1.96 * ex.std(ddof=1) / ex.mean()) ** 2))
+    return out
+
+
+def luck_section(h: pd.DataFrame) -> str:
+    """HTML-sektion 'Skicklighet eller tur?' för rapporten."""
+    rows = ""
+    for port, base, label in (("ai", "enkel", "AI-portföljen mot enkla portföljen"),
+                              ("risk", "enkel", "Risk-portföljen mot enkla portföljen")):
+        t = luck_test(h, port, base)
+        if not t["dagar"]:
+            continue
+        if not t["klar"]:
+            verdict = (f"För tidigt att säga. {t['dagar']} av minst {t['behover']} handelsdagar "
+                       "har gått. Skillnaden hittills är mest slump.")
+        else:
+            p = t["p"]
+            if p < 0.05 and t["snitt"] > 0:
+                verdict = f"Troligen skicklighet. Chansen att det är ren tur är ca {p * 100:.0f} %."
+            elif t["snitt"] <= 0:
+                verdict = f"Ingen fördel hittills. Portföljen ligger inte över basen (tur-chans {p * 100:.0f} %)."
+            else:
+                verdict = f"Kan lika gärna vara tur. Chansen att det är ren tur är ca {p * 100:.0f} %."
+            if "dagar_till_saker" in t:
+                verdict += f" Med dagens tempo behövs ca {t['dagar_till_saker']} handelsdagar för att vara säker."
+        rows += f"<li><b>{esc(label)}</b><br><span class='desc'>{esc(verdict)}</span></li>"
+    if not rows:
+        return ""
+    return ("<section aria-labelledby='luck-h'><h2 id='luck-h'>Skicklighet eller tur?</h2>"
+            "<p class='lede'>Att ligga före en dag säger inget. Här testar vi om försprånget är större än vad "
+            "slumpen ensam brukar ge. Först efter minst 20 handelsdagar ger testet ett svar, och ju längre desto säkrare.</p>"
+            f"<ul class='luck'>{rows}</ul></section>")
+
+
 def cmd_rapport():
     import matplotlib
     matplotlib.use("Agg")
@@ -1002,6 +1056,10 @@ def cmd_rapport():
                                          for k in keys],
                               "spy": [None if pd.isna(x) else round(float(x)) for x in h.get(col, [])],
                               "spy_namn": "Global indexfond" if col == "jamforelse_index" else "SPY"}
+
+    # ---- Skicklighet eller tur? ----
+    if len(h):
+        sec.append(luck_section(h))
 
     # ---- Idag i korthet ----
     if pf:
