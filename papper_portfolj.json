@@ -312,267 +312,250 @@
  },
  "signaler": [
   {
-   "aktie": "HEXA-B.ST",
-   "datum": "2026-11-16",
-   "pris": 106.44999694824219,
-   "ml": 0.48635413715759285,
-   "nyheter": 0.0,
-   "poang": 0.48635413715759285,
-   "risk": 0.2264136943319586,
-   "blankning": 0.61,
-   "nyhetslista": []
+   "aktie": "AZN.ST",
+   "datum": "2026-11-17",
+   "pris": 1838.0,
+   "ml": 0.48159881091273404,
+   "nyheter": 0.09784999999999999,
+   "poang": 0.48649131091273407,
+   "risk": 0.24425248406473263,
+   "blankning": 0.0,
+   "nyhetslista": [
+    {
+     "rubrik": "AstraZeneca Stock Up 12% in a Month: Time to Buy, Sell or Hold?",
+     "sammanfattning": "AZN's 16 blockbuster drugs, strong oncology sales and pipeline opportunities support its $80B revenue target, despite generic pressure and clinical setbacks.",
+     "datum": "2026-11-17",
+     "poang": 0.9244,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Summit Therapeutics (SMMT) Stock Sees Modest Fair Value Cut As Analysts Weigh Trial Risks",
+     "sammanfattning": "Summit Therapeutics has seen its modeled fair value per share edge down from US$30.07 to US$29.41, which gives you an updated reference point for where some analysts see long term worth. This subtle shift lines up with recent research that weighs the US$2b AstraZeneca partnership and lung cancer program optimism against questions on valuation, trial outcomes, and competitive pressures. As you read on, you will see how these moving targets shape the evolving analyst story around Summit...",
+     "datum": "2026-11-17",
+     "poang": 0.7003,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "AstraZeneca Bet $2 Billion on Summit’s Cancer Drug. The FDA Just Said Not Yet.",
+     "sammanfattning": "Summit Therapeutics stock sinks as regulators decline to approve ivonescimab, a next-generation cancer therapy backed by AstraZeneca.",
+     "datum": "2026-11-16",
+     "poang": -0.8658,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "European Equities Traded in the US as American Depositary Receipts Kick Off Week Lower in Monday Trading",
+     "sammanfattning": "European equities traded in the US as American depositary receipts kicked off the week tracking lowe",
+     "datum": "2026-11-16",
+     "poang": -0.1779,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ]
   },
   {
    "aktie": "EVO.ST",
-   "datum": "2026-11-16",
-   "pris": 873.0,
-   "ml": 0.47825838983504404,
+   "datum": "2026-11-17",
+   "pris": 861.7999877929688,
+   "ml": 0.47433098765057674,
    "nyheter": 0.0,
-   "poang": 0.47825838983504404,
-   "risk": 0.20907058988233465,
+   "poang": 0.47433098765057674,
+   "risk": 0.23038985220546665,
    "blankning": 1.46,
    "nyhetslista": []
   },
   {
-   "aktie": "TELIA.ST",
-   "datum": "2026-11-16",
-   "pris": 50.34000015258789,
-   "ml": 0.47728759425612777,
-   "nyheter": 0.58852,
-   "poang": 0.5067135942561277,
-   "risk": 0.2218711216080992,
-   "blankning": 0.0,
+   "aktie": "PG",
+   "datum": "2026-11-17",
+   "pris": 171.72000122070312,
+   "ml": 0.5129410859027581,
+   "nyheter": 0.20682999999999999,
+   "poang": 0.5232825859027581,
+   "risk": 0.2118839402399516,
+   "blankning": null,
    "nyhetslista": [
     {
-     "rubrik": "Hikari Tsushin (TSE:9435) Stock Trades At A Premium To Its Cash Flow",
-     "sammanfattning": "Hikari Tsushin has delivered a powerful long term share price run, and the question now is whether the current ¥40,690 level can be supported by the cash the business is expected to generate. After such a move, investors are naturally asking if the stock’s present valuation is still grounded in its underlying cash flows. Over the past 5 years the stock has gained about 147.3%, which puts real weight on whether the underlying cash flows can support such a step up in market value. The business...",
-     "datum": "2026-11-16",
-     "poang": 0.9186,
+     "rubrik": "Can PG's Health Care Segment Extend Its Sales Momentum Ahead?",
+     "sammanfattning": "P&G's Health Care segment eyes sustained growth as improving cold and cough demand, product innovation and the Thorne acquisition create fresh opportunities.",
+     "datum": "2026-11-17",
+     "poang": 0.9618,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Hankyu Hanshin Holdings (TSE:9042) Stock Looks Reasonable Based On Earnings",
-     "sammanfattning": "Hankyu Hanshin Holdings has delivered a strong share price run over recent years, which puts a spotlight on whether the current ¥5,036 level is still grounded in its earnings power. With that backdrop, the key issue for you as an investor is how much of the recent share price strength is being driven by the business performance that shows up in the income statement. Over the past 5 years the stock has returned 53.8%, so the central question is how closely that gain lines up with what the...",
-     "datum": "2026-11-16",
-     "poang": 0.9231,
+     "rubrik": "Charlie Bilello Calls Leveraged Single-Stock ETFs ‘One of the Worst Financial Innovations’",
+     "sammanfattning": "More than 600 ETFs now bet on a single stock, and one market veteran says the people buying them are losing badly while the sponsors cash in. Why does a simple 10% swing quietly punish traders, and what do two Dividend Kings do differently?",
+     "datum": "2026-11-17",
+     "poang": -0.9217,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Does Daio Paper (TSE:3880) Look Fairly Valued on Earnings?",
-     "sammanfattning": "Daio Paper has seen its share price move around in recent years, and with the stock now at ¥1,035, the real question for you is whether that level is supported by the earnings the business produces. The share price has fallen 40.7% over the past 5 years, which puts the spotlight firmly on whether the current earnings profile can support a recovery case. For a paper and pulp producer that relies heavily on capital intensive assets, the way profits convert into cash and how consistently Daio...",
-     "datum": "2026-11-16",
+     "rubrik": "Forget SCHD: 4 Dividend Stocks Retirees Should Own Instead",
+     "sammanfattning": "SCHD protects retirees from any single dividend cut, but its income has barely moved while living costs climb. Four blue-chip payers raise checks faster, and each one carries a risk that could undercut the pitch.",
+     "datum": "2026-11-17",
+     "poang": -0.4588,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "3 Bulletproof Passive Income Dividend Kings to Buy and Hold Forever",
+     "sammanfattning": "Cancer drugs, detergent, and soda have funded more than 50 straight years of dividend hikes. But a talc settlement, a pending IRS ruling, and rising commodity costs test whether each payout can survive the next shock.",
+     "datum": "2026-11-17",
+     "poang": -0.6271,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ]
+  },
+  {
+   "aktie": "KO",
+   "datum": "2026-11-17",
+   "pris": 98.79000091552734,
+   "ml": 0.47594699483233127,
+   "nyheter": 0.28943,
+   "poang": 0.4904184948323313,
+   "risk": 0.2158555410545304,
+   "blankning": null,
+   "nyhetslista": [
+    {
+     "rubrik": "Warren Buffett Buys: 3 Forever Stocks the Billionaire Investor Has Invested In",
+     "sammanfattning": "These stocks have incredibly strong brands and robust financials, making them among the safest investments to own over the long haul.",
+     "datum": "2026-11-17",
+     "poang": 0.8268,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Coca-Cola Stock (KO) May Struggle to Repeat Its Strong 2026 Performance",
+     "sammanfattning": "Coca-Cola (KO) stock may struggle to repeat its strong 2026 performance, as reported revenue growth could slow next year and its valuation leaves limited room for further gains. Shares of the beverage maker have soared in 2026, with investors cheering accelerating revenue and earnings growth after a weak 2025. Indeed, Coca-Cola’s 7% Q3 2026 revenue expansion was notably higher than the 2% net revenue growth for full-year 2025. However, the planned sale of its Africa bottling business is expected",
+     "datum": "2026-11-17",
+     "poang": 0.9169,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Does Coca-Cola Stock Fit Your Portfolio Risk?",
+     "sammanfattning": "Today's big story: Could Nvidia Stock Fall 50%? Follow The Cash.",
+     "datum": "2026-11-17",
+     "poang": 0.1926,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "What Threatens Keurig Dr Pepper Stock Most?",
+     "sammanfattning": "Today's big story: Could Nvidia Stock Fall 50%? Follow The Cash.",
+     "datum": "2026-11-17",
+     "poang": -0.4515,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ]
+  },
+  {
+   "aktie": "XOM",
+   "datum": "2026-11-17",
+   "pris": 167.2100067138672,
+   "ml": 0.4920406503656026,
+   "nyheter": 0.09428,
+   "poang": 0.4967546503656026,
+   "risk": 0.2797801056762191,
+   "blankning": null,
+   "nyhetslista": [
+    {
+     "rubrik": "The Bet Behind ExxonMobil's Rally",
+     "sammanfattning": "If ExxonMobil was on your watchlist rather than in your portfolio, the result may feel like a painful miss. Investors who held ExxonMobil over the past year are up 45.6%, including dividends. That outcome now looks simple to admire, but the real puzzle is what could have helped you spot it in advance. Was the key clue the assumption back in November 2025 that its refining-heavy model would keep turning strong margins into durable cash flow? If the move has made ExxonMobil harder to judge,...",
+     "datum": "2026-11-17",
+     "poang": 0.7184,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "ExxonMobil makes a bold $3 billion move to clean up its balance sheet",
+     "sammanfattning": "The energy goliath is targeting billions in outstanding debt through a new tender offer.",
+     "datum": "2026-11-17",
+     "poang": 0.836,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "4 High-Yield Energy Stocks That Pay Roth IRA Investors Tax-Free Income",
+     "sammanfattning": "A $1 million energy dividend portfolio hands the IRS a surprising bill every year, and one account type erases it completely. Four blue-chip payers, one hidden trap for partnership stocks, and a gap that snowballs over two decades.",
+     "datum": "2026-11-17",
+     "poang": 0.3818,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "George Soros and 12 Other Big Funds Bought Salesforce Last Quarter, While 20 Sold. Who’s Right?",
+     "sammanfattning": "Key TakeawaysOf the 456 big funds that have filed 13Fs for the quarter ended Sept. 30, 13 bought Salesforce, including George Soros’ fund and Coatue, and 20 sold.",
+     "datum": "2026-11-17",
+     "poang": 0.0,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ]
+  },
+  {
+   "aktie": "WMT",
+   "datum": "2026-11-17",
+   "pris": 127.5199966430664,
+   "ml": 0.5075753881451269,
+   "nyheter": 0.15967,
+   "poang": 0.515558888145127,
+   "risk": 0.2396256878828594,
+   "blankning": null,
+   "nyhetslista": [
+    {
+     "rubrik": "Dow Jones Discount Retail Giant Walmart Poised To Hit Buy Point With Earnings Due",
+     "sammanfattning": "Dow Jones discount retail giant Walmart stock is approaching a new buy point ahead of this week's earnings report.",
+     "datum": "2026-11-17",
+     "poang": 0.25,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Here’s How Much Traders Expect Walmart Stock to Move After Earnings Thursday",
+     "sammanfattning": "Walmart’s stock has fallen for months. Could this week’s earnings report change that?",
+     "datum": "2026-11-17",
+     "poang": -0.3612,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Disney earnings show consumers will still pay up for experiences",
+     "sammanfattning": "Siebert Financial chief investment officer Mark Malek and his panel of experts weigh in on how resilient the US consumer looks heading into the holidays, with Disney (DIS) reporting a strong fourth quarter and premium experiential spending, like Viking Cruises (VIK), holding up.\n\nToday's panel includes Yahoo Finance's Julie Hyman, Solidarity Wealth CEO Jeff McClean, Roundhill Investments ETF strategist Thomas DiFazio, and Alumni Ventures managing partner Laura Rippy.",
+     "datum": "2026-11-17",
      "poang": 0.9081,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "The Trump-Xi Talks Just Got More Complicated",
-     "sammanfattning": "The Democratic sweep of Congress was going to change the U.S. relationship with China anyway. But then along came the Nvidia scandal.",
-     "datum": "2026-11-16",
-     "poang": -0.5927,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    }
-   ]
-  },
-  {
-   "aktie": "ASSA-B.ST",
-   "datum": "2026-11-16",
-   "pris": 396.5,
-   "ml": 0.4468554658782016,
-   "nyheter": 0.0,
-   "poang": 0.4468554658782016,
-   "risk": 0.20172516345878455,
-   "blankning": 0.69,
-   "nyhetslista": []
-  },
-  {
-   "aktie": "ESSITY-B.ST",
-   "datum": "2026-11-16",
-   "pris": 294.3999938964844,
-   "ml": 0.4737338860052501,
-   "nyheter": 0.8442,
-   "poang": 0.5159438860052501,
-   "risk": 0.1855875975712061,
-   "blankning": 1.7200000000000002,
-   "nyhetslista": [
-    {
-     "rubrik": "Essity (OM:ESSITY B) Stock Still Trades At A Discount Despite A 25% Run",
-     "sammanfattning": "Essity shares have logged a 25.4% return over the past three years, which naturally raises a simple question for holders and would be buyers. Is the current price around SEK 291.5 adequately supported by the cash flows the business can generate over time? A 25.4% three year gain puts real weight on whether Essity's current valuation is grounded in the cash it can realistically produce for shareholders. The group relies on steady demand and a cash generative profile, which can support an...",
-     "datum": "2026-11-10",
-     "poang": 0.8442,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    }
-   ]
-  },
-  {
-   "aktie": "MSFT",
-   "datum": "2026-11-16",
-   "pris": 517.989990234375,
-   "ml": 0.5537458993738179,
-   "nyheter": -0.023639999999999994,
-   "poang": 0.5525638993738179,
-   "risk": 0.3257124269233827,
-   "blankning": null,
-   "nyhetslista": [
-    {
-     "rubrik": "Chase Bank outage sparks issues for customers at several major US banks",
-     "sammanfattning": "The bank issues follow a Microsoft outage last week that halted work for many businesses across the globe",
-     "datum": "2026-11-16",
-     "poang": 0.0,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "What's dragging down the S&P 500? Apple in focus",
-     "sammanfattning": "Yahoo Finance Markets and Data Editor Jared Blikre joins Deirdre Bosa on Deirdre Bosa Live to discuss Apple's (AAPL) influence on the S&amp;P 500 (^GSPC). Blikre examines what's driving the latest weakness on Wall Street.",
-     "datum": "2026-11-16",
-     "poang": -0.4215,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "AI Stocks Resume Their Slide",
-     "sammanfattning": "Plus, the Fed weighs AI jobs scenarios and Tyson improves its beef outlook",
-     "datum": "2026-11-16",
-     "poang": 0.4215,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "ServiceNow Stock’s (NOW) Historic Sell-Off May Have Gone Too Far",
-     "sammanfattning": "ServiceNow (NOW) stock’s historic sell-off looks excessive to me. The enterprise workflow software provider disappointed investors with its Q3 earnings and outlook. I understand the frustration. Yet CFO Gina Mastantuono said, “Our AI momentum continues to build,” and the numbers support that view. Subscription revenue grew 21%, while management raised its cash-flow outlook. The stock now trades at roughly 21x next year’s expected earnings. That gives me a much stronger reason to look past an imp",
-     "datum": "2026-11-16",
-     "poang": -0.2263,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    }
-   ]
-  },
-  {
-   "aktie": "AAPL",
-   "datum": "2026-11-16",
-   "pris": 352.7799987792969,
-   "ml": 0.4853051630975841,
-   "nyheter": -0.10098,
-   "poang": 0.48025616309758407,
-   "risk": 0.26450991512599825,
-   "blankning": null,
-   "nyhetslista": [
-    {
-     "rubrik": "What's dragging down the S&P 500? Apple in focus",
-     "sammanfattning": "Yahoo Finance Markets and Data Editor Jared Blikre joins Deirdre Bosa on Deirdre Bosa Live to discuss Apple's (AAPL) influence on the S&amp;P 500 (^GSPC). Blikre examines what's driving the latest weakness on Wall Street.",
-     "datum": "2026-11-16",
-     "poang": -0.4215,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Eli Lilly is trouncing Nvidia — and the weight-loss drug trade is beating AI again",
-     "sammanfattning": "Since its Oct. 6 record, Nvidia has shed more than $1.7 trillion in market value. Eli Lilly has added more than $250 billion over the same stretch, a gain topped only by Apple among the market's biggest stocks.",
-     "datum": "2026-11-16",
-     "poang": 0.4215,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Nvidia is not considering rehiring Jensen Huang, and Amazon's data center gets bought",
-     "sammanfattning": "Deirdre Bosa discusses Nvidia (NVDA), claiming they are not considering bringing back Jensen Huang, Amazon's (AMZN) data centers being bought by Blackstone (BX), and Apple (AAPL) launching a study on how people use AI for health.\n\nDeirdre Bosa then sits down with Niles Investment Management Founder Dan Niles to talk about the AI trade proving itself beyond Jensen Huang, Neoclouds could be the biggest loser post-Jensen, and the Anthropic (ANTH.PVT) IPO.\n\n'Deirdre Bosa Live' airs every day at 4 p.m. Tune in daily to hear how the latest developments in AI and technology are reshaping companies, industries, and the global economy.",
-     "datum": "2026-11-16",
-     "poang": -0.5267,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "The S&P 500's shot at 4 straight double-digit years is in Nvidia's hands",
-     "sammanfattning": "Nvidia's earnings could decide whether the S&P 500 notches a rare fourth straight double-digit year.",
-     "datum": "2026-11-16",
-     "poang": 0.4215,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    }
-   ]
-  },
-  {
-   "aktie": "SKF-B.ST",
-   "datum": "2026-11-16",
-   "pris": 274.8999938964844,
-   "ml": 0.49987906390229103,
-   "nyheter": 0.0,
-   "poang": 0.49987906390229103,
-   "risk": 0.2752145236678752,
-   "blankning": 5.45,
-   "nyhetslista": []
-  },
-  {
-   "aktie": "SAND.ST",
-   "datum": "2026-11-16",
-   "pris": 355.3999938964844,
-   "ml": 0.49176377580387204,
-   "nyheter": 0.0,
-   "poang": 0.49176377580387204,
-   "risk": 0.31891514278391897,
-   "blankning": 0.5,
-   "nyhetslista": []
-  },
-  {
-   "aktie": "NVDA",
-   "datum": "2026-11-16",
-   "pris": 156.13999938964844,
-   "ml": 0.46701743106361976,
-   "nyheter": 0.18685999999999997,
-   "poang": 0.47636043106361975,
-   "risk": 0.5378781124566309,
-   "blankning": null,
-   "nyhetslista": [
-    {
-     "rubrik": "Nvidia stock valuation looks 'draconian,' even without Jensen Huang: Analyst",
-     "sammanfattning": "Nvidia's valuation is making some interesting assumptions.",
-     "datum": "2026-11-16",
-     "poang": 0.4019,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "The S&P 500's shot at 4 straight double-digit years is in Nvidia's hands",
-     "sammanfattning": "Nvidia's earnings could decide whether the S&P 500 notches a rare fourth straight double-digit year.",
-     "datum": "2026-11-16",
-     "poang": 0.4215,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "The cost of ousting a founder: Is the 'bank of Nvidia' at risk?",
-     "sammanfattning": "Benchmark Company general partner Bill Gurley sits down with Deirdre Bosa to share his thoughts on circular financing concerns surrounding Nvidia (NVDA), especially in the absence of Jensen Huang as chief executive.",
-     "datum": "2026-11-16",
-     "poang": 0.0258,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Nvidia to report Q3 earnings amid Huang scandal",
-     "sammanfattning": "Nvidia will report its third quarter earnings after the bell Tuesday.",
-     "datum": "2026-11-16",
-     "poang": -0.4404,
+     "rubrik": "Beyond NVIDIA & Anthropic: 3 Important Stock Catalysts to Watch Into December",
+     "sammanfattning": "FICO, Costco, and Ford have important interim updates ahead that could offer fresh clues about consumer credit, spending, and the auto industry.",
+     "datum": "2026-11-17",
+     "poang": 0.7579,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
@@ -581,105 +564,46 @@
   },
   {
    "aktie": "V",
-   "datum": "2026-11-16",
-   "pris": 426.4599914550781,
-   "ml": 0.47923130172729306,
-   "nyheter": 0.19766000000000006,
-   "poang": 0.4891143017272931,
-   "risk": 0.2511370785622658,
+   "datum": "2026-11-17",
+   "pris": 416.7699890136719,
+   "ml": 0.5400194321111297,
+   "nyheter": 0.0009099999999999973,
+   "poang": 0.5400649321111297,
+   "risk": 0.25092805193199613,
    "blankning": null,
    "nyhetslista": [
     {
-     "rubrik": "Visa (V) Warns Of Rapid Surge In AI Driven Payment Threats",
-     "sammanfattning": "Visa (NYSE: V) warned of a rapid surge in AI-driven payment threats in its latest Biannual Threats Report released in 2026. The company is expanding AI-based fraud detection tools and increasing coordination with law enforcement agencies targeting global payments crime. Visa is rolling out Scan to Pay with Samsung Wallet across Asia Pacific and partnering with Airport Authority Hong Kong on an integrated air cargo payment solution. The AI-driven threat warning and new Asia Pacific payment...",
-     "datum": "2026-11-16",
-     "poang": -0.9674,
+     "rubrik": "Third-Party Vendor Linked to Eli Lilly Is Hit by Data Breach",
+     "sammanfattning": "Lilly found no unauthorized access to its own systems, a person familiar with the matter said. Extortion group n0n claims to hold patient and prescriber data.",
+     "datum": "2026-11-17",
+     "poang": -0.2732,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "3 Financial Stocks to Buy and Hold That Turned $1,000 Into More Than $5,000 Over the Past Decade, Counting Dividends",
-     "sammanfattning": "American Express, Visa, and JPMorgan Chase all outperformed the S&P 500.",
-     "datum": "2026-11-16",
-     "poang": 0.0,
+     "rubrik": "A $2.4 Billion Fund Dumps These 3 Stocks",
+     "sammanfattning": "Key TakeawaysMeridiem Capital Partners sold all of its UnitedHealth, Charles River Laboratories and Alphabet shares in the third quarter, its latest 13F shows. By Sept.",
+     "datum": "2026-11-17",
+     "poang": -0.128,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Visa Warns of AI-Driven ‘Advanced Intrusion’ Surge in Global Payment Threats",
-     "sammanfattning": "The company's latest report found that the industrialization of AI has amplified the scale of fraud and extortion worldwide.",
-     "datum": "2026-11-16",
-     "poang": -0.7906,
+     "rubrik": "Visa and Mastercard's 21-Year Fight Could Change What Happens at Checkout",
+     "sammanfattning": "Stores could soon get more say at the checkout.",
+     "datum": "2026-11-17",
+     "poang": -0.3818,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "PayPal Stock Trades at a Discount: Bargain Buy or Value Trap?",
-     "sammanfattning": "PYPL's low valuation, Venmo growth and strong cash flow suggest upside potential, but sluggish branded checkout raises questions about its turnaround prospects.",
-     "datum": "2026-11-16",
-     "poang": 0.2732,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    }
-   ]
-  },
-  {
-   "aktie": "HM-B.ST",
-   "datum": "2026-11-16",
-   "pris": 180.0,
-   "ml": 0.4902086223149094,
-   "nyheter": 0.0,
-   "poang": 0.4902086223149094,
-   "risk": 0.22919350989204149,
-   "blankning": 1.35,
-   "nyhetslista": []
-  },
-  {
-   "aktie": "WMT",
-   "datum": "2026-11-16",
-   "pris": 128.41000366210938,
-   "ml": 0.4941239085499361,
-   "nyheter": 0.16852999999999999,
-   "poang": 0.502550408549936,
-   "risk": 0.23564715115161838,
-   "blankning": null,
-   "nyhetslista": [
-    {
-     "rubrik": "How Chewy's CEO plans to lower the $2,000 vet ER bill",
-     "sammanfattning": "Chewy CEO Sumit Singh explains to Yahoo Finance Executive Editor Brian Sozzi how the company is trying to bring pet insurance to millions of US households after finding fewer than 2% of pets were covered.",
-     "datum": "2026-11-16",
-     "poang": -0.296,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Eli Lilly is trouncing Nvidia — and the weight-loss drug trade is beating AI again",
-     "sammanfattning": "Since its Oct. 6 record, Nvidia has shed more than $1.7 trillion in market value. Eli Lilly has added more than $250 billion over the same stretch, a gain topped only by Apple among the market's biggest stocks.",
-     "datum": "2026-11-16",
-     "poang": 0.4215,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Earnings to watch: NVIDIA, Walmart, Home Depot and more report this week",
-     "sammanfattning": "Investing.com -- This week’s calendar pairs the consumer (Home Depot, Lowe’s, Target, TJX, Walmart) with the AI trade (NVIDIA). Data is from the earnings calendar as of Mon, Nov 16, 2026 at 3:17 PM EST. Estimates are consensus and can shift.",
-     "datum": "2026-11-16",
-     "poang": 0.0,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Walmart CEO Is Launching AI Agent Profiles as United Airlines Blocks Third-Party Agents",
-     "sammanfattning": "Key TakeawaysWalmart (WMT) is preparing to launch AI agent profiles that let customers authorize purchases and set spending limits, while United Airlines (UAL) is restricting unauthorized third-party AI agents from booking flights. Amazon (AMZN) has restricted outside AI shopping agents, while Shopify (SHOP) expanded checkout access for browser-based agents in September, showing how differently companies are approaching AI-powered commerce.",
-     "datum": "2026-11-16",
-     "poang": 0.0516,
+     "rubrik": "3 Stocks in a Bull Rally Right Now",
+     "sammanfattning": "Forget the AI sell-off. These three non-technology stocks are trading near their all-time highs.",
+     "datum": "2026-11-17",
+     "poang": -0.2263,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
@@ -688,46 +612,46 @@
   },
   {
    "aktie": "UNH",
-   "datum": "2026-11-16",
-   "pris": 412.0199890136719,
-   "ml": 0.49890036126834897,
-   "nyheter": 0.41111000000000003,
-   "poang": 0.519455861268349,
-   "risk": 0.268089404831983,
+   "datum": "2026-11-17",
+   "pris": 389.67999267578125,
+   "ml": 0.5233413083178368,
+   "nyheter": 0.31465,
+   "poang": 0.5390738083178368,
+   "risk": 0.31392550752508647,
    "blankning": null,
    "nyhetslista": [
     {
-     "rubrik": "State Street Health Care SPDR (XLV) Sells Eli Lilly and J&J on Nov. 12",
-     "sammanfattning": "The fund sold $300.3 million of stock, cutting all 60 positions and adding nothing, as its assets stood at $50.56 billion.",
-     "datum": "2026-11-16",
-     "poang": 0.2919,
+     "rubrik": "UnitedHealth Sinks 5% on Medicare Advantage Audit Plan as CMS Moves to “Crush” Medical Fraud",
+     "sammanfattning": "Key TakeawaysUnitedHealth fell 5% after CMS proposed clawing back Medicare Advantage overpayments as far back as payment year 2018, and Humana and CVS Health fell too. CMS estimates the audits would recover about $9 billion per payment year industry-wide, and UnitedHealth hasn’t sized its share.",
+     "datum": "2026-11-17",
+     "poang": 0.1027,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Elevance Health Targets 12% Earnings Growth in 2027 as Insurance Margins Recover",
-     "sammanfattning": "Elevance Health (NYSE:ELV) expects adjusted earnings per share to grow at least 12% in 2027 from its recently increased 2026 baseline of at least $26.75, Chief Financial Officer Mark Kaye said at a UBS conference. Kaye said the outlook rests on improving health insurance margins, disciplined pricin",
-     "datum": "2026-11-14",
-     "poang": 0.8271,
+     "rubrik": "Is UnitedHealth Group (UNH) Cheap As Board Changes Put Valuation Back In Focus?",
+     "sammanfattning": "UnitedHealth Group (UNH) is back in focus after appointing longtime health care executive Madeline S. Bell to its board of directors, giving investors a fresh lens on governance and long term capital allocation. Recent trading has been constructive for UnitedHealth Group, with a 7 day share price return of 3.62% adding to a 22.48% year to date share price gain. The 1 year total shareholder return of 31.97% contrasts with a 3 year total shareholder return that declined 18.01% as investors...",
+     "datum": "2026-11-17",
+     "poang": 0.9287,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "UnitedHealth vs. Cigna: Which Dividend Stock Pays You More in 10 Years?",
-     "sammanfattning": "Key TakeawaysUnitedHealth Group yields 2. 3% and Cigna Group yields 2.",
-     "datum": "2026-11-13",
-     "poang": 0.0,
+     "rubrik": "A $2.4 Billion Fund Dumps These 3 Stocks",
+     "sammanfattning": "Key TakeawaysMeridiem Capital Partners sold all of its UnitedHealth, Charles River Laboratories and Alphabet shares in the third quarter, its latest 13F shows. By Sept.",
+     "datum": "2026-11-17",
+     "poang": -0.128,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Can UNH's Optum Rx Sustain Profit Growth as Prescription Volumes Fall?",
-     "sammanfattning": "UnitedHealth's Optum Rx posts 10.9% operating earnings growth despite falling prescriptions in Q3 2026. Can specialty pharmacy and efficiency gains sustain momentum?",
-     "datum": "2026-11-13",
-     "poang": 0.9153,
+     "rubrik": "UnitedHealth Stocks Fall 4.62% as CMS Proposes Wider Medicare Advantage Audits",
+     "sammanfattning": "The CRUSH rule would extrapolate audit findings from payment year 2018 and recover about $9 billion a year in overpayments.",
+     "datum": "2026-11-17",
+     "poang": -0.0857,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
@@ -736,46 +660,46 @@
   },
   {
    "aktie": "JNJ",
-   "datum": "2026-11-16",
-   "pris": 282.54998779296875,
-   "ml": 0.4936441610766621,
-   "nyheter": 0.23582,
-   "poang": 0.5054351610766621,
-   "risk": 0.2702605266608381,
+   "datum": "2026-11-17",
+   "pris": 278.70001220703125,
+   "ml": 0.5009682136941161,
+   "nyheter": 0.42138,
+   "poang": 0.5220372136941162,
+   "risk": 0.2802256362871837,
    "blankning": null,
    "nyhetslista": [
     {
-     "rubrik": "Johnson & Johnson (JNJ) Eyes Ollin Biosciences, Is It 19% Overvalued?",
-     "sammanfattning": "Johnson & Johnson (JNJ) is back in focus after reports it is in advanced talks to buy eye drug developer Ollin Biosciences in a deal valued at up to US$3.4b. The Ollin Biosciences headlines land on top of a strong run for Johnson & Johnson, with the share price at US$285.75 and a 30 day share price return of 11.81% contributing to a 37.81% year to date gain. The 5 year total shareholder return of 104.40% points to momentum that has been building rather than fading. Scan how other large...",
-     "datum": "2026-11-16",
-     "poang": 0.9413,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Top Analyst Reports for Taiwan Semiconductor, Johnson & Johnson and Palantir",
-     "sammanfattning": "Taiwan Semiconductor, Johnson & Johnson and Palantir headline today's analyst reports, with AI growth, drug pipelines and competitive pressures shaping their outlooks.",
-     "datum": "2026-11-16",
-     "poang": 0.4215,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Sector Update: Healthcare Stocks Decline Late Afternoon",
-     "sammanfattning": "Healthcare stocks were lower late Monday afternoon, with the NYSE Healthcare Index falling 0.3% and",
-     "datum": "2026-11-16",
-     "poang": -0.4215,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "J&J Pushes Into Retinal Disease With $2.2 Billion Ollin Deal",
-     "sammanfattning": "The deal adds OLN324, a Phase 3 bispecific antibody aimed at two drivers of retinal disease",
-     "datum": "2026-11-16",
+     "rubrik": "Johnson & Johnson vs. Pfizer: Consistency vs. Volatility in Revenue",
+     "sammanfattning": "J&J's quarterly sales have climbed with few setbacks, while Pfizer's have swung between $13.7 billion and $17.8 billion over eight quarters.",
+     "datum": "2026-11-17",
      "poang": 0.0,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "How Did AbbVie's Neuroscience Franchise Perform in Q3?",
+     "sammanfattning": "ABBV's neuroscience franchise delivers 19.5% operational sales growth in Q3, prompting the company to raise its 2026 segment sales outlook to $13 billion.",
+     "datum": "2026-11-17",
+     "poang": 0.3818,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Johnson & Johnson's Planned Ollin Biosciences Acquisition to Serve as Growth Driver Past 2030, UBS Says",
+     "sammanfattning": "Johnson & Johnson's (JNJ) planned acquisition of Ollin Biosciences for up to $3.3 billion is a poten",
+     "datum": "2026-11-17",
+     "poang": 0.3818,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Guggenheim Names Top Biotech Stock Pick Following JNJ Latest Deal",
+     "sammanfattning": "Investing.com -- Guggenheim has highlighted Surrozen as its top pick in the biotechnology sector following Johnson & Johnson's acquisition of Ollin Biosciences, a deal that underscores growing strategic interest in retinal vascular disease treatments. The firm maintains a Buy rating on SRZN with an $80 price target.",
+     "datum": "2026-11-17",
+     "poang": 0.743,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
@@ -784,46 +708,46 @@
   },
   {
    "aktie": "HD",
-   "datum": "2026-11-16",
-   "pris": 347.510009765625,
-   "ml": 0.5072860674186896,
-   "nyheter": 0.019009999999999992,
-   "poang": 0.5082365674186896,
-   "risk": 0.2737159935137627,
+   "datum": "2026-11-17",
+   "pris": 339.010009765625,
+   "ml": 0.5281108822388998,
+   "nyheter": 0.15613,
+   "poang": 0.5359173822388998,
+   "risk": 0.3027032436546148,
    "blankning": null,
    "nyhetslista": [
     {
-     "rubrik": "Earnings to watch: NVIDIA, Walmart, Home Depot and more report this week",
-     "sammanfattning": "Investing.com -- This week’s calendar pairs the consumer (Home Depot, Lowe’s, Target, TJX, Walmart) with the AI trade (NVIDIA). Data is from the earnings calendar as of Mon, Nov 16, 2026 at 3:17 PM EST. Estimates are consensus and can shift.",
-     "datum": "2026-11-16",
+     "rubrik": "Home Depot taps Richard McPhail as new CEO, reports Q3 earnings beat",
+     "sammanfattning": "Current CEO Ted Decker will stay on as board Chair, while CFO Richard McPhail will be named CEO.",
+     "datum": "2026-11-17",
      "poang": 0.0,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Is There A Risk Hiding In Walmart Stock's Latest Quarter?",
-     "sammanfattning": "For questions about this article or underlying research, email help@trefis.com.",
-     "datum": "2026-11-16",
-     "poang": -0.5106,
+     "rubrik": "Stocks slip ahead of Nvidia earnings, Home Depot shares slide: AlphaCheck",
+     "sammanfattning": "Stocks slipped on Tuesday ahead of Nvidia's quarterly results.",
+     "datum": "2026-11-17",
+     "poang": 0.296,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Home Depot, Lowe's Q3 Results Likely to Dampen Recovery Expectations, Oppenheimer Says",
-     "sammanfattning": "Home Depot (HD) and Lowe's (LOW) are likely to report soft but largely in-line fiscal Q3 results, wi",
-     "datum": "2026-11-16",
-     "poang": -0.2303,
+     "rubrik": "Home Depot CFO Richard McPhail to become retailer's next CEO",
+     "sammanfattning": "Home Depot (HD) announces that CFO Richard McPhail will step up to become the next CEO, replacing Ted Decker, effective November 23. Decker will serve in a new role as the company's chair.\n\nThe 8:30 Hosts Jake Conley, Julie Hyman, and Pras Subramanian discuss the significance of this headline reported alongside Home Depot's third quarter earnings results.",
+     "datum": "2026-11-17",
+     "poang": 0.6369,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Home Depot Accelerates Express Delivery: Can It Fuel Growth?",
-     "sammanfattning": "HD's nationwide three-hour express delivery rollout aims to boost sales and customer loyalty, but can faster fulfillment overcome housing market pressures?",
-     "datum": "2026-11-16",
-     "poang": 0.3204,
+     "rubrik": "Who is new Home Depot CEO Richard McPhail?",
+     "sammanfattning": "Home Depot has a new CEO. Here's what we know.",
+     "datum": "2026-11-17",
+     "poang": 0.0,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
@@ -832,14 +756,23 @@
   },
   {
    "aktie": "VOLV-B.ST",
-   "datum": "2026-11-16",
-   "pris": 322.70001220703125,
-   "ml": 0.4671128849628822,
-   "nyheter": 0.765,
-   "poang": 0.5053628849628822,
-   "risk": 0.20765351626392567,
+   "datum": "2026-11-17",
+   "pris": 319.70001220703125,
+   "ml": 0.46843209307300715,
+   "nyheter": 0.47145000000000004,
+   "poang": 0.49200459307300715,
+   "risk": 0.227501919689593,
    "blankning": 0.0,
    "nyhetslista": [
+    {
+     "rubrik": "CAT Standardizes Construction Equipment Safety: Will It Set It Apart?",
+     "sammanfattning": "Caterpillar is making collision warning and mitigation technology standard on most new construction machines in 2027, expanding jobsite safety capabilities.",
+     "datum": "2026-11-17",
+     "poang": 0.1779,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
     {
      "rubrik": "New Strong Sell Stocks for November 16th",
      "sammanfattning": "VLVLY, ATS and ALLY have been added to the Zacks Rank #5 (Strong Sell) List on November 16th, 2026.",
@@ -853,46 +786,46 @@
   },
   {
    "aktie": "JPM",
-   "datum": "2026-11-16",
-   "pris": 338.2099914550781,
-   "ml": 0.5027851425605685,
-   "nyheter": -0.09147,
-   "poang": 0.4982116425605685,
-   "risk": 0.23746754152917185,
+   "datum": "2026-11-17",
+   "pris": 329.9599914550781,
+   "ml": 0.5075318813673192,
+   "nyheter": 0.18739,
+   "poang": 0.5169013813673192,
+   "risk": 0.25871074419638485,
    "blankning": null,
    "nyhetslista": [
     {
-     "rubrik": "JPMorgan and DBS customers can now move tokenized dollars after hours",
-     "sammanfattning": "Scott Melker discusses what you should know about JPMorgan's (JPM) and DBS's (D05.SI) now-connected blockchain-based deposit networks.\n\n\"The Daily Wolf with Scott Melker\" airs every day at 12:00 p.m. Tune in for your daily dose of all things crypto.",
-     "datum": "2026-11-16",
+     "rubrik": "Software bug freezes Chase: Is it the time for bitcoin?",
+     "sammanfattning": "Scott Melker discusses an hours-long Chase (JPM) outage and whether decentralized bitcoin (BTC-USD) matters more now than ever.\n\n\"The Daily Wolf with Scott Melker\" airs every day at 12:00 p.m. Tune in for your daily dose of all things crypto.",
+     "datum": "2026-11-17",
      "poang": 0.0,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Update: JPMorgan, Bank of America, Wells Fargo Site Users Report Connectivity Issues, Downdetector Says",
-     "sammanfattning": "(Updates banks affected by outages as reported by Downdetector.) JPMorgan Chase (JPM), Bank of Am",
-     "datum": "2026-11-16",
-     "poang": 0.1027,
+     "rubrik": "JPMorgan CFO Jeremy Barnum to step down as Jamie Dimon's succession plans take shape",
+     "sammanfattning": "JPMorgan Chase said Tuesday that longtime chief financial officer Jeremy Barnum will step down next year in the latest change among the top ranks of the country's largest bank as it prepares for CEO Jamie Dimon's eventual succession.",
+     "datum": "2026-11-17",
+     "poang": 0.5267,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "A Third Outage Strikes, This Time at Chase, Big Banks. The Stocks Are Falling.",
-     "sammanfattning": "The tracking site Downdetector.com noted an uptick in messages just after 9 a.m. Monday morning.",
-     "datum": "2026-11-16",
-     "poang": -0.4767,
+     "rubrik": "After IPO Day: Executing as a Public Company, 6th Palm Beach CorpGov Forum",
+     "sammanfattning": "CorpGov hosted the sixth annual Palm Beach CorpGov Forum on Nov. 4-5, 2026, at the Palm Beach Lake Pavilion and The Cove Club, both located waterfront with sweeping views of Palm Beach Island, along with a reception at Cucina Palm Beach. The panel called “After IPO Day: Executing as a Public Company” took place on […] The post After IPO Day: Executing as a Public Company, 6th Palm Beach CorpGov Forum appeared first on CorpGov.",
+     "datum": "2026-11-17",
+     "poang": 0.0,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Update: JPMorgan, Bank of America, Wells Fargo Site Users Report Connectivity Issues, Downdetector Says",
-     "sammanfattning": "(Updates in the headline and last three paragraphs.) User reports indicated problems at JPMorgan",
-     "datum": "2026-11-16",
-     "poang": -0.1779,
+     "rubrik": "As tech crashes mount, how can banks respond?",
+     "sammanfattning": "JPMorganChase's outage on Monday came amid glitches impacting air travel and Microsoft. Technology experts say it's time to brush up on public communication skills and get ready for political pressure.",
+     "datum": "2026-11-17",
+     "poang": 0.0772,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
@@ -901,13 +834,13 @@
   },
   {
    "aktie": "ERIC-B.ST",
-   "datum": "2026-11-16",
-   "pris": 106.1500015258789,
-   "ml": 0.5030566032171011,
+   "datum": "2026-11-17",
+   "pris": 104.1500015258789,
+   "ml": 0.506854292627248,
    "nyheter": 0.7856285714285713,
-   "poang": 0.5423380317885297,
-   "risk": 0.26357705980053253,
-   "blankning": 3.71,
+   "poang": 0.5461357211986766,
+   "risk": 0.2823076374196486,
+   "blankning": 3.8,
    "nyhetslista": [
     {
      "rubrik": "Here’s What Weighed on Telefonaktiebolaget LM Ericsson (Publ) (ERIC) in Q3",
@@ -949,57 +882,57 @@
   },
   {
    "aktie": "INVE-B.ST",
-   "datum": "2026-11-16",
-   "pris": 436.0,
-   "ml": 0.4896517889234122,
+   "datum": "2026-11-17",
+   "pris": 425.5,
+   "ml": 0.48671663720410896,
    "nyheter": 0.0,
-   "poang": 0.4896517889234122,
-   "risk": 0.16750865028608652,
+   "poang": 0.48671663720410896,
+   "risk": 0.18885248186176282,
    "blankning": 0.0,
    "nyhetslista": []
   },
   {
    "aktie": "META",
-   "datum": "2026-11-16",
-   "pris": 626.4099731445312,
-   "ml": 0.5279296392828569,
-   "nyheter": 0.0729,
-   "poang": 0.5315746392828569,
-   "risk": 0.41752294408020624,
+   "datum": "2026-11-17",
+   "pris": 618.8699951171875,
+   "ml": 0.5199834819099002,
+   "nyheter": 0.08606,
+   "poang": 0.5242864819099001,
+   "risk": 0.4227500764184789,
    "blankning": null,
    "nyhetslista": [
     {
-     "rubrik": "What's dragging down the S&P 500? Apple in focus",
-     "sammanfattning": "Yahoo Finance Markets and Data Editor Jared Blikre joins Deirdre Bosa on Deirdre Bosa Live to discuss Apple's (AAPL) influence on the S&amp;P 500 (^GSPC). Blikre examines what's driving the latest weakness on Wall Street.",
-     "datum": "2026-11-16",
-     "poang": -0.4215,
+     "rubrik": "Trading Day: AI trade unwind continues, but Nvidia beats",
+     "sammanfattning": "By Jamie McGeever ORLANDO, Florida, Nov 17 (Reuters) - The AI trade unwind continued on Tuesday, pushing global stocks lower ahead of Nvidia's quarterly earnings and as investors prepared for",
+     "datum": "2026-11-17",
+     "poang": -0.1154,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "The cost of ousting a founder: Is the 'bank of Nvidia' at risk?",
-     "sammanfattning": "Benchmark Company general partner Bill Gurley sits down with Deirdre Bosa to share his thoughts on circular financing concerns surrounding Nvidia (NVDA), especially in the absence of Jensen Huang as chief executive.",
-     "datum": "2026-11-16",
-     "poang": 0.0258,
+     "rubrik": "Nvidia's Complex Orbit",
+     "sammanfattning": "Nvidia has built a sprawling network of financial ties across the technology industry.",
+     "datum": "2026-11-17",
+     "poang": 0.0,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Wall Street ends sharply lower on AI jitters ahead of Nvidia results, Anthropic IPO",
-     "sammanfattning": "By Stephen Culp and Utkarsh Hathi NEW YORK, Nov 16 (Reuters) - A broad selloff dragged US stocks lower on Monday as fallout from Jensen Huang's resignation as Nvidia CEO soured enthusiasm for AI",
-     "datum": "2026-11-16",
-     "poang": -0.4404,
+     "rubrik": "Meta Platforms, Inc. (META): Strong Advertising Growth Supports Its Long-Term Investment Case",
+     "sammanfattning": "We just published our list, Ken Fisher Portfolio Review: 10 Highest-Conviction Technology Stocks for Long-Term Growth, and Meta Platforms, Inc. ranked 9th on this list. Ken Fisher, founder and former CEO of Fisher Asset Management, has historically maintained a constructive, growth-oriented view of technology stocks. His investment philosophy centers around companies with strong long-term growth […]",
+     "datum": "2026-11-17",
+     "poang": 0.9545,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Nebius Stocks Sink 8% as Nvidia's Financing Retreat Hits Neocloud Builders",
-     "sammanfattning": "A report that interim CEO Colette Kress will rein in Nvidia's AI financing names Nebius, which plans up to $45 billion of 2027 capex.",
-     "datum": "2026-11-16",
-     "poang": 0.2023,
+     "rubrik": "Nvidia Bet Big on AI Stocks. Now They’re Getting Hit.",
+     "sammanfattning": "Billion-dollar investments have linked dozens of companies to Nvidia’s success—and now its stumbles.",
+     "datum": "2026-11-17",
+     "poang": 0.0,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
@@ -1008,12 +941,12 @@
   },
   {
    "aktie": "ATCO-A.ST",
-   "datum": "2026-11-16",
-   "pris": 191.89999389648438,
-   "ml": 0.4882413159605596,
+   "datum": "2026-11-17",
+   "pris": 189.1999969482422,
+   "ml": 0.4893974935257788,
    "nyheter": 0.9678,
-   "poang": 0.5366313159605596,
-   "risk": 0.2695612631170586,
+   "poang": 0.5377874935257788,
+   "risk": 0.28103088095640466,
    "blankning": 0.0,
    "nyhetslista": [
     {
@@ -1029,67 +962,57 @@
   },
   {
    "aktie": "ABB.ST",
-   "datum": "2026-11-16",
-   "pris": 832.2000122070312,
-   "ml": 0.4645532395221888,
-   "nyheter": -0.2732,
-   "poang": 0.4508932395221888,
-   "risk": 0.2632419792241413,
+   "datum": "2026-11-17",
+   "pris": 818.7999877929688,
+   "ml": 0.47258806721353663,
+   "nyheter": 0.0,
+   "poang": 0.47258806721353663,
+   "risk": 0.2951678524824321,
    "blankning": 0.0,
-   "nyhetslista": [
-    {
-     "rubrik": "Softbank and ABB reenter talks after China blocked acquisition",
-     "sammanfattning": "The decision could result in a carve-out of the $5.4 billion deal, a new buyer or a potential spin-off.",
-     "datum": "2026-11-10",
-     "poang": -0.2732,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    }
-   ]
+   "nyhetslista": []
   },
   {
    "aktie": "GOOGL",
-   "datum": "2026-11-16",
-   "pris": 283.7200012207031,
-   "ml": 0.6228599533614511,
-   "nyheter": -0.049170000000000005,
-   "poang": 0.620401453361451,
-   "risk": 0.35019244720034687,
+   "datum": "2026-11-17",
+   "pris": 280.20001220703125,
+   "ml": 0.6140717473591121,
+   "nyheter": 0.49693000000000004,
+   "poang": 0.6389182473591121,
+   "risk": 0.36876606343814483,
    "blankning": null,
    "nyhetslista": [
     {
-     "rubrik": "What's dragging down the S&P 500? Apple in focus",
-     "sammanfattning": "Yahoo Finance Markets and Data Editor Jared Blikre joins Deirdre Bosa on Deirdre Bosa Live to discuss Apple's (AAPL) influence on the S&amp;P 500 (^GSPC). Blikre examines what's driving the latest weakness on Wall Street.",
-     "datum": "2026-11-16",
-     "poang": -0.4215,
+     "rubrik": "Can this AI help 'democratize' access to extensive wealth planning?",
+     "sammanfattning": "Deirdre Bosa is joined by dub CEO Steven Wang to discuss the copy-trading platform's new AI financial assistant, Arlo, and how this feature may help investors receive more personalized wealth management strategies.",
+     "datum": "2026-11-17",
+     "poang": 0.9017,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "The cost of ousting a founder: Is the 'bank of Nvidia' at risk?",
-     "sammanfattning": "Benchmark Company general partner Bill Gurley sits down with Deirdre Bosa to share his thoughts on circular financing concerns surrounding Nvidia (NVDA), especially in the absence of Jensen Huang as chief executive.",
-     "datum": "2026-11-16",
-     "poang": 0.0258,
+     "rubrik": "Trading Day: AI trade unwind continues, but Nvidia beats",
+     "sammanfattning": "By Jamie McGeever ORLANDO, Florida, Nov 17 (Reuters) - The AI trade unwind continued on Tuesday, pushing global stocks lower ahead of Nvidia's quarterly earnings and as investors prepared for",
+     "datum": "2026-11-17",
+     "poang": -0.1154,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Eli Lilly is trouncing Nvidia — and the weight-loss drug trade is beating AI again",
-     "sammanfattning": "Since its Oct. 6 record, Nvidia has shed more than $1.7 trillion in market value. Eli Lilly has added more than $250 billion over the same stretch, a gain topped only by Apple among the market's biggest stocks.",
-     "datum": "2026-11-16",
-     "poang": 0.4215,
+     "rubrik": "All Investor Eyes Are on Nvidia’s Future and Forward Looking Statements",
+     "sammanfattning": "Investors aren’t so focused on how Nvidia performed last quarter.",
+     "datum": "2026-11-17",
+     "poang": 0.5214,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "AI Stocks Resume Their Slide",
-     "sammanfattning": "Plus, the Fed weighs AI jobs scenarios and Tyson improves its beef outlook",
-     "datum": "2026-11-16",
-     "poang": 0.4215,
+     "rubrik": "Alphabet vs. Amazon: Which Is the Better AI Cloud Stock to Own for the Next 5 Years?",
+     "sammanfattning": "It's hard not to like both businesses, but one offers the potential for a better return.",
+     "datum": "2026-11-17",
+     "poang": 0.6592,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
@@ -1097,95 +1020,327 @@
    ]
   },
   {
-   "aktie": "XOM",
-   "datum": "2026-11-16",
-   "pris": 166.8699951171875,
-   "ml": 0.5153824797413589,
-   "nyheter": 0.11688999999999998,
-   "poang": 0.5212269797413589,
-   "risk": 0.28117919475938336,
-   "blankning": null,
-   "nyhetslista": [
-    {
-     "rubrik": "Nvidia board needs 'some heavyweights,' ex-Medtronic CEO Bill George says",
-     "sammanfattning": "The Nvidia board could use a jolt of fresh blood.",
-     "datum": "2026-11-16",
-     "poang": 0.3182,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Sector Update: Energy Stocks Retreat Late Afternoon",
-     "sammanfattning": "Energy stocks were lower late Monday afternoon, with the NYSE Energy Sector Index falling 2.1% and t",
-     "datum": "2026-11-16",
-     "poang": 0.5106,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Could Occidental Petroleum Be The Value Stock For Your Portfolio?",
-     "sammanfattning": "For questions about this article or underlying research, email help@trefis.com.",
-     "datum": "2026-11-16",
-     "poang": 0.34,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Sector Update: Energy Stocks Decline Monday Afternoon",
-     "sammanfattning": "Energy stocks were lower Monday afternoon, with the NYSE Energy Sector Index and the State Street En",
-     "datum": "2026-11-16",
-     "poang": 0.4767,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    }
-   ]
+   "aktie": "SEB-A.ST",
+   "datum": "2026-11-17",
+   "pris": 219.0,
+   "ml": 0.47891336323098416,
+   "nyheter": 0.0,
+   "poang": 0.47891336323098416,
+   "risk": 0.2274865826577114,
+   "blankning": 0.63,
+   "nyhetslista": []
   },
   {
-   "aktie": "KO",
-   "datum": "2026-11-16",
-   "pris": 99.4800033569336,
-   "ml": 0.4816264280229754,
-   "nyheter": 0.24779,
-   "poang": 0.4940159280229754,
-   "risk": 0.20834146455767208,
+   "aktie": "AMZN",
+   "datum": "2026-11-17",
+   "pris": 257.8900146484375,
+   "ml": 0.5075556285412562,
+   "nyheter": 0.54867,
+   "poang": 0.5349891285412562,
+   "risk": 0.35159837854769976,
    "blankning": null,
    "nyhetslista": [
     {
-     "rubrik": "What Does Warren Buffett’s 90/10 Rule Say to a 74-Year-Old With $1 Million of Coca-Cola at a Record?",
-     "sammanfattning": "Coca-Cola sits at an all-time high, and one couple's biggest holding now dwarfs the simple split Buffett prescribed for retirees. Getting there means choosing among five paths, and each one sends the IRS a different bill.",
-     "datum": "2026-11-16",
+     "rubrik": "There's 'no difference' between buying Anthropic's IPO and Amazon's IPO: Kevin O'Leary",
+     "sammanfattning": "\"Shark Tank\" star Kevin O'Leary weighs in on Anthropic's IPO.",
+     "datum": "2026-11-17",
      "poang": 0.0,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "PepsiCo Stock Drops 2.4% in 6 Months: Is More Downside Ahead?",
-     "sammanfattning": "PEP's shares decline as weak North American demand, rising costs and lowered earnings guidance cloud its near-term recovery prospects.",
-     "datum": "2026-11-16",
-     "poang": -0.4201,
+     "rubrik": "Why SpaceX's latest Starship test was a big deal",
+     "sammanfattning": "In the Loop Host Ejaaz Ahamadeen breaks down his takeaways from Friday's SpaceX (SPCX) Starship Flight 15 test mission, examining what made the launch a success and what it could mean for the company's ambitious space exploration plans.",
+     "datum": "2026-11-17",
+     "poang": 0.8271,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "Coca-Cola Has Crushed PepsiCo in 2026, but Retirement Investors Face a Different Dividend Decision",
-     "sammanfattning": "One Dividend King trades at a steep premium while the other offers a yield above 4%. For retirees who need income to last decades, the cheaper stock may hide the bigger problem, and the pricier one may hide a surprising weak spot.",
-     "datum": "2026-11-16",
-     "poang": -0.8674,
+     "rubrik": "Robert Pattinson is the next James Bond: A closer look at Amazon MGM's decision",
+     "sammanfattning": "Amazon (AMZN) MGM Studios recently announced that Robert Pattinson will star as James Bond in the next film.\n\n\"The 8:30\" hosts Julie Hyman, Pras Subramanian, and Jake Conley discuss the details.",
+     "datum": "2026-11-17",
+     "poang": 0.34,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
     },
     {
-     "rubrik": "WisdomTree U.S. Dividend Growth (DGRW) Adds Microsoft and Nvidia on Nov. 12",
-     "sammanfattning": "The fund bought $586.1 million of stock and sold nothing, lifting 184 positions.",
-     "datum": "2026-11-16",
-     "poang": 0.3818,
+     "rubrik": "Can this AI help 'democratize' access to extensive wealth planning?",
+     "sammanfattning": "Deirdre Bosa is joined by dub CEO Steven Wang to discuss the copy-trading platform's new AI financial assistant, Arlo, and how this feature may help investors receive more personalized wealth management strategies.",
+     "datum": "2026-11-17",
+     "poang": 0.9017,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ]
+  },
+  {
+   "aktie": "SHB-A.ST",
+   "datum": "2026-11-17",
+   "pris": 161.35000610351562,
+   "ml": 0.4763945650263283,
+   "nyheter": 0.0,
+   "poang": 0.4763945650263283,
+   "risk": 0.1880434806931834,
+   "blankning": 1.9,
+   "nyhetslista": []
+  },
+  {
+   "aktie": "HM-B.ST",
+   "datum": "2026-11-17",
+   "pris": 178.35000610351562,
+   "ml": 0.5024651286006492,
+   "nyheter": 0.0,
+   "poang": 0.5024651286006492,
+   "risk": 0.2422801309967263,
+   "blankning": 1.35,
+   "nyhetslista": []
+  },
+  {
+   "aktie": "NVDA",
+   "datum": "2026-11-17",
+   "pris": 155.4600067138672,
+   "ml": 0.4774699480469251,
+   "nyheter": 0.14098000000000002,
+   "poang": 0.48451894804692514,
+   "risk": 0.571849569126837,
+   "blankning": null,
+   "nyhetslista": [
+    {
+     "rubrik": "AMD, Broadcom, CoreWeave stocks rise on Nvidia earnings beat",
+     "sammanfattning": "Semiconductor and AI infrastructure stocks moved higher in after-hours trading on Tuesday after AI chip heavyweight Nvidia posted better-than-expected quarterly results.",
+     "datum": "2026-11-17",
+     "poang": 0.0,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Nvidia earnings: Why Jensen turmoil won't have a near-term impact on the numbers",
+     "sammanfattning": "Uniphore CEO Umesh Sachdev and Morningstar equity strategist Brian Colello sit down with Deirdre Bosa to share their thoughts on Nvidia's (NVDA) latest earnings results in the wake of Jensen Huang's departure from the company.",
+     "datum": "2026-11-17",
+     "poang": -0.0772,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Nvidia’s Q3 earnings show its advantage as the bank of the AI boom",
+     "sammanfattning": "Yahoo Finance's Deirdre Bosa explains that Nvidia's (NVDA) role as a quasi-lender to smaller neo cloud customers means that part of its sales depends on customers it helps finance, which shows up in receivables and free cash flow.",
+     "datum": "2026-11-17",
+     "poang": 0.7845,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Why a Jensen Huang comeback could become a major battle in Washington",
+     "sammanfattning": "Semafor's editor in chief, Ben Smith, sits down with Deirdre Bosa to explain why Jensen Huang's return to Nvidia (NVDA) would be so contentious among politicians in Washington.",
+     "datum": "2026-11-17",
+     "poang": -0.6965,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ]
+  },
+  {
+   "aktie": "SAND.ST",
+   "datum": "2026-11-17",
+   "pris": 347.79998779296875,
+   "ml": 0.48446270257923196,
+   "nyheter": 0.0,
+   "poang": 0.48446270257923196,
+   "risk": 0.33469480886317393,
+   "blankning": 0.5,
+   "nyhetslista": []
+  },
+  {
+   "aktie": "ASSA-B.ST",
+   "datum": "2026-11-17",
+   "pris": 389.8999938964844,
+   "ml": 0.4763603750826834,
+   "nyheter": 0.0,
+   "poang": 0.4763603750826834,
+   "risk": 0.21879938366811125,
+   "blankning": 0.69,
+   "nyhetslista": []
+  },
+  {
+   "aktie": "ESSITY-B.ST",
+   "datum": "2026-11-17",
+   "pris": 291.20001220703125,
+   "ml": 0.46787559855932176,
+   "nyheter": 0.0,
+   "poang": 0.46787559855932176,
+   "risk": 0.20166704894556292,
+   "blankning": 1.7200000000000002,
+   "nyhetslista": []
+  },
+  {
+   "aktie": "MSFT",
+   "datum": "2026-11-17",
+   "pris": 506.239990234375,
+   "ml": 0.5477721820623945,
+   "nyheter": 0.5007900000000001,
+   "poang": 0.5728116820623945,
+   "risk": 0.33044543193074255,
+   "blankning": null,
+   "nyhetslista": [
+    {
+     "rubrik": "Microsoft AI chief says compute isn't a bottleneck — for now",
+     "sammanfattning": "Microsoft (MSFT) unveiled a slew of new AI models at its Ignite 2026 event on Tuesday.\n\nMicrosoft AI CEO Mustafa Suleyman sits down with Deirdre Bosa to discuss the status of Microsoft's AI compute and the pricing scale it's offering to partner companies.",
+     "datum": "2026-11-17",
+     "poang": 0.0,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Microsoft's AI pitch at Ignite: Cheaper models as business 'token spend is going through the roof'",
+     "sammanfattning": "Microsoft rolled out new features to its AI initiative and products during its flagship conference on Tuesday. One theme was keeping enterprise costs down.",
+     "datum": "2026-11-17",
+     "poang": 0.1027,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Is AI to blame for basic IT gaps in Big Tech, airlines, and more?",
+     "sammanfattning": "Siebert Financial chief investment officer Mark Malek and his panel of experts weigh in on the recent outages experienced by companies like Microsoft (MSFT), JPMorgan Chase (JPM), and various airlines last week, and whether the hyperfocus on AI has taken attention away from basic system functions.\n\nToday's panel includes Yahoo Finance's Julie Hyman, Solidarity Wealth CEO Jeff McClean, Roundhill Investments ETF strategist Thomas DiFazio, and Alumni Ventures managing partner Laura Rippy.",
+     "datum": "2026-11-17",
+     "poang": 0.6705,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "What far cheaper AI compute in space could mean for Elon Musk",
+     "sammanfattning": "In the Loop host Ejaaz Ahamadeen explains how SpaceX (SPCX) CEO Elon Musk's ability to scale AI compute on Earth, and potentially in space at a much lower cost, could make his space business a highly lucrative AI compute provider on par with the big cloud businesses like Amazon Web Services (AMZN), Google Cloud (GOOG) (GOOGL), and Microsoft's (MSFT) Azure.",
+     "datum": "2026-11-17",
+     "poang": 0.5106,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ]
+  },
+  {
+   "aktie": "HEXA-B.ST",
+   "datum": "2026-11-17",
+   "pris": 104.3499984741211,
+   "ml": 0.4921040944560702,
+   "nyheter": 0.0,
+   "poang": 0.4921040944560702,
+   "risk": 0.24845354766182015,
+   "blankning": 0.61,
+   "nyhetslista": []
+  },
+  {
+   "aktie": "SKF-B.ST",
+   "datum": "2026-11-17",
+   "pris": 271.6000061035156,
+   "ml": 0.5078773291684839,
+   "nyheter": 0.0,
+   "poang": 0.5078773291684839,
+   "risk": 0.2860735643486294,
+   "blankning": 5.45,
+   "nyhetslista": []
+  },
+  {
+   "aktie": "AAPL",
+   "datum": "2026-11-17",
+   "pris": 351.9100036621094,
+   "ml": 0.4663375902065575,
+   "nyheter": 0.42243,
+   "poang": 0.48745909020655753,
+   "risk": 0.26778655681113883,
+   "blankning": null,
+   "nyhetslista": [
+    {
+     "rubrik": "Apple outage today: iCloud and App Store down after a week of big outages",
+     "sammanfattning": "Apple's iCloud and App Store problems follow outages at Microsoft, the FAA, Chase, and United.",
+     "datum": "2026-11-17",
+     "poang": 0.0258,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Huang pitches Nvidia comeback, WSJ reports SEC probing the chipmaker",
+     "sammanfattning": "WASHINGTON/SAN FRANCISCO, Nov 17 (Reuters) - Jensen Huang said on Tuesday he \"would be honored\" to return as Nvidia's CEO if the chipmaker's board decided the move was in the best interests of shareholders and employees, and the Wall Street Journal reported a regulator was probing Nvidia. The US Securities and Exchange Commission was investigating Nvidia, the Journal reported, citing people familiar with the matter.",
+     "datum": "2026-11-17",
+     "poang": 0.9062,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Fund Manager Lists Three Reasons He Still Won’t Buy Tesla Stock",
+     "sammanfattning": "Gary Black, managing partner of The Future Fund LLC, sold his firm’s Tesla position in May 2025 at $356.",
+     "datum": "2026-11-17",
+     "poang": 0.0,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Apple Pay outage blocks instant crypto purchases",
+     "sammanfattning": "The outage hits one of the most popular ways to buy Bitcoin instantly.",
+     "datum": "2026-11-17",
+     "poang": 0.2006,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    }
+   ]
+  },
+  {
+   "aktie": "TELIA.ST",
+   "datum": "2026-11-17",
+   "pris": 50.040000915527344,
+   "ml": 0.4696929702612502,
+   "nyheter": 0.67273,
+   "poang": 0.5033294702612502,
+   "risk": 0.2281134550177434,
+   "blankning": 0.0,
+   "nyhetslista": [
+    {
+     "rubrik": "Mizuno (TSE:8022) Stock May Trade Above Fair Value Following Its 4.8x Run",
+     "sammanfattning": "Mizuno has produced very strong share price gains over the past several years, yet the recent pullback puts fresh attention on a simple question for investors. Do the company’s current cash flows support where the stock now trades, or has the price moved ahead of the underlying money it can generate? Over the past 5 years the share price has risen about 4.8x, which puts a lot of weight on whether the business can sustain cash flows that justify that kind of compounding. The group’s ability...",
+     "datum": "2026-11-17",
+     "poang": 0.9621,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "European chip stocks fall after new U.S. curbs on AI chip access",
+     "sammanfattning": "Investing.com -- European semiconductor stocks fell on Tuesday, with ASML, BE Semiconductor and AT&S among the biggest decliners, as investors weighed new U.S. curbs on access to advanced AI chips through overseas data centres.",
+     "datum": "2026-11-17",
+     "poang": 0.25,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Plesio stock surges 23% after operational financing extension",
+     "sammanfattning": "Investing.com -- Plesio (EPA:CASP) shares soared more than 23% on Tuesday following the company’s announcement that it secured an extension of the maturity of its operational financings to January 4, 2027.",
+     "datum": "2026-11-17",
+     "poang": 0.5994,
+     "relevant": true,
+     "motivering": "",
+     "metod": "VADER"
+    },
+    {
+     "rubrik": "Is Keisei Electric Railway (TSE:9009) Fully Priced On Half Year Results And Fare Review?",
+     "sammanfattning": "Why Keisei Electric Railway Stock Is Back in Focus Keisei Electric Railway (TSE:9009) just released half year results showing higher sales and net income. The board met on November 6 to consider changing passenger fares, putting future revenue drivers under closer investor scrutiny. The recent half year report and fare review discussion landed after a strong run in Keisei Electric Railway’s shares. The 30 day share price return was 12.74% and the 90 day gain was 19.74%, building on a 20.91%...",
+     "datum": "2026-11-17",
+     "poang": 0.8779,
      "relevant": true,
      "motivering": "",
      "metod": "VADER"
@@ -1194,12 +1349,12 @@
   },
   {
    "aktie": "SWED-A.ST",
-   "datum": "2026-11-16",
-   "pris": 421.5,
-   "ml": 0.433588767352778,
+   "datum": "2026-11-17",
+   "pris": 418.1000061035156,
+   "ml": 0.4689605132723851,
    "nyheter": 0.9652,
-   "poang": 0.48184876735277804,
-   "risk": 0.20484650154680045,
+   "poang": 0.517220513272385,
+   "risk": 0.22493368165103156,
    "blankning": 0.88,
    "nyhetslista": [
     {
@@ -1214,268 +1369,92 @@
    ]
   },
   {
-   "aktie": "AZN.ST",
-   "datum": "2026-11-16",
-   "pris": 1870.5,
-   "ml": 0.45906758962535604,
-   "nyheter": 0.08908999999999997,
-   "poang": 0.463522089625356,
-   "risk": 0.2348325538897755,
-   "blankning": 0.0,
-   "nyhetslista": [
-    {
-     "rubrik": "AstraZeneca Bet $2 Billion on Summit’s Cancer Drug. The FDA Just Said Not Yet.",
-     "sammanfattning": "Summit Therapeutics stock sinks as regulators decline to approve ivonescimab, a next-generation cancer therapy backed by AstraZeneca.",
-     "datum": "2026-11-16",
-     "poang": -0.8658,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "European Equities Traded in the US as American Depositary Receipts Kick Off Week Lower in Monday Trading",
-     "sammanfattning": "European equities traded in the US as American depositary receipts kicked off the week tracking lowe",
-     "datum": "2026-11-16",
-     "poang": -0.1779,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "AstraZeneca Secures US, EU Nod for New Myasthenia Gravis Drug Klygefa",
-     "sammanfattning": "AZN secures US and EU approval for Klygefa, a once-weekly gMG treatment that offers patients greater convenience.",
-     "datum": "2026-11-16",
-     "poang": 0.8481,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "FDA Doesn't Approve Summit's China-Developed Lung Cancer Drug",
-     "sammanfattning": "The FDA said Summit Therapeutics' lung cancer drug ivonescimab, developed in China, failed to show a statistically significant survival benefit.",
-     "datum": "2026-11-16",
-     "poang": -0.8519,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    }
-   ]
-  },
-  {
-   "aktie": "SEB-A.ST",
-   "datum": "2026-11-16",
-   "pris": 222.1999969482422,
-   "ml": 0.4629545528573346,
-   "nyheter": 0.0,
-   "poang": 0.4629545528573346,
-   "risk": 0.21646180653847225,
-   "blankning": 0.63,
-   "nyhetslista": []
-  },
-  {
-   "aktie": "AMZN",
-   "datum": "2026-11-16",
-   "pris": 257.75,
-   "ml": 0.5227084279551323,
-   "nyheter": -0.21274,
-   "poang": 0.5120714279551323,
-   "risk": 0.34443610316823886,
-   "blankning": null,
-   "nyhetslista": [
-    {
-     "rubrik": "How Chewy's CEO plans to lower the $2,000 vet ER bill",
-     "sammanfattning": "Chewy CEO Sumit Singh explains to Yahoo Finance Executive Editor Brian Sozzi how the company is trying to bring pet insurance to millions of US households after finding fewer than 2% of pets were covered.",
-     "datum": "2026-11-16",
-     "poang": -0.296,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Nvidia is not considering rehiring Jensen Huang, and Amazon's data center gets bought",
-     "sammanfattning": "Deirdre Bosa discusses Nvidia (NVDA), claiming they are not considering bringing back Jensen Huang, Amazon's (AMZN) data centers being bought by Blackstone (BX), and Apple (AAPL) launching a study on how people use AI for health.\n\nDeirdre Bosa then sits down with Niles Investment Management Founder Dan Niles to talk about the AI trade proving itself beyond Jensen Huang, Neoclouds could be the biggest loser post-Jensen, and the Anthropic (ANTH.PVT) IPO.\n\n'Deirdre Bosa Live' airs every day at 4 p.m. Tune in daily to hear how the latest developments in AI and technology are reshaping companies, industries, and the global economy.",
-     "datum": "2026-11-16",
-     "poang": -0.5267,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "What's dragging down the S&P 500? Apple in focus",
-     "sammanfattning": "Yahoo Finance Markets and Data Editor Jared Blikre joins Deirdre Bosa on Deirdre Bosa Live to discuss Apple's (AAPL) influence on the S&amp;P 500 (^GSPC). Blikre examines what's driving the latest weakness on Wall Street.",
-     "datum": "2026-11-16",
-     "poang": -0.4215,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Stock Market Today: Dow Dives As Nvidia Makes Huang Decision; Warren Buffett Does This",
-     "sammanfattning": "The Dow Jones index falls. President Trump speaks on Nvidia, Jensen Huang and Howard Lutnick. Chip plays skid.",
-     "datum": "2026-11-16",
-     "poang": 0.25,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    }
-   ]
-  },
-  {
-   "aktie": "SHB-A.ST",
-   "datum": "2026-11-16",
-   "pris": 162.9499969482422,
-   "ml": 0.47413997307483646,
-   "nyheter": 0.875,
-   "poang": 0.5178899730748364,
-   "risk": 0.17363124791978723,
-   "blankning": 1.9,
-   "nyhetslista": [
-    {
-     "rubrik": "Is Svenska Handelsbanken (OM:SHB A) Undervalued After A 165% Run?",
-     "sammanfattning": "Svenska Handelsbanken has delivered a powerful share price run over the past few years, which naturally puts its valuation framework under the microscope. The key issue for anyone looking at the stock today is whether that performance lines up with the returns it earns on its capital. Over the last 5 years the share price has returned 164.7%, which raises the question of how much of that move is supported by the bank's underlying capital efficiency. The business model is anchored in a...",
-     "datum": "2026-11-10",
-     "poang": 0.875,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    }
-   ]
-  },
-  {
-   "aktie": "PG",
-   "datum": "2026-11-16",
-   "pris": 173.02000427246094,
-   "ml": 0.4708537320760933,
-   "nyheter": 0.62494,
-   "poang": 0.5021007320760933,
-   "risk": 0.21151533497070957,
-   "blankning": null,
-   "nyhetslista": [
-    {
-     "rubrik": "Stock Market Today: Dow Dives As Nvidia Makes Huang Decision; Warren Buffett Does This",
-     "sammanfattning": "The Dow Jones index falls. President Trump speaks on Nvidia, Jensen Huang and Howard Lutnick. Chip plays skid.",
-     "datum": "2026-11-16",
-     "poang": 0.25,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "Why Investors Should Own Businesses That Can Win Under Any Administration",
-     "sammanfattning": "The United States holds elections every two years, which is too short a period to justify a long-term investment.",
-     "datum": "2026-11-15",
-     "poang": 0.765,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "As Plastics, Package Makers Mark America Recycles Day, Hopes Run High for Action in Congress",
-     "sammanfattning": "Industry groups are hoping new recycling rules make it through Congress. Critics say they’re trying to undermine state rules.",
-     "datum": "2026-11-15",
-     "poang": 0.296,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    },
-    {
-     "rubrik": "4 Durable Dividend Stocks Retirees Can Count On for Passive Income",
-     "sammanfattning": "One company has raised its dividend through seven decades of recessions, yet it is not the only name retirees should trust. Each of these four payers faces a real risk that could test the check, and the safest one may surprise you.",
-     "datum": "2026-11-15",
-     "poang": 0.7783,
-     "relevant": true,
-     "motivering": "",
-     "metod": "VADER"
-    }
-   ]
-  },
-  {
    "aktie": "ALFA.ST",
-   "datum": "2026-11-16",
-   "pris": 546.4000244140625,
-   "ml": 0.4892565441580572,
+   "datum": "2026-11-17",
+   "pris": 536.2000122070312,
+   "ml": 0.5008950299819557,
    "nyheter": 0.0,
-   "poang": 0.4892565441580572,
-   "risk": 0.22988397979272368,
+   "poang": 0.5008950299819557,
+   "risk": 0.24474442191652487,
    "blankning": 0.0,
    "nyhetslista": []
   }
  ],
  "marknad": {
-  "us": 0.014211051289549248,
-  "se": 0.0529357699618338
+  "us": 0.0036257063440126025,
+  "se": 0.035447821064793494
  },
  "spy_start": 7598.693386837724,
  "viktigast": [
   [
    "relativ_styrka_60d",
-   0.02449979372421344
+   0.024153620818925026
   ],
   [
    "avk_120d_rank",
-   0.009051246442701574
-  ],
-  [
-   "avk_120d",
-   0.008798112534864325
+   0.01076165704779286
   ],
   [
    "vol_kvot",
-   0.008428333588468284
-  ],
-  [
-   "vol_60",
-   0.007891633007194199
-  ],
-  [
-   "atr_pct",
-   0.007504511553278433
-  ],
-  [
-   "fran_arshogsta_rank",
-   0.007493714174798531
+   0.00822740565232242
   ],
   [
    "avst_ma20",
-   0.007261508004401025
+   0.006515753073770503
+  ],
+  [
+   "marknad_avk_20d",
+   0.006361664318647524
+  ],
+  [
+   "fran_arshogsta_rank",
+   0.006346697364348526
+  ],
+  [
+   "atr_pct",
+   0.005060956777770668
+  ],
+  [
+   "avst_ma10",
+   0.004653722210659998
   ]
  ],
- "uppdaterad": "2026-11-16T23:29",
+ "uppdaterad": "2026-11-17T23:30",
  "index_start": 1565.8844387056888,
  "senaste_priser": {
-  "TELIA.ST": 50.34000015258789,
-  "MSFT": 5226.415341816377,
-  "ESSITY-B.ST": 294.3999938964844,
-  "PG": 1745.7372185156855,
-  "ASSA-B.ST": 396.5,
-  "AAPL": 3559.479589695984,
-  "EVO.ST": 873.0,
-  "SKF-B.ST": 274.8999938964844,
-  "KO": 1003.7333260308224,
-  "XOM": 1683.6848568727728,
-  "HEXA-B.ST": 106.44999694824219,
-  "HD": 3506.306455173064,
-  "NVDA": 1575.4213472581177,
-  "VOLV-B.ST": 322.70001220703125,
-  "JPM": 3412.471131530183,
-  "ERIC-B.ST": 106.1500015258789,
-  "JNJ": 2850.872833204805,
-  "UNH": 4157.199236112123,
-  "INVE-B.ST": 436.0,
-  "META": 6320.351272479282,
-  "ATCO-A.ST": 191.89999389648438,
-  "SAND.ST": 355.3999938964844,
-  "V": 4302.895971026795,
-  "GOOGL": 2862.678034548706,
-  "SWED-A.ST": 421.5,
-  "AZN.ST": 1870.5,
-  "WMT": 1295.6312396667781,
-  "SEB-A.ST": 222.1999969482422,
-  "AMZN": 2600.6459193229675,
-  "SHB-A.ST": 162.9499969482422,
-  "HM-B.ST": 180.0,
-  "ABB.ST": 832.2000122070312,
-  "ALFA.ST": 546.4000244140625
+  "TELIA.ST": 50.040000915527344,
+  "MSFT": 5114.228650733596,
+  "ESSITY-B.ST": 291.20001220703125,
+  "PG": 1734.7806713972532,
+  "ASSA-B.ST": 389.8999938964844,
+  "AAPL": 3555.128512023104,
+  "EVO.ST": 861.7999877929688,
+  "SKF-B.ST": 271.6000061035156,
+  "KO": 998.0141095812651,
+  "XOM": 1689.2189939982927,
+  "HEXA-B.ST": 104.3499984741211,
+  "HD": 3424.807874277467,
+  "NVDA": 1570.516031361345,
+  "VOLV-B.ST": 319.70001220703125,
+  "JPM": 3333.381152117421,
+  "ERIC-B.ST": 104.1500015258789,
+  "JNJ": 2815.533373270475,
+  "UNH": 3936.6952860390884,
+  "INVE-B.ST": 425.5,
+  "META": 6252.059736810508,
+  "ATCO-A.ST": 189.1999969482422,
+  "SAND.ST": 347.79998779296875,
+  "V": 4210.368717794976,
+  "GOOGL": 2830.6869429688086,
+  "SWED-A.ST": 418.1000061035156,
+  "AZN.ST": 1838.0,
+  "WMT": 1288.2554380413276,
+  "SEB-A.ST": 219.0,
+  "AMZN": 2605.3028743196046,
+  "SHB-A.ST": 161.35000610351562,
+  "HM-B.ST": 178.35000610351562,
+  "ABB.ST": 818.7999877929688,
+  "ALFA.ST": 536.2000122070312
  },
- "senaste_data": "2026-11-16"
+ "senaste_data": "2026-11-17"
 }
