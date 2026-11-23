@@ -40,5 +40,38 @@
   },
   "beslut": "forkastad",
   "sammanfattning": "På 2003–2023 gav idén +14,8 % per år mot +16,5 % för nuvarande Enkla portföljen, och värsta fallet blev −24 % mot −30 %. Resan blev lugnare men avkastningen lägre, så det räckte inte som förbättring. Utan marknadsfiltret blev det sämre, och AI:ns riskprognos var inte bättre än att bara titta på de senaste 20 dagarnas svängningar. Idén förkastas. (Testad manuellt, utanför den förregistrerade listan.)"
+ },
+ {
+  "id": "tilt05",
+  "datum": "2026-11-23",
+  "titel": "Låt AI:n bestämma mindre",
+  "fraga": "Blir AI-portföljen bättre om AI:n bara får flytta pengarna hälften så mycket?",
+  "portfolj": "AI-portföljen",
+  "utveckling": {
+   "fore": {
+    "arlig": 0.15153834808583322,
+    "sharpe": 1.0571187642196145,
+    "max_ras": -0.33803687697073526
+   },
+   "efter": {
+    "arlig": 0.15865326983489303,
+    "sharpe": 1.1359441079466863,
+    "max_ras": -0.3180690687046781
+   }
+  },
+  "kontroll": {
+   "fore": {
+    "arlig": 0.15588430230329076,
+    "sharpe": 1.3154701689913473,
+    "max_ras": -0.1863621428795348
+   },
+   "efter": {
+    "arlig": 0.17161410062897686,
+    "sharpe": 1.5146912984257848,
+    "max_ras": -0.17174036700845186
+   }
+  },
+  "beslut": "klarade",
+  "sammanfattning": "På 2003–2023 gav idén +15,9 % per år mot +15,2 % för nuvarande AI-portföljen, och värsta fallet blev −31,8 % mot −33,8 %. Den höll även på kontrollperioden 2024–idag (+17,2 % mot +15,6 % per år). Nästa steg är att prova den med låtsaspengar."
  }
 ]
